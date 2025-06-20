@@ -203,7 +203,8 @@ table.partition-table { background-color: #dee2e6; }
 }
 /* after login */
 .favor-navbox-tiles .tile {
-  background-color: #5385C1;
+  /*background-color: #5385C1;*/
+  background-color: #646c9a;
 }
 .favor-dropdown-menu { 
 	background-color: #5385C1;
@@ -251,3 +252,5 @@ table.partition-table { background-color: #dee2e6; }
 	border: 1px solid #EBEDF3;
 	border-radius: 0.42rem;
 }
+div.link-button-cover a { background-color: #5d77ff; color: white; }
+div.link-button-cover a:hover { background-color: whitesmoke; color: black; }
