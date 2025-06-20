@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta http-equiv="Cache-Control" content="no-store">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="-1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Chat</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
+    <script>
+        function openChatRoom() {
+            window.parent.openChatRoom(roomname.value);
+        }
+        function createChatRoom() {
+            window.parent.createChatRoom(roomname.value,function() { openChatRoom(); });
+        }
+        window.onload = function() {
+			openbutton.onclick = openChatRoom;
+			createbutton.onclick = createChatRoom;
+		}
+    </script>
+</head>
+<body>
+    <h3>Open Chat</h3>
+	<div id="bodylayer" class="container">
+        <div class="row">
+            <div class="col-md-2 text-right"><label>Room Name</label></div>
+            <div class="col-md-3">
+                <input type="text" id="roomname" class="form-control input-md"/>
+            </div>
+            <div class="col-md">
+                <button id="openbutton" class="btn btn-dark btn-sm">Open</button>
+                <button id="createbutton" class="btn btn-dark btn-sm">Create</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

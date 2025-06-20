@@ -1,0 +1,33 @@
+<%  let rows = data.dataset?.rows;
+    let len = rows?rows.length:0;
+    for(let jdx = 0; jdx < 3; jdx++) {
+%>
+    <div class="kt-grid-nav__row">
+<%        
+        for(let idx = 0; idx < 3; idx++) {
+            let index = (jdx*3) + idx;
+            if(index < len) {
+                let r = rows[index];
+                let iconfile = r.iconfile;
+                if(!iconfile || iconfile.trim().length ==0) iconfile = "application.png";
+%>
+<a href="javascript:void(0)" class="kt-grid-nav__item tile fa-box-title fav-app" seqno="<%=index+1%>" pid="<%=r.programid%>" url="<%=r.url%>" data-path="<%=r.progpath%>" data-new="<%=r.newflag%>" data-method="<%=r.openmethod%>" title="<%=r.programid%>" data-caption="<%=r.shortname%>" data-tree="Shortcut Program#CUT#">
+    <span class="kt-grid-nav__icon">
+        <img class="fa fa-app-image" src="<%=meta.cdn_url%>/img/apps/<%=iconfile%>" alt=""/>
+    </span>
+    <span class="kt-grid-nav__title font-size-custom-h-14"><%=r.shortname%></span>
+</a>
+<%          } else { %>
+    <a href="javascript:void(0)" class="kt-grid-nav__item tile fa-box-title fav-blank" title="New Favorite" seqno="<%=index+1%>">
+        <span class="kt-grid-nav__icon">
+            <img class="fa fa-app-image" src="<%=meta.cdn_url%>/img/apps/fs_icon.png" alt=""/>
+        </span>
+        <span class="kt-grid-nav__title font-size-custom-h-14">New Favorite</span>
+    </a>
+<%          } 
+        }
+%>
+    </div>
+<%        
+    }
+%>

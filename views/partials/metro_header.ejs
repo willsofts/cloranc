@@ -1,0 +1,154 @@
+<div id="kt_header" class="kt-header kt-grid__item  kt-header--fixed ">
+    <div class="kt-header-menu-wrapper" id="kt_header_menu_wrapper">
+        <div id="kt_header_menu" class="kt-header-menu kt-header-menu-mobile  kt-header-menu--layout-default ">
+            <ul class="kt-menu__nav">
+            </ul>
+        </div>
+    </div>
+    <div class="kt-header__topbar">
+        <% if(meta.info?.chat) {%>
+        <div class="kt-header__topbar-item dropdown">
+            <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="50px,0px" aria-expanded="false" id="chat_select" title="Chat">
+                <a href="javascript:void(0)" id="chatmenuitemlink" class="kt-header__topbar-icon kt-pulse kt-pulse--brand flaticon2-talk"></a>
+            </div>
+        </div>
+        <%}%>
+        <% if(meta.info?.notify) {%>
+        <div class="kt-header__topbar-item dropdown" id="notificationheader">
+            <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="30px,0px" aria-expanded="false" id="noti_select" title="Notification">
+                <span class="kt-header__topbar-icon kt-pulse kt-pulse--brand flaticon2-notification" >
+                </span>
+            </div>
+            <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-lg">
+                    <div id="noti_cover_layer" class="kt-head kt-head--skin-dark kt-head--fit-x kt-head--fit-b">
+                        <h3 class="kt-head__title font-size-custom-h2">
+							<%=label.get('notification_title','Notifications')%>
+                            &nbsp;
+                            <span class="btn btn-success btn-sm btn-bold btn-font-md font-size-custom-h2" ><span id="noti_numberlist" >0</span> <%=label.get('newnotifications','new notifications')%></span>
+                        </h3>
+                        <ul id="tabitemlisting" class="nav nav-tabs nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-success kt-notification-item-padding-x" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active show font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_notifications" role="tab" aria-selected="true" id="noti_tab_lastest"><%=label.get('lastest_title','Lastest')%></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_events" role="tab" aria-selected="false" id="noti_tab_weeks"><%=label.get('weekly_title','Weeks')%></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_logs" role="tab" aria-selected="false" id="noti_tab_months"><%=label.get('monthly_title','Months')%></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane active show" id="topbar_notifications_notifications" role="tabpanel">
+                            <div class="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200" id="noti_lastest">
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="topbar_notifications_events" role="tabpanel">
+                            <div class="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200" id="noti_weeks">
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="topbar_notifications_logs" role="tabpanel">
+                            <div class="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200"  id="noti_months">
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <%}%>
+        <div class="kt-header__topbar-item dropdown">
+            <div id="favor_menu_id" class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="30px,0px" aria-expanded="true" title="Favorite">
+                <span class="kt-header__topbar-icon flaticon2-menu-4">
+                </span>
+            </div>
+            <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl">
+                    <div id="header_cover_layer" class="kt-head kt-head--skin-dark">
+                        <h3 class="kt-head__title font-size-custom-h2">
+							<%=label.get('favorite_title','Short Cut Menu')%>
+                            <span class="kt-space-15"></span>
+                            <div id="favornewitemlayer" class="fa-hidden">
+                                <a href="javascript:void(0)" id="favorcancelitem" class="btn btn-danger btn-icon" title="Close New Favorite"><em class="fa fa-times-circle"></em></a>
+                                <select id="favorprogitem" class="form-control">
+                                </select>
+                                <a href="javascript:void(0)" id="favornewitem" class="btn btn-success" title="Add New Favorite">
+                                    <em class="fa fa-plus"></em>
+                                </a>
+                            </div>
+                        </h3>
+                    </div>
+                    <div id="favorbarmenu" class="kt-grid-nav kt-grid-nav--skin-light">
+                    </div>
+            </div>
+        </div>
+        <div class="kt-header__topbar-item kt-header__topbar-item--langs">
+            <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px" title="Language">
+                <span class="kt-header__topbar-icon">
+                    <img class="" src="<%=meta.cdn_url%>/assets/lang/<%=meta.language%>.svg" alt="" id="languageimage"/>
+                </span>
+            </div>
+            <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround">
+                <ul class="kt-nav kt-margin-t-10 kt-margin-b-10">
+                    <li class="li-lang kt-nav__item <%='EN'==meta.language ? 'kt-nav__item--active' : ''%>" id="lang-EN">
+                        <a href="javascript:void(0)" class="kt-nav__link lang-linker" id="linklangen" data-lang="EN" data-image="<%=meta.cdn_url%>/assets/lang/EN.svg">
+                            <span class="kt-nav__link-icon"><img src="<%=meta.cdn_url%>/assets/lang/EN.svg" alt="" /></span>
+                            <span class="kt-nav__link-text font-size-custom-h-14 lang-word"><%=label.get('EN_lang','English')%></span>
+                        </a>
+                    </li>
+                    <li class="li-lang kt-nav__item <%='TH'==meta.language ? 'kt-nav__item--active' : ''%>" id="lang-TH">
+                        <a href="javascript:void(0)" class="kt-nav__link lang-linker" id="linklangth" data-lang="TH" data-image="<%=meta.cdn_url%>/assets/lang/TH.svg">
+                            <span class="kt-nav__link-icon"><img src="<%=meta.cdn_url%>/assets/lang/TH.svg" alt="" /></span>
+                            <span class="kt-nav__link-text font-size-custom-h-14 lang-word"><%=label.get('TH_lang','Thai')%></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="kt-header__topbar-item kt-header__topbar-item--user">
+            <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="0px,0px" title="Menu">
+                <div class="kt-header__topbar-user">
+                    <span class="kt-header__topbar-welcome kt-hidden-mobile font-size-custom-h2"><%=label.get('greet_menu','Hi,')%></span>
+                    <span class="kt-header__topbar-username kt-hidden-mobile font-size-custom-d2" id="accessor_label">Seen</span>
+                    <img class="" alt="Pic" src="<%=meta.cdn_url%>/assets/metronic/media/users/300_25.jpg" id="fs_image_profile_select"/>
+                </div>
+            </div>
+            <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-lg">
+                <div id="user_card_cover_layer" class="kt-user-card kt-user-card--skin-dark kt-notification-item-padding-x">
+                    <div class="kt-user-card__avatar">
+                        <img alt="Pic" src="<%=meta.cdn_url%>/assets/metronic/media/users/300_25.jpg" id="fs_image_profile"/>
+                    </div>
+                    <div class="kt-user-card__name kt-notification__item-details">
+                        <div class="kt-notification__item-title kt-font-bold font-size-custom-h2" id="name_profile"></div>
+                        <div class="kt-notification__item-time font-size-custom-d2" id="rolename_profile"></div>
+                        <div class="kt-notification__item-time font-size-custom-d2" id="last_access_label"></div>
+                    </div>
+                </div>
+                <div class="kt-notification">
+                        <a href="javascript:void(0)" class="kt-notification__item" id="accessor_change_link">
+                            <div class="kt-notification__item-icon">
+                                <i class="fa fa-lock kt-font-danger"></i>
+                            </div>
+                            <div class="kt-notification__item-details">
+                                <div class="kt-notification__item-title kt-font-bold font-size-custom-h-14">
+                                    <%=label.get('change_menu','Change Password')%>
+                                </div>
+                            </div>
+                        </a>
+                    <a href="javascript:void(0)" class="kt-notification__item" id="accessor_profile_link">
+                        <div class="kt-notification__item-icon">
+                            <i class="fa fa-cog "></i>
+                        </div>
+                        <div class="kt-notification__item-details">
+                            <div class="kt-notification__item-title kt-font-bold font-size-custom-h-14">
+								<%=label.get('profile_menu','User Profile')%>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="kt-notification__custom kt-space-between">
+                        <a href="javascript:void(0)" id="accessor_logout_link" class="btn btn-label btn-label-brand btn-sm btn-bold font-size-custom-h-14">
+							<%=label.get('logout_menu','Log Out')%>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

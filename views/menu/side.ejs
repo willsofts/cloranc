@@ -1,0 +1,190 @@
+<ul id="menuitemlist" class="kt-menu__nav nav flex-column sidebar-nav navbar-nav list-sidebar bg-default" role="menu">
+<%
+function createMenuTree(lang,menu,progmap,counter,treepath) {
+    if(menu) {
+        let progname = "TH"==lang ? menu.caption || menu.text : menu.text;
+        let hasItems = menu?.items && menu?.items?.length > 0;
+        let hasProg = menu?.itemname && menu?.itemname.trim().length > 0;
+        if(hasProg) { 
+            let progid = menu.itemname;
+            let prg = progmap[progid];
+            let url = prg?.url;
+            let path = prg?.progpath;
+            let newflag = prg?.newflag;
+            let openmethod = prg?.openmethod;  
+        %>
+    <li class="kt-menu__item" aria-haspopup="true">
+        <a href="javascript:void(0);" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
+            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+            <span class="kt-menu__link-text"><%=progname%></span>
+        </a>
+    </li>
+<%      } else { %>
+    <li class="dropdown kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
+    <a class="kt-menu__link kt-menu__toggle" data-toggle="collapse" data-target="#submenu_<%=counter%>" href="javascript:void(0);">
+        <span class="kt-menu__link-icon"><em class="fa fa-list-alt"><span></span></em></span>
+        <span class="kt-menu__link-text"><%=progname%></span>
+        <i class="kt-menu__ver-arrow la la-angle-right"></i>
+    </a>
+    <% if(hasItems) { %>
+    <div class="kt-menu__submenu ">
+    <span class="kt-menu__arrow"></span>
+    <ul id="submenu_<%=counter%>" class="kt-menu__subnav sub-menu panel-collapse collapse" role="menu">    
+        <% for(let item of menu?.items) {            
+            createMenuTree(lang,item,progmap,counter++,treepath+progname+"#CUT#");   
+        }%>
+    </ul>
+    </div>
+    <% } %>
+    </li>
+<%      }
+    }    
+}
+if(data.dataset?.sidemap && data.dataset?.sidelist) {
+    let lang = meta.language;
+    let counter = 0;
+    let sidemap = data.dataset.sidemap;
+    let sidelist = data.dataset.sidelist;
+    for (let mk in sidemap) {
+        let mv = sidemap[mk];
+        counter++;
+        let groupstyle = mv["groupstyle"];
+        if(!groupstyle || groupstyle=="") groupstyle = "fa fa-tasks";
+        let groupname = "TH"==lang?mv["nameth"]:mv["nameen"];
+        let jsonmenu = undefined;
+        if(data.meta?.MENU_TREE) {
+            let menutext = mv["menutext"];
+            if(menutext && menutext.trim().length > 0) {
+                try { jsonmenu = JSON.parse(menutext); } catch(ex) { console.error(ex); }
+            }
+        }
+        if(jsonmenu) {
+            let progmap = {};
+            for(let k in sidelist) {
+                let ary = sidelist[k];
+                for(let p of ary) {
+                    if(!progmap[p.programid]) {
+                        progmap[p.programid] = p;
+                    }
+                }
+            }
+            let hasMenuItems = jsonmenu?.items && jsonmenu?.items.length > 0;
+            if(hasMenuItems) { %>
+            <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
+                <a class="kt-menu__link kt-menu__toggle" data-toggle="collapse" data-target="#submenu_<%=counter%>" href="javascript:void(0);">
+                    <span class="kt-menu__link-icon"><em class="<%=groupstyle%>"><span></span></em></span>
+                    <span class="kt-menu__link-text"><%=groupname%></span>
+                    <i class="kt-menu__ver-arrow la la-angle-right"></i>
+                </a>
+                <div class="kt-menu__submenu ">
+                <span class="kt-menu__arrow"></span>
+                <ul id="submenu_<%=counter%>" class="kt-menu__subnav collapse" role="menu">
+                <% for(let item of jsonmenu?.items) {            
+                    createMenuTree(lang,item,progmap,++counter,groupname+"#CUT#");   
+                }%>
+                </ul>
+                </div>
+            </li>
+            <% } %>
+        <%} else {
+            let list = sidelist[mk];
+            if(list.length>0) {
+                if(list.length==1) {
+                    let element = list[0];
+                    let progname = "TH"==lang?element["prognameth"]:element["progname"];
+                    let iconstyle = element["iconstyle"];
+                    let progid = element["programid"];
+                    let url = element["url"];
+                    let path = element["progpath"];
+                    let progtype = element["progtype"];
+                    let newflag = element["newflag"];
+                    let openmethod = element["openmethod"];
+                    if("I"!=progtype) {                
+                    %>
+                    <li class="kt-menu__item " aria-haspopup="true">
+                        <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
+                            <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                            <span class="kt-menu__link-text"><%=progname%></span>
+                        </a>
+                    </li>    
+                    <%
+                    }
+                } else {
+                    let program = null;
+                    let progcounter = 0;
+                    for(let i=0,isz=list.length;i<isz;i++) {
+                        let element = list[i];
+                        if(element) {
+                            let progtype = element["progtype"];
+                            if("I"!=progtype) {
+                                progcounter++;
+                                program = element;
+                            }
+                        }
+                    }
+                    if(program && progcounter==1) {
+                        let progname = "TH"==lang?program["prognameth"]:program["progname"];
+                        let iconstyle = program["iconstyle"];
+                        let progid = program["programid"];
+                        let url = program["url"];
+                        let path = program["progpath"];
+                        let newflag = program["newflag"];
+                        let openmethod = program["openmethod"];
+                        let treepath = groupname+"#CUT#";
+                        %>
+                        <li class="kt-menu__item" aria-haspopup="true">
+                            <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>"  data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
+                                <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                <span class="kt-menu__link-text"><%=progname%></span>
+                            </a>
+                        </li>        
+                        <%
+                    } else {
+                    %>
+                    <li class="kt-menu__item  kt-menu__item--submenu">
+                        <a class="kt-menu__link kt-menu__toggle" data-toggle="collapse" data-target="#submenu_<%=counter%>" href="javascript:void(0);">
+                            <span class="kt-menu__link-icon"><em class="<%=groupstyle%>"><span></span></em></span>
+                            <span class="kt-menu__link-text"><%=groupname%></span>
+                            <i class="kt-menu__ver-arrow la la-angle-right"></i>
+                        </a>
+                        <div class="kt-menu__submenu ">
+                        <span class="kt-menu__arrow"></span>
+                        <ul id="submenu_<%=counter%>" class="kt-menu__subnav collapse" role="menu">    
+                        <%
+                        for(let i=0,isz=list.length;i<isz;i++) {
+                            let element = list[i];
+                            if(element) {
+                                let progname = "TH"==lang?element["prognameth"]:element["progname"];
+                                let iconstyle = element["iconstyle"];
+                                let progid = element["programid"];
+                                let url = element["url"];
+                                let path = element["progpath"];
+                                let progtype = element["progtype"];
+                                let newflag = element["newflag"];
+                                let openmethod = element["openmethod"];
+                                let treepath = groupname+"#CUT#"
+                                if("I"!=progtype) {
+                                %>
+                                <li class="kt-menu__item " aria-haspopup="true">
+                                    <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
+                                        <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
+                                        <span class="kt-menu__link-text"><%=progname %></span>
+                                    </a>
+                                </li>
+                                <%	    
+                                }                                        
+                            }
+                        }
+                        %>
+                        </ul>
+                        </div>
+                    </li>
+                        <%
+                    }
+                }
+            }
+        }
+    }
+}
+%>
+</ul>

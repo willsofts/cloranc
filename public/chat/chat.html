@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta http-equiv="Cache-Control" content="no-store">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="-1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Me</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css" />
+	<link rel="stylesheet" type="text/css" href="/chat/emoji/joypixel/sprites/joypixels-sprite-24.min.css" />
+	<link rel="stylesheet" type="text/css" href="/chat/emoji/joypixel/sprites/joypixels-sprite-40.min.css" />
+	<link rel="stylesheet" type="text/css" href="/chat/chat.css" />
+    <script type="text/javascript" src="/jquery/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="/chat/js/crypto-js.min.js"></script>
+    <script type="text/javascript" src="/chat/emoji.js"></script>
+    <script>
+        var HOST = "http://localhost:3000";
+        var SERVER_URL = "ws://localhost:3000/websocket"; 
+        var USERNAME = "tas";       
+        var PASSWORD = "tas";       
+        var ROOM_NAME = "general";  
+    </script>
+    <script type="text/javascript" src="/chat/chat.js"></script>
+</head>
+<body>
+	<div id="bodylayer">
+		<div id="categorylayer">
+			<div id="wholayer">
+                <h4 class="system" id="whoamihead">
+                    <span id="whoamilabel">
+                        <img class="avatar-img" id="imgwhoami"/><span id="whoami">Me</span>
+                    </span>
+                    <div class="dropdown show" id="settingsmenuleftlayer">
+                        <a class="dropdown-toggle" href="javascript:void(0)" role="button" id="settingsmenuleftlinker" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="-1">
+                            <em class="fa fa-bars"></em>
+                        </a>                      
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="settingsmenuleftlinker">
+                            <a class="dropdown-item" href="javascript:void(0)" id="userslistlinker"><em class="fa fa-user-plus"></em> User</a>
+                            <a class="dropdown-item" href="javascript:void(0)" id="newgrouplinker"><em class="fa fa-comment"></em> New Channel</a>
+                        </div>
+                    </div>
+                </h4>
+            </div>
+            <div id="menuleftlayer">
+                <div id="categorylist">
+                    <div id="categorylisting" class="category-list">
+                        <div id="channellisting" class="group-list channel-list">
+                            <div class="topic-message channel-message">Channels</div>
+                            <div id="channellistitems">
+                            </div>
+                        </div>
+                        <div id="directlisting" class="group-list user-list">
+                            <div class="topic-message direct-message">Direct messages</div>
+                            <div id="directlistitems">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="usercategorylist">
+                    <div id="usercategorylisting" class="category-list">
+                        <div id="userdirectlisting" class="group-list user-list">
+                            <div class="topic-message direct-message">
+                                <span>Users List</span>
+                                <a href="javascript:void(0)" id="closeuserslistlinker" class="btn-link-menu"><em class="fa fa-times"></em></a>
+                            </div>
+                            <div id="userdirectlistitems">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+        <div id="questlayer">  
+            <div id="topiclayer">
+                <h4 class="topic-head" id="topicheader">
+                    <span id="topiclabel">Topic</span>
+                    <div class="dropdown show" id="settingsmenulayer">
+                        <a href="javascript:void(0)" id="groupsettingslinker" tabindex="-1">
+                            <em class="fa fa-users"></em>
+                        </a>                      
+                        <a class="dropdown-toggle" href="javascript:void(0)" role="button" id="settingslinker" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="-1">
+                            <em class="fa fa-cog"></em>
+                        </a>                      
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="settingslinker">
+                            <a class="dropdown-item" href="javascript:void(0)" id="userslinker"><em class="fa fa-th-list" id="toggleusers"></em> Toggle Room</a>
+                            <a class="dropdown-item" href="javascript:void(0)" id="alertlinker"><em class="fa fa-bell-o" id="togglealert"></em> Toggle Alert</a>
+                        </div>
+                    </div>
+                </h4>
+            </div>
+            <div id="chatmessages" class="single-texts">
+                <div id="listmessages"></div>
+            </div>
+            <div id="formlayer">
+                <div id="uploadlayer">
+                    <div id="controlbuttons">
+                        <a href="javascript:void(0)" class="btn btn-link" id="btnaddemoji" title="Emoji" data-toggle="tooltip"><em class="fa fa-smile-o"></em></a>
+                        <a href="javascript:void(0)" class="btn btn-link" id="btnaddbold" title="Bold" data-toggle="tooltip"><em class="fa fa-bold"></em></a>
+                        <a href="javascript:void(0)" class="btn btn-link" id="btnadditalic" title="Italic" data-toggle="tooltip"><em class="fa fa-italic"></em></a>
+                        <a href="javascript:void(0)" class="btn btn-link" id="btnaddstrike" title="Strikethrough" data-toggle="tooltip"><em class="fa fa-strikethrough"></em></a>
+                        <a href="javascript:void(0)" class="btn btn-link" id="btnaddinline" title="Inline Code" data-toggle="tooltip"><em class="fa fa-code"></em></a>
+                        <a href="javascript:void(0)" class="btn btn-link" id="btnaddmultiline" title="Multi-line Code" data-toggle="tooltip"><em class="fa fa-list-ol"></em></a>
+                        <a href="javascript:void(0)" class="btn btn-link" id="btnaddlink" title="Link" data-toggle="tooltip"><em class="fa fa-link"></em></a>
+                        <a href="javascript:void(0)" class="btn btn-link" id="btnaddimage" title="Upload" data-toggle="tooltip"><em class="fa fa-paperclip"></em></a>
+                        <a href="javascript:void(0)" class="btn btn-link" id="btnclearmsg" title="Clear" data-toggle="tooltip"><em class="fa fa-refresh"></em></a>
+                    </div>
+                    <form id="videouploadform" name="videouploadform" action="" onsubmit="return false;" class="fa-hidden">
+                        <div id="videouploadinputlayer">
+                            <input type="file" id="videofilename" name="videofilename" class="input input-md input-ask" accept=".mp4"/>
+                        </div>
+                    </form>
+                </div>
+                <div id="questformlayer">
+                    <form id="chatform" name="chatform" action="" onsubmit="return false;">
+                        <div id="inputlayer">
+                            <div id="chatinputlayer" class="input-normal input-wrapper">
+                                <textarea rows="1" id="messageinput" name="messageinput" class="input input-md input-ask" autocomplete="off" placeholder="Type a message"></textarea>
+                            </div>
+                            <button id="sendbutton" class="input-ask btn"><em class="fa fa-send"></em></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="grouperlayer">
+                <div id="memberlistslayer">
+                    <div id="memberscategorylisting" class="category-list">
+                        <div id="memberslisting" class="group-list member-list">
+                            <div class="topic-message direct-message">
+                                <span>Members</span><span id="numofmembers"></span>
+                                <a href="javascript:void(0)" id="closememberslistlinker" class="btn-link-menu"><em class="fa fa-times"></em></a>
+                                <a href="javascript:void(0)" id="addmemberslistlinker" class="btn-link-menu"><em class="fa fa-plus"></em></a>
+                            </div>
+                            <div id="memberslistitems">
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div id="addmembergrouperlayer">
+                    <div id="addmemberscategorylisting" class="category-list">
+                        <div id="addmemberslisting" class="group-list member-list">
+                            <div class="topic-message direct-message">
+                                <a href="javascript:void(0)" id="addmemberbutton" class="btn btn-sm btn-secondary">Add Member</a>
+                                <a href="javascript:void(0)" id="closeaddmemberslistlinker" class="btn-link-menu"><em class="fa fa-times"></em></a>
+                                <a href="javascript:void(0)" id="backmemberslistlinker" class="btn-link-menu"><em class="fa fa-reply"></em></a>
+                            </div>
+                            <div id="addmemberslistitems">
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="addlinkdialog">
+        <div id="fslinkdialog_layer" class="modal fade pt-page pt-page-item" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-xm">
+                <div class="modal-content portal-area fa-portal-area">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="linkheadertitle">Add Link</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div id="fslinkentry_layer" class="entry-dialog-layer">
+                        <div class="row row-height">
+                            <div class="col-height col-md-12">
+        <label for="fieldtext" id="fieldtext_label" class="control-label">Text</label>
+        <input type="text" id="fieldtext" class="form-control input-md" maxlength="250" />
+                            </div>
+                        </div>
+                        <div class="row row-height">
+                            <div class="col-height col-md-12">
+        <label for="fieldlink" id="fieldlink_label" class="control-label">Link</label>
+        <input type="text" id="fieldlink" class="form-control input-md" maxlength="250" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row-heighter modal-footer" >
+                        <button id="addlinkbutton" class="btn btn-sm btn-secondary">Add</button>
+                        <button id="cancellinkbutton" class="btn btn-sm btn-light" data-dismiss="modal">Cancel</button>
+                    </div>        
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <div id="addfiledialog">
+        <div id="fsfiledialog_layer" class="modal fade pt-page pt-page-item" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-xm">
+                <div class="modal-content portal-area fa-portal-area">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="fileheadertitle">File Upload</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div id="fsfileentry_layer" class="entry-dialog-layer">
+                        <form id="fileuploadform" name="fileuploadform" action="" onsubmit="return false;">
+                            <div class="row row-height">
+                                <div class="col-height col-md-12">
+            <label for="fieldfile" id="fieldfile_label" class="control-label">File</label>
+            <input type="file" id="fieldfile" name="file" class="input input-md input-ask" accept=".png,.jpg,.jpeg,.svg,.gif,.mp4"/>
+                                </div>
+                            </div>
+                            <div class="row row-height">
+                                <div class="col-height col-md-12">
+            <label for="fieldmsg" id="fieldmsg_label" class="control-label">Description</label>
+            <input type="text" id="fieldmsg" name="msg" class="form-control input-md" maxlength="250" />
+                                </div>
+                            </div>
+                        </form>    
+                    </div>
+                    <div class="row-heighter modal-footer" >
+                        <button id="addfilebutton" class="btn btn-sm btn-secondary">Send</button>
+                        <button id="cancelfilebutton" class="btn btn-sm btn-light" data-dismiss="modal">Cancel</button>
+                    </div>        
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <div id="addemojidialog">
+        <div id="fsemojidialog_layer" class="modal fade pt-page pt-page-item" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content portal-area fa-portal-area">
+                    <div class="modal-header">
+                        <div id="emojiheaderlayer">
+                        </div>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>                    
+                    <div id="fsemojientry_layer" class="modal-body emoji-dialog-layer">
+                        <div id="emojilists">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <div id="confirmationdialog">
+        <div id="fsconfirmdialog_layer" class="modal fade pt-page pt-page-item" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content portal-area fa-portal-area">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="confirmheader">Confirmation</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>                    
+                    <div id="fsconfirm_layer" class="modal-body">
+                        <label id="confirmationlabel">Do you want to hide this discussion?</label>
+                    </div>
+                    <div class="row-heighter modal-footer" >
+                        <button class="btn btn-sm btn-secondary" id="confirmbutton">OK</button>
+                        <button class="btn btn-sm btn-light" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addgroupdialog">
+        <div id="fsgroupdialog_layer" class="modal fade pt-page pt-page-item" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content portal-area fa-portal-area">
+                    <div class="modal-header">
+                        <h4 class="modal-title">New Channel</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>                    
+                    <div id="fsgroupentry_layer" class="entry-dialog-layer">
+                        <div class="row row-height">
+                            <div class="col-height col-md-12">
+                                <label for="groupname" id="groupname_label" class="control-label">Name</label>
+                                <input type="text" id="groupname" name="groupname" class="form-control input-md" maxlength="30" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row-heighter modal-footer" >
+                        <button class="btn btn-sm btn-secondary" id="addgroupbutton">OK</button>
+                        <button class="btn btn-sm btn-light" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="sound-chime" preload="none">
+        <source src="/chat/sounds/chime.mp3"/>
+    </audio>
+</body>
+</html>
