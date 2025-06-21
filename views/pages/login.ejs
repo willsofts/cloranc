@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title><%=label.get('project_title','Assure')%></title>		
+		<title><%=label.get('project_title','Cloranc')%></title>		
 		<%- include('../asset/meta') %>		
 		<%- include('../asset/stylesmain') %>		
-		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/metronic/plugins/custom/fullcalendar/fullcalendar.bundle-min.css" />
 		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/metronic/plugins/global/plugins.bundle-min.css" />
 		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/metronic/css/style.bundle-min.css" />
 		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/metronic/css/skins/header/base/light-min.css" />
@@ -16,7 +15,6 @@
 		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/app.setting.js"></script>
 		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/metronic/plugins/global/plugins.bundle.js"></script>
 		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/metronic/js/scripts.bundle.js"></script>
-		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/metronic/js/global/components/base/app-min.js"></script>
 		<%- include('../asset/scriptsmain') %>
 		<% if(!(meta.info?.appstype == "WEB")) { %>		
 		<script type="text/javascript" src="<%=meta.cdn_url%>/js/msal-browser.js" defer></script>
