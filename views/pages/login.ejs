@@ -16,9 +16,9 @@
 		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/app.setting.js"></script>
 		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/metronic/plugins/global/plugins.bundle.js"></script>
 		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/metronic/js/scripts.bundle.js"></script>
-		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/js/global/components/base/app-min.js"></script>
+		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/metronic/js/global/components/base/app-min.js"></script>
 		<%- include('../asset/scriptsmain') %>
-		<% if(!(meta.info?.appstype == "W")) { %>		
+		<% if(!(meta.info?.appstype == "WEB")) { %>		
 		<script type="text/javascript" src="<%=meta.cdn_url%>/js/msal-browser.js" defer></script>
 		<script type="text/javascript" src="<%=meta.cdn_url%>/js/auth.js" defer></script>
 		<% } %>

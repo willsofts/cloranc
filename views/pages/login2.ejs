@@ -5,7 +5,7 @@
 		<%- include('../asset/meta') %>		
 		<%- include('../asset/stylesmain') %>		
 		<%- include('../asset/scriptsmain') %>
-		<% if(!(meta.info?.appstype == "W")) { %>		
+		<% if(!(meta.info?.appstype == "WEB")) { %>		
 		<script type="text/javascript" src="<%=meta.cdn_url%>/js/msal-browser.js" defer></script>
 		<script type="text/javascript" src="<%=meta.cdn_url%>/js/auth.js" defer></script>
 		<% } %>
