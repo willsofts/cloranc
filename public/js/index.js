@@ -109,12 +109,35 @@
 			if(body) {
 				showBackground(body.background);
 				let avatar = body.avatar;
-				if(avatar && avatar!="") {
-					$("#avatarimage").attr("src",avatar);
+				if(avatar && avatar.trim().length>0) {					
+					showAvatar(avatar);
+				} else {
+					fetchAvatar(body.userid);
 				}
 			}
 			startChating();
 			startReceiveBroadcast();
+		}
+		function showAvatar(avatar) {
+			if(!avatar || avatar.trim().length==0) return;
+			$("#avatarimage").attr("src",avatar);
+			$("#fs_image_profile_select").attr("src",avatar);
+			$("#fs_image_profile").attr("src",avatar);
+		}
+		function fetchAvatar(userid) {
+			let authtoken = getAccessorToken();
+			console.log("fetchAvatar: userid="+userid);
+			$.ajax({ 
+				url : API_URL+"/api/avatar/image", 
+				data: { userid: userid }, 
+				headers : { "authtoken": authtoken }, 
+				type : "POST",
+				dataType: "json",
+				contentType: defaultContentType,
+				success: function(data) { 
+					showAvatar(data?.avatar);
+				}
+			});
 		}
 		function startWorking(unloadFirstPage,firstpage) {
 			resetBackground();
@@ -258,7 +281,7 @@
 			stopChating();
 		}
 		function clearAvatar() {
-			$("#avatarimage").attr("src",CDN_URL+"/img/avatar.png");
+			showAvatar(CDN_URL+"/img/avatar.png");
 		}
 		function clearBackground() {
 			$("body").css("background-image","none");
