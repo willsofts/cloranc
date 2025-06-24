@@ -220,7 +220,7 @@
 	opacity: 0.5; 
 	/* 3x3 = -310/320/9, 3x4 = -310/420/12, 3x5 = -310/520/15  */
 }
-#favornewitemlayer { display: none; }
+#favornewitemlayer { display: none; justify-content: center; }
 #favornewitemlayer.show { display: flex; }
 #favornewitem { 
   margin-top: 2px;

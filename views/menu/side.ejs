@@ -3,6 +3,8 @@
 function createMenuTree(lang,menu,progmap,counter,treepath) {
     if(menu) {
         let progname = "TH"==lang ? menu.caption || menu.text : menu.text;
+        let nameth = menu.caption || menu.text;
+        let nameen = menu.text;
         let hasItems = menu?.items && menu?.items?.length > 0;
         let hasProg = menu?.itemname && menu?.itemname.trim().length > 0;
         if(hasProg) { 
@@ -16,14 +18,14 @@ function createMenuTree(lang,menu,progmap,counter,treepath) {
     <li class="kt-menu__item" aria-haspopup="true">
         <a href="javascript:void(0);" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-            <span class="kt-menu__link-text"><%=progname%></span>
+            <span class="kt-menu__link-text span-menu-label" data-en="<%=nameen%>" data-th="<%=nameth%>"><%=progname%></span>
         </a>
     </li>
 <%      } else { %>
     <li class="dropdown kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
     <a class="kt-menu__link kt-menu__toggle" data-toggle="collapse" data-target="#submenu_<%=counter%>" href="javascript:void(0);">
         <span class="kt-menu__link-icon"><em class="fa fa-list-alt"><span></span></em></span>
-        <span class="kt-menu__link-text"><%=progname%></span>
+        <span class="kt-menu__link-text span-menu-label" data-en="<%=nameen%>" data-th="<%=nameth%>"><%=progname%></span>
         <i class="kt-menu__ver-arrow la la-angle-right"></i>
     </a>
     <% if(hasItems) { %>
@@ -73,7 +75,7 @@ if(data.dataset?.sidemap && data.dataset?.sidelist) {
             <li class="kt-menu__item  kt-menu__item--submenu" aria-haspopup="true" data-ktmenu-submenu-toggle="hover">
                 <a class="kt-menu__link kt-menu__toggle" data-toggle="collapse" data-target="#submenu_<%=counter%>" href="javascript:void(0);">
                     <span class="kt-menu__link-icon"><em class="<%=groupstyle%>"><span></span></em></span>
-                    <span class="kt-menu__link-text"><%=groupname%></span>
+                    <span class="kt-menu__link-text span-menu-label" data-en="<%=mv.nameen%>" data-th="<%=mv.nameth%>"><%=groupname%></span>
                     <i class="kt-menu__ver-arrow la la-angle-right"></i>
                 </a>
                 <div class="kt-menu__submenu ">
@@ -104,7 +106,7 @@ if(data.dataset?.sidemap && data.dataset?.sidelist) {
                     <li class="kt-menu__item " aria-haspopup="true">
                         <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                            <span class="kt-menu__link-text"><%=progname%></span>
+                            <span class="kt-menu__link-text span-menu-label" data-en="<%=element.progname%>" data-th="<%=element.prognameth%>"><%=progname%></span>
                         </a>
                     </li>    
                     <%
@@ -135,7 +137,7 @@ if(data.dataset?.sidemap && data.dataset?.sidelist) {
                         <li class="kt-menu__item" aria-haspopup="true">
                             <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>"  data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                <span class="kt-menu__link-text"><%=progname%></span>
+                                <span class="kt-menu__link-text span-menu-label" data-en="<%=program.progname%>" data-th="<%=program.prognameth%>"><%=progname%></span>
                             </a>
                         </li>        
                         <%
@@ -144,7 +146,7 @@ if(data.dataset?.sidemap && data.dataset?.sidelist) {
                     <li class="kt-menu__item  kt-menu__item--submenu">
                         <a class="kt-menu__link kt-menu__toggle" data-toggle="collapse" data-target="#submenu_<%=counter%>" href="javascript:void(0);">
                             <span class="kt-menu__link-icon"><em class="<%=groupstyle%>"><span></span></em></span>
-                            <span class="kt-menu__link-text"><%=groupname%></span>
+                            <span class="kt-menu__link-text span-menu-label" data-en="<%=mv.nameen%>" data-th="<%=mv.nameth%>"><%=groupname%></span>
                             <i class="kt-menu__ver-arrow la la-angle-right"></i>
                         </a>
                         <div class="kt-menu__submenu ">
@@ -168,7 +170,7 @@ if(data.dataset?.sidemap && data.dataset?.sidelist) {
                                 <li class="kt-menu__item " aria-haspopup="true">
                                     <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
                                         <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
-                                        <span class="kt-menu__link-text"><%=progname %></span>
+                                        <span class="kt-menu__link-text span-menu-label" data-en="<%=element.progname%>" data-th="<%=element.prognameth%>"><%=progname %></span>
                                     </a>
                                 </li>
                                 <%	    

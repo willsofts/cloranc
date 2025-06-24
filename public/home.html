@@ -57,16 +57,20 @@
 			.span-pass {color: darkcyan; }
 			.span-and { color: #315989; }
 			.span-go { color: lightseagreen; }
+			#welcomeimagelayer { display: flex; justify-content: center; margin-top: 20px; }
 		</style>
 	</head>
 	<body class="portalbody portalbody-off">
 		<div class="topnav" id="headtopnav">
 			<a href="#home" id="titlelink"><span id="toptitle"><em class="fa fa-home"></em> Cloranc</span></a>
-			<a href="/index" id="loginlink">Sign In</a>
+			<a href="/login" id="loginlink">Sign In</a>
 	  	</div>  
 		<br/><br/><br/><br/>
 		<div class="text-center welcome-layer">
-			Welcome to <span class="span-pass">Pass</span> <span class="span-and">&amp;</span> <span class="span-go">Go</span>
+			Welcome
+		</div>
+		<div id="welcomeimagelayer">
+			<img id="welcomeimage" src="./img/welcome_logo.png" />
 		</div>
 		<nav id="footerbar" class="navbar-fixed-bottom fixed-bottom">
 			<div class="row">

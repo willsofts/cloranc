@@ -177,6 +177,7 @@
 						open_page({appid:pid, url:url, path:$e.attr("data-path"), newflag:$e.attr("data-new"), openmethod:$e.attr("data-method"), caption: $e.attr("data-caption"), treepath: $e.attr("data-tree")});
 					});
 				});
+				show_subheader("favorite","Short Cut Menu");
 			}); //menu/box
 		}
 		function hideMenu() {
@@ -281,7 +282,7 @@
 			stopChating();
 		}
 		function clearAvatar() {
-			showAvatar(CDN_URL+"/img/avatar.png");
+			showAvatar(IMG_URL+"/img/avatar.png");
 		}
 		function clearBackground() {
 			$("body").css("background-image","none");
@@ -383,7 +384,21 @@
 			}catch(ex) { }
 			let fs_name = $("#accessor_label").data(fs_Language);
 			if(fs_name) $("#accessor_label").html(fs_name);
-			load_sidebar_menu(null,fs_Language);
+			changeSiderMenuLanguage(fs_Language);
+			//load_sidebar_menu(null,fs_Language);
+		}
+		function changeSiderMenuLanguage(lang) {
+			lang = lang.toLowerCase();
+			$("#sidebarlayer").find("span.span-menu-label").each(function(index,element) {
+				let e = $(element);
+				let text = e.attr("data-"+lang);
+				if(text) e.html(text);
+			});
+			$("#page_first").find("span.span-menu-label").each(function(index,element) {
+				let e = $(element);
+				let text = e.attr("data-"+lang);
+				if(text) e.html(text);
+			});
 		}
 		function refreshScreen() {
 			$(window).trigger("resize");
@@ -509,7 +524,7 @@
             	$("#kt_subheader").toggleClass("dp-flex-togger");
           	});
 		}
-		var fs_workingframe_offset = 10;
+		var fs_workingframe_offset = 2;
 		$(function(){
 			$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
 			try { startApplication("index",true); }catch(ex) { }
@@ -524,14 +539,6 @@
 			});
 			$(window).resize(function() { 
 					let wh = $(window).height();
-					let nh = 0;
-					if($("#navigatebar").is(":visible")) {
-						nh = $("#navigatebar").height();
-					}
-					let fh = 0;
-					if($("#footerbar").is(":visible")) {
-						fh = $("#footerbar").height();
-					}
 					let kh = 0;
 					if($("#kt_header").is(":visible")) {
 						kh = $("#kt_header").height();
@@ -540,7 +547,7 @@
 					if($("#kt_subheader").is(":visible")) {
 						ksh = $("#kt_subheader").height();
 					}
-					$("#workingframe").height((wh-nh-fh-kh-ksh) - fs_workingframe_offset);
+					$("#workingframe").height((wh-kh-ksh) - fs_workingframe_offset);
 			}).trigger("resize");
 			let pos = $("#loginframe").position();
 			if(pos) { mouseX = pos.left; mouseY = pos.top; }

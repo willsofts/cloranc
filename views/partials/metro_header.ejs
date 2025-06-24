@@ -11,6 +11,8 @@
             <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="50px,0px" aria-expanded="false" id="chat_select" title="Chat">
                 <a href="javascript:void(0)" id="chatmenuitemlink" class="kt-header__topbar-icon kt-pulse kt-pulse--brand flaticon2-talk"></a>
             </div>
+            <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-lg">
+            </div>
         </div>
         <%}%>
         <% if(meta.info?.notify) {%>
@@ -118,7 +120,7 @@
                     <div class="kt-user-card__name kt-notification__item-details">
                         <div class="kt-notification__item-title kt-font-bold font-size-custom-h2" id="name_profile"></div>
                         <div class="kt-notification__item-time font-size-custom-d2" id="rolename_profile"></div>
-                        <div class="kt-notification__item-time font-size-custom-d2" id="last_access_label"></div>
+                        <div class="kt-notification__item-time font-size-custom-d2"><em id="lastclock" class="fa fa-clock-o fas fa-clock"></em><span id="last_access_label"></span></div>
                     </div>
                 </div>
                 <div class="kt-notification">

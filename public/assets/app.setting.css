@@ -9,7 +9,7 @@
 #kt_wrapper { padding-top: 38px; background-color: #f2f3f8; }
 #kt_content { background-color: #f2f3f8; }
 #workingframe { min-height: 500px;border:none; margin:0px; display:none; }
-#workingframe2 { min-height: 500px;border:none; margin:0px; display:none; }
+#workingframe2 { min-height: 550px;border:none; margin:0px; display:none; }
 #kt_header_mobile { display: none; }
 #aside_header { display: none; }
 
