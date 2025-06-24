@@ -142,7 +142,8 @@ How to implementation.
 
 ## How to customize menu
 1. Server Side Render (SSR) ex. `http://localhost:8080/index`
-    - like chat setting by customize on `config/default.json` with `META_INFO` attribute ex.
+    
+    Like chat setting by customize on `config/default.json` with `META_INFO` attribute ex.
 
 ```json
     "META_INFO": {"notify": true, "language": true }
@@ -154,7 +155,8 @@ How to implementation.
 | language | `false` to disable display language menu, default `true`. |
 
 2. Single Page Application (SPA) ex. `http://localhost:8080/login`
-    - as same as setting SSR but customize on `public/default.js` with `META_INFO` attribute ex.
+    
+    As same as setting SSR but customize on `public/default.js` with `META_INFO` attribute ex.
 
 ```javascript
     var appVariables = {
