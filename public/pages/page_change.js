@@ -96,7 +96,7 @@ function save(aform) {
 					clearingFields();
 					if(CHANGED_ACTION=="force" || CHANGED_ACTION=="expire") {						
 						try {  
-							window.parent.gotoLoginPage(null,false); 
+							window.parent.gotoLoginPage(); 
 						} catch(ex) { }
 						return;
 					}

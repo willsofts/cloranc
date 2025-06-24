@@ -428,7 +428,7 @@ a:hover { text-decoration: none; }
 .input-group-lookup { border-radius: 0; }
 .input-group-clear { border-radius: 0 .25rem .25rem 0; }
 
-div.bc-layer { position: fixed; bottom: 0; right: 0; margin-right: 15px; margin-bottom: 10px; padding: 10px; border: 2px solid indianred; background-color: whitesmoke; }
+div.bc-layer { position: fixed; bottom: 0; right: 0; margin-right: 15px; margin-bottom: 10px; padding: 10px; border: 2px solid indianred; background-color: whitesmoke; z-index: 95; }
 div.bc-layer a { text-decoration: none; }	  
 a.bc-close { position: absolute; top: 0%; right: 0%; margin-right: 4px; }
 a.bc-close:hover { color: darkgray; }

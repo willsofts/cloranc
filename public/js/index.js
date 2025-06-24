@@ -50,7 +50,6 @@
 		}
 		function loginSuccess(data) {
 			console.log("loginSuccess: data",data);
-			let unloadFirstPage = false;
 			let json = $.parseJSON(data);
 			if(json.head.errorflag=="Y") {
 				alertbox(json.head.errordesc);
@@ -59,7 +58,7 @@
 				saveAccessorInfo(json.body);
 				setupDiffie(json);
 				console.log("loginSuccess: body",json.body);
-				verifyAfterLogin(json.body,unloadFirstPage);
+				verifyAfterLogin(json.body,json.body?.firstpage);
 			}			
 		}
 		function showUserDetail(json) {
@@ -81,16 +80,16 @@
 			$("#rolename_profile").html("");
         	$("#kt_header_mobile").removeClass("not_login").addClass("success_login");
 		}		
-		function verifyAfterLogin(body,unloadFirstPage,firstpage) {
+		function verifyAfterLogin(body,firstpage) {
 			$("#fsworkinglayer").addClass("working-control-class");
 			if(body?.factorverify && body?.factorid!="" && (body?.factorcode==undefined || body?.factorcode=="")) {
 				resetBackground();
 				open_page({appid:"factor",params:"factorid="+body.factorid, target: "workingframe2"});			
 			} else {
-				checkAfterLogin(body,unloadFirstPage,firstpage);
+				checkAfterLogin(body,firstpage);
 			}
 		}
-		function checkAfterLogin(body,unloadFirstPage,firstpage) {
+		function checkAfterLogin(body,firstpage) {
 			$("#fsworkinglayer").addClass("working-control-class");
 			if(body?.changeflag && body?.changeflag=="1") {
 				resetBackground();
@@ -99,12 +98,12 @@
 				resetBackground();
 				open_page({appid:"page_change",params:"changed=expire", target: "workingframe2"});
 			} else {
-				doAfterLogin(body,unloadFirstPage,firstpage);
+				doAfterLogin(body,firstpage);
 			}
 		}
-		function doAfterLogin(body,unloadFirstPage,firstpage) {
+		function doAfterLogin(body,firstpage) {
 			if(body) firstpage = body.firstpage;
-			startWorking(unloadFirstPage,firstpage);
+			startWorking(firstpage);
 			refreshScreen();
 			if(body) {
 				showBackground(body.background);
@@ -139,13 +138,13 @@
 				}
 			});
 		}
-		function startWorking(unloadFirstPage,firstpage) {
+		function startWorking(firstpage) {
 			resetBackground();
 			hideWorkSpace();
 			$("#navigatebar").removeClass("fa-hidden");
 			$('#page_login').hide();
 			createMenu(); 
-			startupPage(unloadFirstPage,firstpage); 
+			startupPage(firstpage); 
 		}
 		function createMenu(){
 			$("#aside_header").show();
@@ -157,11 +156,10 @@
 			$("#loginlayer").hide();
 			$("#languagemenuitem").removeClass("language-menu-item");
 		}
-		function startupPage(unloadFirstPage,firstpage){
-			if(!unloadFirstPage) {
-				load_page_first();
-			}
-			load_sidebar_menu(firstpage);
+		function startupPage(firstpage){
+			load_sidebar_menu(firstpage,fs_default_language,function() {
+				load_first_page(firstpage);
+			});
 			load_favor_menu();
 			load_prog_item();
 			$("#languagemenuitem").show();
@@ -178,7 +176,26 @@
 					});
 				});
 				show_subheader("favorite","Short Cut Menu");
-			}); //menu/box
+			});
+			$("#languagemenuitem").show();
+			hideWorkSpace();
+		}
+		function load_first_page(firstpage) {
+			if(!firstpage) {
+				let body = getAccessorInfo();
+				firstpage = body?.firstpage;
+			}
+			let pages = null; 
+			if(firstpage && firstpage.trim().length>0) {
+				pages = $("a[data-pid="+firstpage+"]",$("#sidebarlayer"));
+			} else {
+				pages = $("a[data-pid=worklist]",$("#sidebarlayer"));
+			}
+			if(pages && pages.length>0) {
+				pages.eq(0).trigger("click");
+			} else {
+				load_page_first();
+			}
 		}
 		function hideMenu() {
 			$("#page_first").hide();
@@ -223,9 +240,7 @@
 			if(thi_label) $("#thailanguage").html(thi_label);
 		}
 		function goHome() {
-			load_page_first();
-			$("#languagemenuitem").show();
-			hideWorkSpace();
+			load_first_page();
 		}
 		function forceLogout() {
 			let useruuid = $("#main_useruuid").val();
@@ -257,14 +272,14 @@
 			hideWorkSpace();
 			doLogin();
 		}
-		function gotoAfterLogin(body,unloadFirstPage,firstpage) {
+		function gotoAfterLogin(body,firstpage) {
 			//this for factor page success (factor.js)
 			if(!body) body = getAccessorInfo();
-			checkAfterLogin(body,unloadFirstPage,firstpage);
+			checkAfterLogin(body,firstpage);
 		}
-		function gotoLoginPage(body,unloadFirstPage,firstpage) {
+		function gotoLoginPage(body,firstpage) {
 			//this for change password success (page_change.js)
-			doAfterLogin(body,unloadFirstPage,firstpage);
+			doAfterLogin(body,firstpage);
 			hideWorkSpace();
 		}
 		function logOut() {
@@ -327,9 +342,8 @@
 			hideNewFavorItem();
 			$("#kt_header_mobile").removeClass("success_login").addClass("not_login");
 		}		
-		function load_sidebar_menu(firstpage,language) {
+		function load_sidebar_menu(firstpage,language,callback) {
 			let fs_user = $("#main_user").val();
-			//if($.trim(fs_user)=="") return;
 			if(!language) language = fs_default_language;
 			let authtoken = getAccessorToken();
 			let requestid = getRequestID();
@@ -342,22 +356,13 @@
 				contentType: defaultContentType,
 				success: function(data){ 
 					$("#sidebarlayer").html(data); 
-					bindingOnSideBarMenu(); 
-					if(firstpage && firstpage!="") {
-						open_page({appid: firstpage});
-					} else {
-						//try to auto launch work list page
-						let isz = $("a[data-item=worklist]",$("#sidebarlayer")).length;
-						if(isz>0) {
-							open_page({appid: "worklist", caption: "Work List"});
-						}
-					}
+					bindingOnSideBarMenu();
+					if(callback) callback(firstpage);
 				}
 			});
 		}
 		function load_favor_menu(language) {
 			let fs_user = $("#main_user").val();
-			//if($.trim(fs_user)=="") return;
 			if(!language) language = fs_default_language;
 			let authtoken = getAccessorToken();
 			let requestid = getRequestID();
@@ -384,8 +389,7 @@
 			}catch(ex) { }
 			let fs_name = $("#accessor_label").data(fs_Language);
 			if(fs_name) $("#accessor_label").html(fs_name);
-			changeSiderMenuLanguage(fs_Language);
-			//load_sidebar_menu(null,fs_Language);
+			changeSiderMenuLanguage(fs_Language);			
 		}
 		function changeSiderMenuLanguage(lang) {
 			lang = lang.toLowerCase();
@@ -523,6 +527,14 @@
 			$("#kt_header_mobile_subheader_toggler").on("click",function(){
             	$("#kt_subheader").toggleClass("dp-flex-togger");
           	});
+			/*
+			$("#notificationheader").find("a").each(function(index,element) {
+				$(element).on("click",function(e) {
+					e.preventDefault();
+					return false;
+				});
+			});
+			*/
 		}
 		var fs_workingframe_offset = 2;
 		$(function(){

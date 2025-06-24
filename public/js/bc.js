@@ -15,6 +15,10 @@ function startReceiveBroadcast() {
                 div.css({bottom: bottom});
             }
             div.append(link).append(span).appendTo(body);
+            if(!(String(META_INFO.BC_AUTO_HIDE)=="false")) {
+                let interval = META_INFO.BC_AUTO_HIDE_INTERVAL || 3000;
+                setTimeout(function() { div.hide(1000, function() { div.remove(); }); },interval);
+            }
         });
     }
 }

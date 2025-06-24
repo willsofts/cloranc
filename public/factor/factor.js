@@ -59,7 +59,7 @@ function save(aform) {
 		success: function(data,status,transport){
 			stopWaiting();
 			try { 
-				window.parent.gotoAfterLogin(null,false); 
+				window.parent.gotoAfterLogin(); 
 			} catch(ex) { }
 		}
 	});	

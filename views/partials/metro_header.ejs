@@ -30,13 +30,13 @@
                         </h3>
                         <ul id="tabitemlisting" class="nav nav-tabs nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-success kt-notification-item-padding-x" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active show font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_notifications" role="tab" aria-selected="true" id="noti_tab_lastest"><%=label.get('lastest_title','Lastest')%></a>
+                                <a class="nav-link active show font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_notifications;javascript:void(0);" role="tab" aria-selected="true" id="noti_tab_lastest"><%=label.get('lastest_title','Lastest')%></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_events" role="tab" aria-selected="false" id="noti_tab_weeks"><%=label.get('weekly_title','Weeks')%></a>
+                                <a class="nav-link font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_events;javascript:void(0);" role="tab" aria-selected="false" id="noti_tab_weeks"><%=label.get('weekly_title','Weeks')%></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_logs" role="tab" aria-selected="false" id="noti_tab_months"><%=label.get('monthly_title','Months')%></a>
+                                <a class="nav-link font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_logs;javascript:void(0);" role="tab" aria-selected="false" id="noti_tab_months"><%=label.get('monthly_title','Months')%></a>
                             </li>
                         </ul>
                     </div>
@@ -81,6 +81,7 @@
                     </div>
             </div>
         </div>
+        <% if(meta.info?.language) {%>
         <div class="kt-header__topbar-item kt-header__topbar-item--langs">
             <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px" title="Language">
                 <span class="kt-header__topbar-icon">
@@ -104,6 +105,7 @@
                 </ul>
             </div>
         </div>
+        <%}%>
         <div class="kt-header__topbar-item kt-header__topbar-item--user">
             <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="0px,0px" title="Menu">
                 <div class="kt-header__topbar-user">
