@@ -128,12 +128,55 @@ How to implementation.
 
     See [Rocket Chat Setting](https://github.com/willsofts/rocketchat)
 
-2. change setting on `default.json` to enable and configure to rocket chat server. ex.
+2. change setting on `config/default.json` to enable and configure to rocket chat server with `META_INFO` attribute. ex.
 
+```json
     "META_INFO": {"chat": true, "ROCKET_HOST": "http://localhost:3000", "ROCKET_WEBSOCKET": "ws://localhost:3000/websocket"}
+```
 
 | Attribute | Description |
 | -------- | ----------- |
 | chat | `true` to enable using rocket chat |
 | ROCKET_HOST | this point to rocket chat server url |
 | ROCKET_WEBSOCKET | this point to web socket rocket chat server url |
+
+## How to customize menu
+1. Server Side Render (SSR) ex. `http://localhost:8080/index`
+    - like chat setting by customize on `config/default.json` with `META_INFO` attribute ex.
+
+```json
+    "META_INFO": {"notify": true, "language": true }
+```
+
+| Attribute | Description |
+| -------- | ----------- |
+| notify | `true` to enable display notification menu, default `false`. |
+| language | `false` to disable display language menu, default `true`. |
+
+2. Single Page Application (SPA) ex. `http://localhost:8080/login`
+    - as same as setting SSR but customize on `public/default.js` with `META_INFO` attribute ex.
+
+```javascript
+    var appVariables = {
+        ALLOW_AUTHEN_SAML: "true",
+        MULTI_LANGUAGES: ["EN","TH"],
+        DEFAULT_LANGUAGE: "EN",
+        META_INFO: { chat: false, notify: false, language: true }
+    };
+```
+
+| Attribute | Description |
+| -------- | ----------- |
+| chat | `true` to enable chat menu, default `false`. |
+| notify | `true` to enable display notification menu, default `false`. |
+| language | `false` to disable display language menu, default `true`. |
+
+## Login Configuration Variables
+Both platform using same tag but `config/default.json` for SSR and `public/default.js` for SPA.
+
+| Attribute | Description |
+| -------- | ----------- |
+| ALLOW_AUTHEN_SAML | `true` to enable authenticate via SSO with Azure Active Directory by SAML protocol, default `false`. |
+| ALLOW_AUTHEN_SAML_ONLY | `true` to enable authenticate with SAML only, default `false`. |
+| MULTI_LANGUAGES | array of supported languages |
+| DEFAULT_LANGUAGE | to set default language, default `EN`. |
