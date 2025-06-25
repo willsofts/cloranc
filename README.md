@@ -180,5 +180,18 @@ Both platform using same tag but `config/default.json` for SSR and `public/defau
 | -------- | ----------- |
 | ALLOW_AUTHEN_SAML | `true` to enable authenticate via SSO with Azure Active Directory by SAML protocol, default `false`. |
 | ALLOW_AUTHEN_SAML_ONLY | `true` to enable authenticate with SAML only, default `false`. |
-| MULTI_LANGUAGES | array of supported languages |
+| MULTI_LANGUAGES | array of supported language codes |
 | DEFAULT_LANGUAGE | to set default language, default `EN`. |
+
+## Application Configuration Variables
+Single page application (SPA) can customize more setting via `public/app.config.js`.
+
+| Attribute | Description |
+| -------- | ----------- |
+| BASE_CSS | to change supported theme of application. |
+| BASE_URL | to change base url. |
+| API_URL | to change API url. |
+| CDN_URL | to change CDN url. |
+| IMG_URL | to change Image url. |
+
+(All setting can override by login setting configuration)
