@@ -25,6 +25,11 @@ function handleRequestMessage(data) {
         }
         console.log("saveAccessorInfo",data.accessorinfo);
     }
+    if(data.archetype=="willsofts" && data.type=="language") {
+        if(data.language && data.language.trim().length>0) {
+            fs_default_language = data.language;
+        }
+    }
 }
 window.onmessage = function(e) {
     console.log("interface: onmessage:",e.data);

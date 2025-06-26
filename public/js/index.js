@@ -672,6 +672,8 @@
 		}
 		function stopNotify() {
 			if(META_INFO.notify) {
+				$("#nn_alert_container").empty();
+				$("#kt_alert_container").empty();
 				window.open(BASE_URL+"/blank.html","notifyframe");			
 			}
 		}
