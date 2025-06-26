@@ -89,11 +89,13 @@ function showBroadcastNotification(datanotification) {
         unReadN = parseInt(!unReadN ? '0' : unReadN);
         console.log("-new unReadN", unReadN);
         if (unReadN > 0) {
-            notinumber.show().html(((unReadN > 99) ? '+99' : unReadN));
-            var tnotimessege = datanotification.rOutputData.transaction[0].t_Notimessege;
-            var enotimessege = datanotification.rOutputData.transaction[0].e_NotiMessege;
+            let counter = (unReadN > 99) ? '+99' : unReadN;
+            notinumber.show().html(""+counter);
+            var tnotimessege = datanotification.rOutputData?.transaction[0]?.t_Notimessege;
+            var enotimessege = datanotification.rOutputData?.transaction[0]?.e_NotiMessege;
             var msg = getFsText(enotimessege, tnotimessege);
-            var key = datanotification.rOutputData.transaction[0].keyId == null ? new Date().getTime() : datanotification.rOutputData.transaction[0].keyId;
+            console.log("msg:",msg,", enotimessege",enotimessege,", tnotimessege",tnotimessege);
+            var key = datanotification.rOutputData?.transaction[0]?.keyId ? datanotification.rOutputData.transaction[0].keyId : new Date().getTime();
             if (datanotification.rOutputData.isShow) {
                 createAlert({
                     icon: 'kt-header__topbar-icon kt-pulse kt-pulse--brand flaticon2-notification',

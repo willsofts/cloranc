@@ -5,6 +5,7 @@ $(function(){
     });    
 });
 function createAlert(opts){
+    console.log("createAlert:",opts);
     var icon,
         title,
         text,
@@ -23,7 +24,7 @@ function createAlert(opts){
     isFade = opts.isFade || false;
     serial = opts.serial || undefined; 
     duration = opts.duration || 5;
-    let container = window.parent.$("#nn-alert-container");
+    let container = window.parent.$("#nn_alert_container");
     let notis = container.find(".alert[data-serial='"+serial+"']");
     if(notis && notis.length > 0 ){
         return false;
@@ -32,8 +33,7 @@ function createAlert(opts){
 							'<div class="alert-icon"><i class="'+icon+'"></i></div>'+
 							'<div class="alert-text">'+title+'</div>'+
 							'<div class="alert-close">'+
-								'<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
-									'<span aria-hidden="true"><i class="la la-close"></i></span>'+
+								'<button type="button" class="close btn-close" data-dismiss="alert" aria-label="Close">'+
 								'</button>'+
 							'</div>'+
 						'</div>';
@@ -63,4 +63,18 @@ function intervalNewNotificationAlert($alert,duration,countdown){
             intervalNewNotificationAlert($alert,duration,countdown);
         }
     }, 1000);
+}
+window.onmessage = function(e) {
+    console.log("interface: onmessage:",e.data);
+    try {
+        let payload = JSON.parse(e.data);
+        handleRequestMessage(payload);
+    } catch(ex) { console.log(ex); }
+}
+function handleRequestMessage(data) {
+    if(data.archetype=="willsofts" && data.type=="language") {
+        if(data.language && data.language.trim().length>0) {
+            fs_default_language = data.language;
+        }
+    }
 }
