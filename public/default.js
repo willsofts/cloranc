@@ -3,5 +3,5 @@ var appVariables = {
     MULTI_LANGUAGES: ["EN","TH"],
     BASE_CSS: "",
     DEFAULT_LANGUAGE: "EN",
-	META_INFO: { chat: false, notify: false }
+	META_INFO: { chat: false, notify: true, language: true }
 };

@@ -62,8 +62,8 @@
                 </div>
             </div>
         </div>
-        <div class="nn-alert-container first-push"></div>
-        <div class="kt-alert-continer first-push"></div>
+        <div id="nn_alert_container" class="nn-alert-container first-push"></div>
+        <div id="kt_alert_container" class="kt-alert-continer first-push"></div>
         <div id="fsworkinglayer2" class="working-class working-control-class" >
             <iframe id="workingframe2" name="workingframe2" width="100%" title="Working"></iframe>
         </div>
@@ -72,7 +72,12 @@
 		<div id="fschatinglayer" class="chating-class chating-control-class">
 			<iframe id="chatingframe" name="chatingframe" width="100%" class="chating-frame" title="Chating"></iframe>
 		</div>
-		<%}%>	
+		<%}%>
+		<% if(meta.info?.notify) {%>
+        <div id="fsnotifylayer" class="notify-class notify-control-class">
+            <iframe id="notifyframe" name="notifyframe" width="100%" class="notify-frame" title="Notify"></iframe>
+        </div>  
+		<%}%>
 		<%- include('../partials/page_waiting') %>		
 	</body>
 </html>

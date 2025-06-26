@@ -147,7 +147,7 @@ table.partition-table { background-color: #dee2e6; }
 	height: 100%;
 	background-color: #f0f0f0;
 	margin-top: 60px;
-	padding-bottom: 60px;
+	padding-bottom: 52px;
 	display: none;
 	z-index: 94;
 }
@@ -254,3 +254,5 @@ table.partition-table { background-color: #dee2e6; }
 }
 div.link-button-cover a { background-color: #5d77ff; color: white; }
 div.link-button-cover a:hover { background-color: whitesmoke; color: black; }
+#lastclock { margin-right: 5px; }
+#noti_number { display: none; }

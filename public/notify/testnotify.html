@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta http-equiv="Cache-Control" content="no-store">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="-1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notify Me</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/notify/noti.push.css" />
+    <script type="text/javascript" src="/jquery/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="/bootstrap/bootbox.js" defer></script>
+    <script type="text/javascript" src="/js/fslib.js"></script>
+    <script>
+        function displayWorkingFrame(url) {
+			$("#workingframe").attr("src", url).show();
+			$("#pagecontainer").hide();
+		}
+    </script>
+</head>
+<body>
+    <div class="kt-subheader__toolbar">
+        <div class="kt-subheader__wrapper" id="subheader_wrapper">
+        </div>
+    </div>
+    <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="30px,0px" aria-expanded="false" id="noti_select" title="Notification">
+        <span class="kt-header__topbar-icon kt-pulse kt-pulse--brand flaticon2-notification"></span>
+        <span class="kt-badge kt-badge--danger noti-number" id="noti_number"></span>
+    </div>
+    <div id="noti_cover_layer" class="kt-head kt-head--skin-dark kt-head--fit-x kt-head--fit-b">
+        <h3 class="kt-head__title font-size-custom-h2">
+            Notifications
+            &nbsp;
+            <span class="btn btn-success btn-sm btn-bold btn-font-md font-size-custom-h2" ><span id="noti_numberlist" >0</span> new notifications</span>
+        </h3>
+        <ul id="tabitemlisting" class="nav nav-tabs nav-tabs-line nav-tabs-bold nav-tabs-line-3x nav-tabs-line-success kt-notification-item-padding-x" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active show font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_notifications" role="tab" aria-selected="true" id="noti_tab_lastest">Lastest</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_events" role="tab" aria-selected="false" id="noti_tab_weeks">Weeks</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link font-size-custom-h-14" data-toggle="tab" href="#topbar_notifications_logs" role="tab" aria-selected="false" id="noti_tab_months">Months</a>
+            </li>
+        </ul>
+    </div>
+    <div id="tab_content" class="tab-content">
+        <div class="tab-pane active show" id="topbar_notifications_notifications" role="tabpanel">
+            <div class="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200" id="noti_lastest">
+            </div>
+        </div>
+        <div class="tab-pane" id="topbar_notifications_events" role="tabpanel">
+            <div class="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200" id="noti_weeks">
+            </div>
+        </div>
+        <div class="tab-pane" id="topbar_notifications_logs" role="tabpanel">
+            <div class="kt-notification kt-margin-t-10 kt-margin-b-10 kt-scroll" data-scroll="true" data-height="300" data-mobile-height="200"  id="noti_months">
+            </div>
+        </div>
+    </div>
+    <div id="nn_alert_container" class="nn-alert-container first-push"></div>
+    <div id="kt_alert_container" class="kt-alert-continer first-push"></div>
+    <div id="fsworkinglayer" class="working-class working-control-class" >
+        <div id="pagecontainer" class="pt-pager"></div>
+        <iframe id="workingframe" name="workingframe" width="100%" title="Working"></iframe>
+    </div>
+    <div id="fsnotifylayer" class="notify-class notify-control-class">
+        <iframe src="notify.html" id="notifyframe" name="notifyframe" width="100%" class="notify-frame" title="Notify"></iframe>
+    </div>  
+    <div id="fswaitlayer" style="display:none;"><img id="waitImage" class="waitimgclass" src="/img/waiting.gif" width="50px" height="50px" alt="" /></div>      
+</body>
+</html>
+
+

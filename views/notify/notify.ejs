@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Notify Me</title>
+    <%- include('../asset/meta') %>		
+    <link rel="shortcut icon" type="image/x-icon" href="<%=meta.base_url%>/favicon.ico" />
+    <script type="text/javascript" src="<%=meta.base_url%>/notify/signalr.min.js"></script>
+    <script type="text/javascript" src="<%=meta.base_url%>/cryptojs/secure-ls.min.js"></script>
+    <script type="text/javascript" src="<%=meta.base_url%>/jquery/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="<%=meta.base_url%>/js/fslib.js"></script>
+    <script type="text/javascript" nonce="YXNzdXJl">
+        fs_default_language = "<%=meta.language%>";
+        var USERNAME = "<%=data.dataset?.username%>";
+        var TOKEN_KEY = "<%=data.dataset?.tokenkey%>";
+        var NOTIFY_HUB_URL = "<%=meta.info?.NOTIFY_HUB_URL%>"; 
+        var NOTIFY_API_URL = "<%=meta.info?.NOTIFY_API_URL%>";
+        var NOTIFY_WEB_URL = "<%=meta.info?.NOTIFY_WEB_URL%>";
+    </script>
+    <script type="text/javascript" src="<%=meta.base_url%>/notify/notify.js"></script>
+    <script type="text/javascript" src="<%=meta.base_url%>/notify/noti.push.js"></script>
+</head>
+<body>
+</body>
+</html>

@@ -169,7 +169,7 @@ function show_subheader(itemname, nameprogram, treepath) {
         '<span class="text-subheader">' + nameprogram + ' </span>';
 
     $("#subheader_link").html(subheraderlink);
-    $("#subheader_wrapper").html('<span style="width: 100px;"><span class="btn btn-bold btn-sm btn-font-sm  btn-label-brand">' + itemname + '</span></span>');
+    $("#subheader_wrapper").html('<span style="width: 100px;"><span class="btn btn-bold btn-sm btn-font-sm btn-label-brand">' + itemname + '</span></span>');
     let x = window.matchMedia("(max-width: 1024px)");
     if (x.matches) {
         $(".kt-content").css("padding", "40px 0px 0px 0px");

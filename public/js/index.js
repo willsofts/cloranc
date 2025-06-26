@@ -114,6 +114,7 @@
 					fetchAvatar(body.userid);
 				}
 			}
+			startNotify();
 			startChating();
 			startReceiveBroadcast();
 		}
@@ -294,6 +295,7 @@
 			doLogin();
 			clearBackground();
 			clearAvatar();
+			stopNotify();
 			stopChating();
 		}
 		function clearAvatar() {
@@ -427,6 +429,28 @@
 			window.open(BASE_URL+"/blank.html","workingframe2");
 			clearSubHeader();
 		}
+		function displayWorkingFrame(url) {
+			let canopen = true;
+			let curpid = $("#subheader_wrapper").text().trim();
+			if(curpid && curpid.length > 0) {
+				let screens = META_INFO.NOTIFY_UNCHECK_OPEN_SCREENS || ["favorite","worklist"];
+				if(!screens.includes(curpid)) {
+					canopen = false;
+				}
+			} 
+			if(!canopen && !(String(META_INFO.NOTIFY_CHECK_OPEN)=="false")) {
+				confirmDialogBox("QS0035",null,"Do you want to open this transaction? <br/>Becareful all current work will be lose",() => {
+					openWorkingFrame(url);
+				});
+			} else {
+				openWorkingFrame(url);
+			}
+		}
+		function openWorkingFrame(url) {
+			clearSubHeader();
+			$("#workingframe").attr("src", url).show();
+			$("#pagecontainer").hide();
+		}
 		function takeSwitchLanguage(lang) {
 			if(lang && lang!="") {
 				$("#linklang"+lang.toLowerCase()).trigger("click");
@@ -527,18 +551,10 @@
 			$("#kt_header_mobile_subheader_toggler").on("click",function(){
             	$("#kt_subheader").toggleClass("dp-flex-togger");
           	});
-			/*
-			$("#notificationheader").find("a").each(function(index,element) {
-				$(element).on("click",function(e) {
-					e.preventDefault();
-					return false;
-				});
-			});
-			*/
 		}
 		var fs_workingframe_offset = 2;
 		$(function(){
-			$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
+			$(this).on("mousedown",function(e) { mouseX = e.pageX; mouseY = e.pageY; });
 			try { startApplication("index",true); }catch(ex) { }
 			setupComponents();
 			//ignore force logout coz it was invalidate when refresh
@@ -637,5 +653,25 @@
 			if(META_INFO.chat) {
 				$("#fschatinglayer").hide();
 				window.open(BASE_URL+"/blank.html","chatingframe");			
+			}
+		}
+		function openNotify() {
+			let authtoken = getAccessorToken();
+			let appurl = "/gui/notify";
+			submitWindow({
+				method: "POST",
+				url : appurl,
+				windowName: "notifyframe",
+				params: "seed="+Math.random()+"&authtoken="+authtoken+"&language="+fs_default_language
+			});	
+		}
+		function startNotify() {
+			if(META_INFO.notify) {
+				openNotify();
+			}
+		}
+		function stopNotify() {
+			if(META_INFO.notify) {
+				window.open(BASE_URL+"/blank.html","notifyframe");			
 			}
 		}
