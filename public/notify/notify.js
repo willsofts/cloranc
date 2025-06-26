@@ -11,10 +11,10 @@ $(function() {
     setupNotificationComponents();
 });
 function getTokenKey() {
-    return TOKEN_KEY || getAccessorToken();
+    return NOTIFY_TOKEN || getAccessorToken();
 }
 function getCurrentUser() {
-    return USERNAME || getAccessorInfo()?.userid;
+    return NOTIFY_USER || getAccessorInfo()?.userid;
 }
 function getCurrentLanguage() {
     return fs_default_language || "EN";

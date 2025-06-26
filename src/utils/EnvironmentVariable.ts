@@ -55,3 +55,4 @@ export const ALWAYS_ACTIVATE_ACCOUNT: boolean = config.env("ALWAYS_ACTIVATE_ACCO
 export const CHAT_USER: string = config.env("CHAT_USER"); 
 export const CHAT_PASSWORD: string = config.env("CHAT_PASSWORD"); 
 export const NOTIFY_USER: string = config.env("NOTIFY_USER"); 
+export const NOTIFY_TOKEN: string = config.env("NOTIFY_TOKEN"); 
