@@ -140,8 +140,10 @@
       "name": "label",
       "handler": "label.service",
       "group": "core",
-      "description": "service for labeling",
-      "tables": null
+      "description": "service for get label from file under folder label or table",
+      "tables": [
+        { "name": "tlabel" }
+      ]
     },
     {
       "id": 14,
