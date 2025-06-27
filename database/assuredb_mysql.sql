@@ -389,6 +389,12 @@ CREATE TABLE IF NOT EXISTS `tlabel` (
   PRIMARY KEY (`labelid`,`langcode`,`labelname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep label';
 
+CREATE TABLE IF NOT EXISTS `tmessage` (
+  `msgcode` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `langcode` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT 'tconstant.typeid where typename=tlanguage',
+  `msgtext` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  PRIMARY KEY (`msgcode`,`langcode`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep message code';
 
 CREATE TABLE IF NOT EXISTS `tnpwd` (
   `reservenum` varchar(50) NOT NULL,

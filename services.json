@@ -521,6 +521,35 @@
         { "name": "trxlog" },
         { "name": "tconstant" }
       ]
+    },
+    {
+      "id": 46,
+      "name": "dataservice",
+      "handler": "dataservice.service",
+      "group": "worker",
+      "description": "service for scrape data from table by setting query in table",
+      "tables": [
+        { "name": "api_config" }
+      ]
+    },
+    {
+      "id": 47,
+      "name": "message",
+      "handler": "message.service",
+      "group": "workers",
+      "description": "service for get file config/message.json",
+      "tables": [
+      ]
+    },
+    {
+      "id": 48,
+      "name": "msgcode",
+      "handler": "msgcode.service",
+      "group": "workers",
+      "description": "service for get message text from message code",
+      "tables": [
+        { "name": "tmessage" }
+      ]
     }
   ]
 }
