@@ -56,3 +56,5 @@ export const CHAT_USER: string = config.env("CHAT_USER");
 export const CHAT_PASSWORD: string = config.env("CHAT_PASSWORD"); 
 export const NOTIFY_USER: string = config.env("NOTIFY_USER"); 
 export const NOTIFY_TOKEN: string = config.env("NOTIFY_TOKEN"); 
+export const NOTIFY_USER_DEFAULT: boolean = config.env("NOTIFY_USER_DEFAULT","false") === "true"; 
+export const NOTIFY_TOKEN_DEFAULT: boolean = config.env("NOTIFY_TOKEN_DEFAULT","false") === "true"; 

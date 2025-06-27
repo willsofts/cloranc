@@ -1,9 +1,7 @@
 import { KnModel, KnOperation } from "@willsofts/will-db";
-import { HTTP } from "@willsofts/will-api";
 import { KnContextInfo, KnDataTable } from '@willsofts/will-core';
 import { TknOperateHandler } from '@willsofts/will-serv';
-import { VerifyError } from "@willsofts/will-core";
-import { NOTIFY_USER, NOTIFY_TOKEN } from "../utils/EnvironmentVariable";
+import { NOTIFY_USER, NOTIFY_TOKEN, NOTIFY_USER_DEFAULT, NOTIFY_TOKEN_DEFAULT } from "../utils/EnvironmentVariable";
 
 class NotifyHandler extends TknOperateHandler {
     public progid = "notify";
@@ -14,13 +12,10 @@ class NotifyHandler extends TknOperateHandler {
 
     protected override async doExecute(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
         if(!this.userToken) this.userToken = await this.getUserTokenInfo(context);
-        let notiuser = context.params.username || NOTIFY_USER || this.userToken?.userid;
-        if(!notiuser || notiuser.trim().length==0) {
-            return Promise.reject(new VerifyError("User not found",HTTP.NOT_ACCEPTABLE,-16084));
-        }
+        let notiuser = context.params.username || NOTIFY_USER || (NOTIFY_USER_DEFAULT ? this.userToken?.userid : "");
         let usernames = notiuser.split("@");
         let username = usernames[0];
-        let ds = { username: username, tokenkey: NOTIFY_TOKEN || this.getTokenKey(context) };
+        let ds = { username: username, tokenkey: NOTIFY_TOKEN || (NOTIFY_TOKEN_DEFAULT ? this.getTokenKey(context) : "") };
         this.logger.debug(this.constructor.name+".doExecute: ds",ds);
         return this.createDataTable(KnOperation.EXECUTE, ds, {}, "notify/notify");
     }

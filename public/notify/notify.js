@@ -20,7 +20,7 @@ function getCurrentLanguage() {
     return fs_default_language || "EN";
 }
 function createNotifyConfigure() {
-    return { url: NOTIFY_HUB_URL, headers: { "Authorization": getTokenKey() } };
+    return { url: NOTIFY_HUB_URL, username: getCurrentUser(), headers: { "Authorization": getTokenKey() } };
 }
 async function signalRHubConnection() {
     let cfg = createNotifyConfigure();
@@ -94,7 +94,6 @@ function showBroadcastNotification(datanotification) {
             var tnotimessege = datanotification.rOutputData?.transaction[0]?.t_Notimessege;
             var enotimessege = datanotification.rOutputData?.transaction[0]?.e_NotiMessege;
             var msg = getFsText(enotimessege, tnotimessege);
-            console.log("msg:",msg,", enotimessege",enotimessege,", tnotimessege",tnotimessege);
             var key = datanotification.rOutputData?.transaction[0]?.keyId ? datanotification.rOutputData.transaction[0].keyId : new Date().getTime();
             if (datanotification.rOutputData.isShow) {
                 createAlert({
@@ -397,7 +396,7 @@ async function notificationOpen(params, ths) {
     checkAccessTask(params[3],(checkAccess) => {
         if (!checkAccess) {
             updateNotificationReaded(params, () => {
-                alertmsg("BCUN0039","This transaction is already complete.");
+                window.parent.alertmsg("BCUN0039","This transaction is already complete.");
             });
         } else if (!params[3] || !lNameSubheader) { //
             updateNotificationReaded(params, () => {
