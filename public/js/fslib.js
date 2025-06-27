@@ -967,7 +967,7 @@ function loadJSONMessage(aSync) {
 		success: function(data) { msgjsondoc = data; }
 	});	
 }
-function getMessageCode(errcode, params) {
+function getMessageCode(errcode, params, defaultMsg) {
 	try {
 		if (msgjsondoc == null) loadJSONMessage(false);
 		let messages = msgjsondoc?.msg;
@@ -982,10 +982,10 @@ function getMessageCode(errcode, params) {
 			}
 		}
 	}catch(ex) { }
-	return errcode;
+	return defaultMsg ? defaultMsg : errcode;
 }
 function getMessageTitle(titleCode, defaultTitle) {
-	let fs_msgtitle = getMessageCode(titleCode); 
+	let fs_msgtitle = getMessageCode(titleCode, null, defaultTitle); 
 	if(!fs_msgtitle || fs_msgtitle=="") fs_msgtitle = defaultTitle;
 	return fs_msgtitle;
 }
@@ -1114,7 +1114,7 @@ function confirmbox(errcode, okFn, cancelFn, defaultmsg, params, addonmsg, title
 /* uncomment to use boot dialog */
 function alertDialog(msg, callbackfn, title="Alert", icon="fa fa-bell-o fas fa-bell") {
 	try {
-		let fs_okbtn = getMessageCode("fsokbtn"); if(!fs_okbtn || (fs_okbtn=="" || fs_okbtn=="fsokbtn")) fs_okbtn = "OK";
+		let fs_okbtn = getMessageCode("fsokbtn",null,"OK"); 
     	bootbox.alert({
 			title: "<em class='"+icon+"'></em>&nbsp;<label>"+title+"</label>",
     		message: msg,
@@ -1129,13 +1129,12 @@ function alertDialog(msg, callbackfn, title="Alert", icon="fa fa-bell-o fas fa-b
         $(".bootbox > .modal-dialog").draggable();
 		return;
     } catch (ex) { console.log(ex.description); }
-    //alert(msg);
     if (callbackfn) callbackfn();
 }
 function confirmDialog(msg, okCallback, cancelCallback, title="Confirmation", icon="fas fa fa-question-circle") {
 	try {
-		let fs_confirmbtn = getMessageCode("fsconfirmbtn"); if(!fs_confirmbtn || (fs_confirmbtn=="" || fs_confirmbtn=="fsconfirmbtn")) fs_confirmbtn = "OK";
-		let fs_cancelbtn = getMessageCode("fscancelbtn"); if(!fs_cancelbtn || (fs_cancelbtn=="" || fs_cancelbtn=="fscancelbtn")) fs_cancelbtn = "Cancel";
+		let fs_confirmbtn = getMessageCode("fsconfirmbtn",null,"OK"); 
+		let fs_cancelbtn = getMessageCode("fscancelbtn",null,"Cancel"); 
     	bootbox.confirm({
 			title: "<em class='"+icon+"'></em>&nbsp;<label>"+title+"</label>",
 			message: msg, 
@@ -1179,7 +1178,7 @@ function confirmmsg(errcode, fallmsg, params, okFn, cancelFn) {
 }
 function bootAlertDialog(msg, callback, title="Alert", icon="fa fa-bell-o") {
 	try {
-		let fs_okbtn = getMessageCode("fsokbtn"); if(!fs_okbtn || (fs_okbtn=="" || fs_okbtn=="fsokbtn")) fs_okbtn = "OK";
+		let fs_okbtn = getMessageCode("fsokbtn",null,"OK"); 
     	bootbox.alert({
 			title: "<em class='"+icon+"'></em>&nbsp;<label>"+title+"</label>",
     		message: msg,
@@ -1198,8 +1197,8 @@ function bootAlertDialog(msg, callback, title="Alert", icon="fa fa-bell-o") {
 }
 function bootConfirmDialog(msg, okCallback, cancelCallback, title="Confirmation", icon="fa fa-question-circle") {
 	try {
-		let fs_confirmbtn = getMessageCode("fsconfirmbtn"); if(!fs_confirmbtn || (fs_confirmbtn=="" || fs_confirmbtn=="fsconfirmbtn")) fs_confirmbtn = "OK";
-		let fs_cancelbtn = getMessageCode("fscancelbtn"); if(!fs_cancelbtn || (fs_cancelbtn=="" || fs_cancelbtn=="fscancelbtn")) fs_cancelbtn = "Cancel";
+		let fs_confirmbtn = getMessageCode("fsconfirmbtn",null,"OK"); 
+		let fs_cancelbtn = getMessageCode("fscancelbtn",null,"Cancel"); 
     	bootbox.confirm({
 			title: "<em class='"+icon+"'></em>&nbsp;<label>"+title+"</label>",
 			message: msg, 
