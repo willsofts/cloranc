@@ -1,6 +1,7 @@
 {
     "HTTP_PORT": 8080,
     "BASE_URL": "",
+    "//CHAT_URL": "http://localhost:9000",
     "//BASE_CSS": "/css/user_style.css",
     "BASE_STORAGE": "session",
     "DEFAULT_LANGUAGE": "EN",
@@ -14,13 +15,17 @@
     "XFRAME_OPTION": "false",
     "DISABLE_DIFFIE": "true",
     "META_INFO": {
-        "appstype":"", "register": true, "ALLOW_AUTHEN_SAML_ONLY": false, "notify": false, "DISPLAY_PAGE_HEADER": false, 
-        "chat": false, "ROCKET_HOST": "http://localhost:3000", "ROCKET_WEBSOCKET": "ws://localhost:3000/websocket"
+        "appstype":"", "register": false, "ALLOW_AUTHEN_SAML_ONLY": false, "DISPLAY_PAGE_HEADER": false,
+        "chat": false, "ROCKET_HOST": "http://localhost:3000", "ROCKET_WEBSOCKET": "ws://localhost:3000/websocket",
+        "language": true,  "notify": true, 
+        "NOTIFY_HUB_URL": "http://localhost:5000/chathub",
+        "NOTIFY_API_URL": "https://api-dev-cloranc.freewillsolutions.com",
+        "NOTIFY_WEB_URL": "https://dev-cloranc.freewillsolutions.com"
     },
     "EXCEPT_LAUNCH_PATH": "page_forgot,page_register",
-    "EXCEPT_AUTHORIZE_PATH": "/api-docs,/health,/sign,/passwordpolicy,/fetch,/forgot,/captcha,/login,/auth,/category,/register,/message",
+    "EXCEPT_AUTHORIZE_PATH": "/api-docs,/health,/sign,/passwordpolicy,/fetch,/forgot,/captcha,/login,/auth,/category,/register",
     "CONTENT_SECURITY_PATH": "/,/home,/welcome,/main,/index,/gui",
-    "CONTENT_SECURITY_POLICY": "default-src 'self' 'nonce-YXNzdXJl' ws://localhost:3000/websocket http://localhost:3000 https://cdn.jsdelivr.net https://login.microsoftonline.com https://tassanorg.b2clogin.com;base-uri 'self';form-action 'self';frame-ancestors 'self';img-src 'self' http://localhost:3000 https://cdn.jsdelivr.net data:;object-src 'none';script-src 'self' 'nonce-YXNzdXJl' https://cdn.jsdelivr.net;script-src-attr 'self' 'nonce-YXNzdXJl' https://cdn.jsdelivr.net;style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';upgrade-insecure-requests",
+    "CONTENT_SECURITY_POLICY": "default-src 'self' 'nonce-YXNzdXJl' https://api-dev-cloranc.freewillsolutions.com https://dev-cloranc.freewillsolutions.com ws://localhost:3000 ws://localhost:5000 http://localhost:3000 http://localhost:5000 https://cdn.jsdelivr.net https://login.microsoftonline.com https://tassanorg.b2clogin.com;base-uri 'self';form-action 'self';frame-ancestors 'self';img-src 'self' http://localhost:3000 https://cdn.jsdelivr.net data:;object-src 'none';script-src 'self' 'nonce-YXNzdXJl' https://cdn.jsdelivr.net;script-src-attr 'self' 'nonce-YXNzdXJl' https://cdn.jsdelivr.net;style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline';upgrade-insecure-requests",
     "DB_SECTION": "MYSQL",
     "MYSQL" : { "alias": "mysql2", "dialect": "mysql", "url":"", "user": "root", "password": "root", "host": "localhost", "port": 3306, "database": "assuredb", "options": { "charset": "utf8", "connectionLimit": 100 } },
     "REDIRECT_URI": "http://localhost:3000/auth/redirect",

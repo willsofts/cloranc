@@ -14,8 +14,12 @@
     "XFRAME_OPTION": "false",
     "DISABLE_DIFFIE": "true",
     "META_INFO": {
-        "appstype":"", "register": true, "ALLOW_AUTHEN_SAML_ONLY": false, "notify": false, "DISPLAY_PAGE_HEADER": false, 
-        "chat": false, "ROCKET_HOST": "http://localhost:3000", "ROCKET_WEBSOCKET": "ws://localhost:3000/websocket"
+        "appstype":"", "register": false, "ALLOW_AUTHEN_SAML_ONLY": false, "DISPLAY_PAGE_HEADER": false,
+        "chat": false, "ROCKET_HOST": "http://localhost:3000", "ROCKET_WEBSOCKET": "ws://localhost:3000/websocket",
+        "language": true,  "notify": false, 
+        "NOTIFY_HUB_URL": "http://localhost:5000/chathub",
+        "NOTIFY_API_URL": "https://api-dev-cloranc.freewillsolutions.com",
+        "NOTIFY_WEB_URL": "https://dev-cloranc.freewillsolutions.com"
     },
     "EXCEPT_LAUNCH_PATH": "page_forgot,page_register",
     "EXCEPT_AUTHORIZE_PATH": "/api-docs,/health,/sign,/passwordpolicy,/fetch,/forgot,/captcha,/login,/auth,/category,/register",

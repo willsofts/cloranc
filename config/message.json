@@ -171,6 +171,11 @@
 		  "EN": "Do you want to remove this node?"
 		},
 		{
+		  "code": "QS0035",
+		  "TH": "คุณต้องการเปิดหน้ารายการนี้ใช่หรือไม่? <br/>โปรดระวังงานปัจจุบันอาจยังไม่ได้บันทึก",
+		  "EN": "Do you want to open this transaction? <br/>Becareful all current work will be lose."
+		},
+		{
 		  "code": "fsconfirmbtn",
 		  "TH": "ตกลง",
 		  "EN": "OK"
@@ -423,6 +428,11 @@
 			"code": "QS0305",
 			"TH": "ไม่พบรายการที่ต้องการลบ",
 			"EN": "No select transactions to be removed"
+		},
+		{
+			"code": "BCUN0039",
+			"TH": "รายการนี้ถูกทำรายการเสร็จสิ้นเรียบร้อยแล้ว",
+			"EN": "This transaction is already complete."
 		}
 	]
 }

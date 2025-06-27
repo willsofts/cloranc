@@ -20,7 +20,8 @@ function getCurrentLanguage() {
     return fs_default_language || "EN";
 }
 function createNotifyConfigure() {
-    return { url: NOTIFY_HUB_URL, username: getCurrentUser(), headers: { "Authorization": getTokenKey() } };
+    let token = getTokenKey();
+    return { url: NOTIFY_HUB_URL, username: getCurrentUser(), token: token, headers: { "Authorization": token } };
 }
 async function signalRHubConnection() {
     let cfg = createNotifyConfigure();
@@ -28,7 +29,7 @@ async function signalRHubConnection() {
     if(!cfg.url) return;
     connection = await new signalR.HubConnectionBuilder()
         .withAutomaticReconnect([0, 1000, 5000, 15000])
-        .withUrl(cfg.url, { headers: cfg.headers })
+        .withUrl(cfg.url+"?fskey="+encodeURIComponent(cfg.token), { headers: cfg.headers })
         .configureLogging(signalR.LogLevel.Debug)
         .build();
     await startSignalR();
