@@ -111,7 +111,7 @@
 				if(avatar && avatar.trim().length>0) {					
 					showAvatar(avatar);
 				} else {
-					fetchAvatar(body.userid);
+					fetchAvatar(body.userid,body.photoimage);
 				}
 			}
 			startNotify();
@@ -120,16 +120,16 @@
 		}
 		function showAvatar(avatar) {
 			if(!avatar || avatar.trim().length==0) return;
-			$("#avatarimage").attr("src",avatar);
+			//$("#avatarimage").attr("src",avatar);
 			$("#fs_image_profile_select").attr("src",avatar);
 			$("#fs_image_profile").attr("src",avatar);
 		}
-		function fetchAvatar(userid) {
+		function fetchAvatar(userid,photoimage) {
 			let authtoken = getAccessorToken();
 			console.log("fetchAvatar: userid="+userid);
 			$.ajax({ 
 				url : API_URL+"/api/avatar/image", 
-				data: { userid: userid }, 
+				data: { userid: userid, photoimage: photoimage }, 
 				headers : { "authtoken": authtoken }, 
 				type : "POST",
 				dataType: "json",
