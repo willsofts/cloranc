@@ -552,6 +552,20 @@
       "tables": [
         { "name": "tmessage" }
       ]
+    },
+    {
+      "id": 49,
+      "name": "userinfo",
+      "handler": "userinfo.service",
+      "group": "workers",
+      "description": "service for get user information",
+      "tables": [
+        { "name": "tuser" },
+        { "name": "tuserinfo" },
+        { "name": "tusergrp" },
+        { "name": "tuserrole" },
+        { "name": "tuserbranch" }
+      ]
     }
   ]
 }
