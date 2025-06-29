@@ -1,0 +1,45 @@
+<% let fs_express_readonly = page.isRetrieveMode()?" readonly ":""; %>
+		<div class="row row-height">
+			<div class="col-md-12 col-height">
+					<div class="table-layer-class">
+						<div class="row row-height">
+							<div class="col-height col-md-4">
+<label for="msgcode" id="msgcode_label" class="control-label"><%=label.get('msgcode_label','Message Code')%></label>
+<div class="input-group">
+	<input type="text" id="msgcode" name="msgcode" class="form-control input-md irequired ikeyclass alert-input" maxlength="50" picture="(50)X" value="<%=data.dataset?.msgcode%>" <%=fs_express_readonly%> />
+	<div class="input-group-required"><label class="required">*</label></div>
+</div>
+<div id="msgcode_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('msgcode_alert','You can not leave this empty')%></div>
+							</div>
+						</div>
+					</div>
+			</div>
+		</div>
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-4">
+<label for="langcode" id="langcode_label" class="control-label"><%=label.get('langcode_label','Language')%></label>
+<%if(page.isRetrieveMode()) {%>
+<fieldset id="langcodefieldset" disabled><legend class="fa-hidden"></legend>
+<div class="input-group">
+	<%-page.html('select',{map: data.entity?.tklanguage, value: data.dataset?.langcode, id: "langcodedisable", name: "langcodedisable", class: "form-control input-md alert-input"})%>
+	<div class="input-group-required"><label class="required">*</label></div>
+</div>
+</fieldset>
+<input type="hidden" id="langcode" name="langcode" value="<%=data.dataset?.langcode%>"/>
+<%} else {%>
+<fieldset id="langcodefieldset" disabled><legend class="fa-hidden"></legend>
+<div class="input-group">
+	<%-page.html('select',{map: data.entity?.tklanguage, value: data.dataset?.langcode, id: "langcode", name: "langcode", class: "form-control input-md alert-input"})%>
+	<div class="input-group-required"><label class="required">*</label></div>
+</div>
+</fieldset>
+<%}%>
+<div id="langcode_alert" role="alert" class="has-error fa-hidden"><%=label.get('langcode_alert','You can not leave this empty')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>

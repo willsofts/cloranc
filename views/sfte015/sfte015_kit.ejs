@@ -1,0 +1,16 @@
+	<div class="row row-height">
+		<div class="col-md-12 col-height">
+				<div class="table-layer-class">
+					<div class="row row-height">
+						<div class="col-height col-md-11">
+<label for="msgtext" id="msgtext_label" class="control-label"><%=label.get('nmsgtext_label','Message Text')%></label>
+<div class="input-group">
+	<input type="text" id="msgtext" name="msgtext" class="form-control input-md irequired alert-input" maxlength="150" value="<%=data.dataset?.msgtext%>" />
+	<div class="input-group-required"><label class="required">*</label></div>
+</div>
+<div id="msgtext_alert" role="alert" class="has-feedback has-error fa-hidden"><%=label.get('msgtext_alert','You can not leave this empty')%></div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
