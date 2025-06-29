@@ -52,7 +52,7 @@ export const INLINE_BINDING: boolean = config.env("INLINE_BINDING") === "true";
 export const MAX_EXPIRE_DATE: string = config.env("MAX_EXPIRE_DATE","31/12/9000"); 
 export const ALWAYS_ACTIVATE_ACCOUNT: boolean = config.env("ALWAYS_ACTIVATE_ACCOUNT","true") === "true";
 export const AVATAR_IMAGE_PATH_RANDOM: string = config.env("AVATAR_IMAGE_PATH_RANDOM"); 
-export const AVATAR_IMAGE_BASE64: boolean = config.env("AVATAR_IMAGE_BASE64","false") === "true";
+export const AVATAR_IMAGE_BASE64: boolean = config.env("AVATAR_IMAGE_BASE64","true") === "true";
 export const AVATAR_IMAGE_FROM_TEXT: boolean = config.env("AVATAR_IMAGE_FROM_TEXT","false") === "true";
 
 export const CHAT_USER: string = config.env("CHAT_USER"); 

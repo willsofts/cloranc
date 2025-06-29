@@ -29,7 +29,7 @@ const AvatarService : ServiceSchema = {
             let userid = ctx.params.userid;
             let photoimage = ctx.params.photoimage;
             if(!userid || userid.trim().length==0) userid = "anonymous";
-            let ranpath = AVATAR_IMAGE_PATH_RANDOM || "img/users";
+            let ranpath = AVATAR_IMAGE_PATH_RANDOM || "assets/metronic/media/users";
             let directory = path.join(".","public",ranpath);
             let avatar = "";
             try {
