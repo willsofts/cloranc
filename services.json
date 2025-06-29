@@ -7,7 +7,7 @@
       "id": 1,
       "name": "fetch",
       "handler": "fetch.service",
-      "group": "core",
+      "group": "services",
       "description": "service for fetch date/time/timestamp",
       "tables": null
     },
@@ -15,7 +15,7 @@
       "id": 2,
       "name": "health",
       "handler": "health.service",
-      "group": "core",
+      "group": "services",
       "description": "service for health check",
       "tables": null
     },
@@ -23,7 +23,7 @@
       "id": 3,
       "name": "2fa",
       "handler": "2fa.service",
-      "group": "core",
+      "group": "services",
       "description": "service for user factor authentication",
       "tables": [
         { "name": "tconfig" },
@@ -36,7 +36,7 @@
       "id": 4,
       "name": "activate",
       "handler": "activate.service",
-      "group": "core",
+      "group": "services",
       "description": "service for user activate/approve account",
       "tables": [
         { "name": "tactivate" },
@@ -47,7 +47,7 @@
       "id": 5,
       "name": "attach",
       "handler": "attach.service",
-      "group": "core",
+      "group": "services",
       "description": "service for attach file",
       "tables": [
         { "name": "tattach" }
@@ -57,7 +57,7 @@
       "id": 6,
       "name": "authen",
       "handler": "authenticate.service",
-      "group": "core",
+      "group": "services",
       "description": "service for user authenticate",
       "tables": [
         { "name": "tusertoken" }
@@ -67,7 +67,7 @@
       "id": 7,
       "name": "authorize",
       "handler": "authorize.service",
-      "group": "core",
+      "group": "services",
       "description": "service for user authorization",
       "tables": [
         { "name": "tusertoken" }
@@ -77,7 +77,7 @@
       "id": 8,
       "name": "captcha",
       "handler": "captcha.service",
-      "group": "core",
+      "group": "services",
       "description": "service for create/verify captcha",
       "tables": [
         { "name": "tcaptcha" }
@@ -87,7 +87,7 @@
       "id": 9,
       "name": "password",
       "handler": "changepassword.service",
-      "group": "core",
+      "group": "services",
       "description": "service for user change password",
       "tables": [
         { "name": "tuser" },
@@ -104,7 +104,7 @@
       "id": 10,
       "name": "datatable",
       "handler": "datatable.service",
-      "group": "core",
+      "group": "services",
       "description": "service for scrape data from table by configuration",
       "tables": [
         { "name": "tconfig" }
@@ -114,7 +114,7 @@
       "id": 11,
       "name": "crypto",
       "handler": "diffie.service",
-      "group": "core",
+      "group": "services",
       "description": "service for diffie-hellman encryption",
       "tables": [
         { "name": "tusertoken" }
@@ -124,7 +124,7 @@
       "id": 12,
       "name": "forgot",
       "handler": "forgotpassword.service",
-      "group": "core",
+      "group": "services",
       "description": "service for user forgot password",
       "tables": [
         { "name": "tuser" },
@@ -139,7 +139,7 @@
       "id": 13,
       "name": "label",
       "handler": "label.service",
-      "group": "core",
+      "group": "services",
       "description": "service for get label from file under folder label or table",
       "tables": [
         { "name": "tlabel" }
@@ -149,7 +149,7 @@
       "id": 14,
       "name": "logging",
       "handler": "logging.service",
-      "group": "core",
+      "group": "services",
       "description": "service for user logging",
       "tables": [
         { "name": "tuserlog" }
@@ -159,7 +159,7 @@
       "id": 15,
       "name": "login",
       "handler": "login.service",
-      "group": "core",
+      "group": "services",
       "description": "service for login call back",
       "tables": [
         { "name": "tuserinfo" },
@@ -170,7 +170,7 @@
       "id": 16,
       "name": "mail",
       "handler": "mail.service",
-      "group": "core",
+      "group": "services",
       "description": "service for mailing",
       "tables": [
         { "name": "trxlog" }
@@ -180,7 +180,7 @@
       "id": 17,
       "name": "passwordpolicy",
       "handler": "passwordpolicy.service",
-      "group": "core",
+      "group": "services",
       "description": "service for get password policy",
       "tables": [
         { "name": "tppwd" }
@@ -190,7 +190,7 @@
       "id": 18,
       "name": "program",
       "handler": "program.service",
-      "group": "core",
+      "group": "services",
       "description": "service for get program info",
       "tables": [
         { "name": "tprog" }
@@ -200,7 +200,7 @@
       "id": 19,
       "name": "trailing",
       "handler": "trailing.service",
-      "group": "core",
+      "group": "services",
       "description": "service for tracking",
       "tables": [
         { "name": "trxlog" }
@@ -210,7 +210,7 @@
       "id": 20,
       "name": "sign",
       "handler": "signin.service",
-      "group": "core",
+      "group": "services",
       "description": "service for user signin",
       "tables": [
         { "name": "tuser" },
@@ -226,7 +226,7 @@
       "id": 21,
       "name": "apps",
       "handler": "apps.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for get program info",
       "tables": [
         { "name": "tprog" }
@@ -236,7 +236,7 @@
       "id": 22,
       "name": "category",
       "handler": "category.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for get data category from predefined settings",
       "tables": null
     },
@@ -244,7 +244,7 @@
       "id": 23,
       "name": "factor",
       "handler": "factor.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for two factor verify",
       "tables": [
         { "name": "tuserfactor" },
@@ -255,7 +255,7 @@
       "id": 24,
       "name": "menubox",
       "handler": "menu.box.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for user menu box at first page or working space",
       "tables": [
         { "name": "tprog" },
@@ -267,7 +267,7 @@
       "id": 25,
       "name": "menufavor",
       "handler": "menu.favor.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for user menu favorite",
       "tables": [
         { "name": "tprog" },
@@ -279,7 +279,7 @@
       "id": 26,
       "name": "menu",
       "handler": "menu.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for user menu favorite",
       "tables": [
         { "name": "tprog" },
@@ -290,7 +290,7 @@
       "id": 27,
       "name": "menuside",
       "handler": "menu.side.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for user side bar menu",
       "tables": [
         { "name": "tprog" },
@@ -305,7 +305,7 @@
       "id": 28,
       "name": "passwordstrategy",
       "handler": "passwordstrategy.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for password strategy setting",
       "tables": [
         { "name": "tppwd" }
@@ -315,7 +315,7 @@
       "id": 29,
       "name": "profile",
       "handler": "profile.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for user profile",
       "tables": [
         { "name": "tuserinfo" },
@@ -326,7 +326,7 @@
       "id": 30,
       "name": "style",
       "handler": "style.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for program or group style",
       "tables": [
         { "name": "tstyle" }
@@ -336,7 +336,7 @@
       "id": 31,
       "name": "sfte001",
       "handler": "sfte001.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen program info",
       "tables": [
         { "name": "tprog" },
@@ -348,7 +348,7 @@
       "id": 32,
       "name": "sfte002",
       "handler": "sfte002.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen program group info",
       "tables": [
         { "name": "tgroup" },
@@ -362,7 +362,7 @@
       "id": 33,
       "name": "sfte003",
       "handler": "sfte003.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen product info",
       "tables": [
         { "name": "tprod" }
@@ -370,9 +370,19 @@
     },
     {
       "id": 34,
+      "name": "sfte004",
+      "handler": "sfte004.service",
+      "group": "operators",
+      "description": "service for screen role info",
+      "tables": [
+        { "name": "trole" }
+      ]
+    },
+    {
+      "id": 35,
       "name": "sfte005",
       "handler": "sfte005.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen user info (admin)",
       "tables": [
         { "name": "tuser" },
@@ -386,10 +396,10 @@
       ]
     },
     {
-      "id": 35,
+      "id": 36,
       "name": "sfte007",
       "handler": "sfte007.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen user privilege",
       "tables": [
         { "name": "tuser" },
@@ -409,10 +419,10 @@
       ]
     },
     {
-      "id": 36,
+      "id": 37,
       "name": "sfte010",
       "handler": "sfte010.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen password policy settings",
       "tables": [
         { "name": "trpwd" },
@@ -421,30 +431,30 @@
       ]
     },
     {
-      "id": 37,
+      "id": 38,
       "name": "sfte011",
       "handler": "sfte011.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen password reserved number",
       "tables": [
         { "name": "tnpwd" }
       ]
     },
     {
-      "id": 38,
+      "id": 39,
       "name": "sfte012",
       "handler": "sfte012.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen configuration setting",
       "tables": [
         { "name": "tconfig" }
       ]
     },
     {
-      "id": 39,
+      "id": 40,
       "name": "sfte013",
       "handler": "sfte013.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen message template setting",
       "tables": [
         { "name": "ttemplate" },
@@ -452,10 +462,32 @@
       ]
     },
     {
-      "id": 40,
+      "id": 41,
+      "name": "sfte014",
+      "handler": "sfte014.service",
+      "group": "operators",
+      "description": "service for screen program label setting",
+      "tables": [
+        { "name": "tlabel" },
+        { "name": "tconstant" }
+      ]
+    },
+    {
+      "id": 42,
+      "name": "sfte015",
+      "handler": "sfte015.service",
+      "group": "operators",
+      "description": "service for screen message code setting",
+      "tables": [
+        { "name": "tmessage" },
+        { "name": "tconstant" }
+      ]
+    },
+    {
+      "id": 43,
       "name": "sfte016",
       "handler": "sfte016.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen user info (activate)",
       "tables": [
         { "name": "tuser" },
@@ -469,10 +501,10 @@
       ]
     },
     {
-      "id": 41,
+      "id": 44,
       "name": "sfte017",
       "handler": "sfte017.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen user factor",
       "tables": [
         { "name": "tuserfactor" },
@@ -480,10 +512,10 @@
       ]
     },
     {
-      "id": 42,
+      "id": 45,
       "name": "sfte017history",
       "handler": "sfte017.history.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen user factor history",
       "tables": [
         { "name": "tuserfactorhistory" },
@@ -491,10 +523,10 @@
       ]
     },
     {
-      "id": 43,
+      "id": 46,
       "name": "sfte018",
       "handler": "sfte018.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen tenant setting",
       "tables": [
         { "name": "ttenant" },
@@ -502,10 +534,21 @@
       ]
     },
     {
-      "id": 44,
+      "id": 47,
+      "name": "sfte019",
+      "handler": "sfte019.service",
+      "group": "operators",
+      "description": "service for screen company branch setting",
+      "tables": [
+        { "name": "tcompbranch" },
+        { "name": "tconstant" }
+      ]
+    },
+    {
+      "id": 48,
       "name": "sftq001",
       "handler": "sftq001.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen user tracking",
       "tables": [
         { "name": "tuserlog" },
@@ -514,10 +557,10 @@
       ]
     },
     {
-      "id": 45,
+      "id": 49,
       "name": "sftq003",
       "handler": "sftq003.service",
-      "group": "operator",
+      "group": "operators",
       "description": "service for screen mail tracking",
       "tables": [
         { "name": "trxlog" },
@@ -525,26 +568,46 @@
       ]
     },
     {
-      "id": 46,
+      "id": 50,
+      "name": "sftu003",
+      "handler": "sftu003.service",
+      "group": "operators",
+      "description": "service for setting api with query statement",
+      "tables": [
+        { "name": "api_config" }
+      ]
+    },
+    {
+      "id": 51,
+      "name": "sftu004",
+      "handler": "sftu004.service",
+      "group": "operators",
+      "description": "service for setting pass key or token",
+      "tables": [
+        { "name": "tpasskey" },
+        { "name": "tusertoken"}
+      ]
+    },
+    {
+      "id": 52,
       "name": "dataservice",
       "handler": "dataservice.service",
-      "group": "worker",
+      "group": "workers",
       "description": "service for scrape data from table by setting query in table",
       "tables": [
         { "name": "api_config" }
       ]
     },
     {
-      "id": 47,
+      "id": 53,
       "name": "message",
       "handler": "message.service",
       "group": "workers",
       "description": "service for get file config/message.json",
-      "tables": [
-      ]
+      "tables": null
     },
     {
-      "id": 48,
+      "id": 54,
       "name": "msgcode",
       "handler": "msgcode.service",
       "group": "workers",
@@ -554,7 +617,7 @@
       ]
     },
     {
-      "id": 49,
+      "id": 55,
       "name": "userinfo",
       "handler": "userinfo.service",
       "group": "workers",
@@ -566,6 +629,54 @@
         { "name": "tuserrole" },
         { "name": "tuserbranch" }
       ]
+    },
+    {
+      "id": 56,
+      "name": "permit",
+      "handler": "permit.service",
+      "group": "workers",
+      "description": "service for get program permission",
+      "tables": [
+        { "name": "tpperm" },
+        { "name": "tusergrp" },
+        { "name": "tprog" },
+        { "name": "tproggrp" }
+      ]
+    },
+    {
+      "id": 57,
+      "name": "config",
+      "handler": "config.service",
+      "group": "workers",
+      "description": "service for get configuration setting",
+      "tables": [
+        { "name": "tconfig" }
+      ]
+    },
+    {
+      "id": 58,
+      "name": "register",
+      "handler": "register.service",
+      "group": "workers",
+      "description": "service for register new user",
+      "tables": [
+        { "name": "tuser" },
+        { "name": "tuserinfo" },
+        { "name": "tuserinfohistory" },
+        { "name": "tusergrp" },
+        { "name": "tfavor" },
+        { "name": "tppwd" },
+        { "name": "tactivate" },
+        { "name": "ttemplate" }
+      ]
+    },
+    {
+      "id": 59,
+      "name": "avatar",
+      "handler": "avatar.service",
+      "group": "workers",
+      "description": "service for get avatar",
+      "tables": null
     }
   ]
 }
