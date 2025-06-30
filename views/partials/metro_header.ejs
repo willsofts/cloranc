@@ -85,7 +85,7 @@
                 </form>
             </div>
         </div>
-        <% if(meta.info?.language) {%>
+        <% if(!(String(meta.info?.language)=="false")) {%>
         <div class="kt-header__topbar-item kt-header__topbar-item--langs">
             <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="10px,0px" title="Language">
                 <span class="kt-header__topbar-icon">

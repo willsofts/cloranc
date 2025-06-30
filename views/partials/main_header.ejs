@@ -47,7 +47,7 @@
 							<a href="javascript:void(0)" id="chatmenuitemlink" class="nav-link chat-item"><em class="fa fa-comments-o"></em></a>
 						</li>
 						<%}%>
-						<% if(meta.info?.language) {%>								
+						<% if(!(String(meta.info?.language)=="false")) {%>
 						<li id="languagemenuitem" class="nav-item dropdown user-dropdown">
 							<a href="javascript:void(0)" id="languagemenuitemlink" class="nav-link dropdown-item dropdown-toggle" data-toggle="dropdown">	
 								<img id="languageimage" alt="Language" src="<%=meta.cdn_url%>/img/lang/<%=meta.language%>.png" width="30px" title="Language" />
