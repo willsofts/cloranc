@@ -140,6 +140,8 @@ How to implementation.
 | ROCKET_HOST | this point to rocket chat server url |
 | ROCKET_WEBSOCKET | this point to web socket rocket chat server url |
 
+(In case of using CSP, try to allow rocket host and rocket websocket too)
+
 ## How to work with SignalR notification
 1. change setting on `config/default.json` to enable and configure to SignalR notification server with `META_INFO` attribute. ex.
 
@@ -158,6 +160,8 @@ How to implementation.
 | NOTIFY_HUB_URL | this point to SignalR connection hub server url (to get alert message) |
 | NOTIFY_API_URL | this point to notification api server url (to get notify info such as latest, weekly, monthly) |
 | NOTIFY_WEB_URL | this point to notification web server url (to open and launch web page) |
+
+(In case of using CSP, try to allow notification host and hub too)
 
 ## How to customize menu
 1. Server Side Render (SSR) ex. `http://localhost:8080/index`
