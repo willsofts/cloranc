@@ -18,6 +18,7 @@ var SECURE_STORAGE = true;
 var META_INFO = {};
 var CHAT_URL = "";
 var BASE_CSS = "";
+var MULTI_LANGUAGES = ["EN","TH"];
 function getWindowByName(winname) {
 	if(!winname) return null;
 	for(let i=0,isz=fs_winary.length;i<isz;i++) {
@@ -1192,7 +1193,6 @@ function bootAlertDialog(msg, callback, title="Alert", icon="fa fa-bell-o") {
     	$(".bootbox > .modal-dialog").draggable();
 		return;
     } catch (ex) { console.log(ex.description); }
-    //alert(msg);
     if (callback) callback();
 }
 function bootConfirmDialog(msg, okCallback, cancelCallback, title="Confirmation", icon="fa fa-question-circle") {
@@ -1773,7 +1773,7 @@ function getDH() {
 }
 function sendMessageInterface() {
 	let info = getAccessorInfo();
-	let msg = {type: "storage", archetype: "willsofts", API_URL: API_URL, BASE_URL: BASE_URL, CDN_URL: CDN_URL, IMG_URL: IMG_URL, DEFAULT_LANGUAGE: fs_default_language, API_TOKEN: API_TOKEN, BASE_STORAGE: BASE_STORAGE, SECURE_STORAGE: SECURE_STORAGE, BASE_CSS: BASE_CSS, META_INFO: META_INFO, accessorinfo: info};
+	let msg = {type: "storage", archetype: "willsofts", API_URL: API_URL, BASE_URL: BASE_URL, CDN_URL: CDN_URL, IMG_URL: IMG_URL, DEFAULT_LANGUAGE: fs_default_language, API_TOKEN: API_TOKEN, BASE_STORAGE: BASE_STORAGE, SECURE_STORAGE: SECURE_STORAGE, BASE_CSS: BASE_CSS, MULTI_LANGUAGES: MULTI_LANGUAGES, META_INFO: META_INFO, accessorinfo: info};
 	sendMessageToFrame(msg);
 }
 function sendMessageToFrame(data,win) {

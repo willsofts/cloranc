@@ -94,18 +94,16 @@
             </div>
             <div class="dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround">
                 <ul class="kt-nav kt-margin-t-10 kt-margin-b-10">
-                    <li class="li-lang kt-nav__item <%='EN'==meta.language ? 'kt-nav__item--active' : ''%>" id="lang-EN">
-                        <a href="javascript:void(0)" class="kt-nav__link lang-linker" id="linklangen" data-lang="EN" data-image="<%=meta.cdn_url%>/assets/lang/EN.svg">
-                            <span class="kt-nav__link-icon"><img src="<%=meta.cdn_url%>/assets/lang/EN.svg" alt="" /></span>
-                            <span class="kt-nav__link-text font-size-custom-h-14 lang-word"><%=label.get('EN_lang','English')%></span>
+                    <%for(let lang of meta.multi_languages) { 
+                        let lang_label = label.get(lang+"_lang",lang);
+                    %>
+                    <li class="li-lang kt-nav__item <%=lang==meta.language ? 'kt-nav__item--active' : ''%>" id="lang-<%=lang%>">
+                        <a href="javascript:void(0)" class="kt-nav__link lang-linker" id="linklang<%=lang%>" data-lang="<%=lang%>" data-image="<%=meta.cdn_url%>/assets/lang/<%=lang%>.svg">
+                            <span class="kt-nav__link-icon"><img src="<%=meta.cdn_url%>/assets/lang/<%=lang%>.svg" alt="" /></span>
+                            <span class="kt-nav__link-text font-size-custom-h-14 lang-word"><%=lang_label%></span>
                         </a>
                     </li>
-                    <li class="li-lang kt-nav__item <%='TH'==meta.language ? 'kt-nav__item--active' : ''%>" id="lang-TH">
-                        <a href="javascript:void(0)" class="kt-nav__link lang-linker" id="linklangth" data-lang="TH" data-image="<%=meta.cdn_url%>/assets/lang/TH.svg">
-                            <span class="kt-nav__link-icon"><img src="<%=meta.cdn_url%>/assets/lang/TH.svg" alt="" /></span>
-                            <span class="kt-nav__link-text font-size-custom-h-14 lang-word"><%=label.get('TH_lang','Thai')%></span>
-                        </a>
-                    </li>
+                    <%}%>
                 </ul>
             </div>
         </div>

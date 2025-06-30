@@ -53,8 +53,11 @@
 								<strong class="fa fa-caret-down caret-down"></strong>
 							</a>
 							<ul class="dropdown-menu dropdown-menu-right">
-								<li><a href="javascript:void(0)" class="dropdown-item lang-linker" id="linklangen" data-lang="EN" data-image="<%=meta.cdn_url%>/img/lang/EN.png"><img alt="" src="<%=meta.cdn_url%>/img/lang/EN.png" width="30px" title="English"/><span id="englishlanguage" class="lang-word"><%=label.get('EN_lang','English')%></span></a></li>
-								<li><a href="javascript:void(0)" class="dropdown-item lang-linker" id="linklangth" data-lang="TH" data-image="<%=meta.cdn_url%>/img/lang/TH.png"><img alt="" src="<%=meta.cdn_url%>/img/lang/TH.png" width="30px" title="Thai"/><span id="thailanguage" class="lang-word"><%=label.get('TH_lang','Thai')%></span></a></li>
+								<%for(let lang of meta.multi_languages) { 
+									let lang_label = label.get(lang+"_lang",lang);
+								%>
+								<li><a href="javascript:void(0)" class="dropdown-item lang-linker" id="linklang<%=lang%>" data-lang="<%=lang%>" data-image="<%=meta.cdn_url%>/img/lang/<%=lang%>.png"><img alt="" src="<%=meta.cdn_url%>/img/lang/<%=lang%>.png" width="30px" title="<%=lang_label%>"/><span class="lang-word"><%=lang_label%></span></a></li>
+								<%}%>
 							</ul>
 						</li>
 						<li id="favormenuitem" class="nav-item dropdown user-dropdown">
