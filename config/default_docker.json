@@ -9,7 +9,6 @@
     "SECRET_KEY": "ASSURE_OF_SECRET_KEY",
     "VALIDATE_ANOMYMOUS_TOKEN": "false",
     "ALWAYS_ACTIVATE_ACCOUNT": "false",
-    "ALWAYS_DB_TRACKING": "false",
     "ALLOW_AUTHEN_SAML": "true",
     "XFRAME_OPTION": "false",
     "DISABLE_DIFFIE": "true",

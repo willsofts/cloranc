@@ -1,3 +1,7 @@
+2025-05-30
+version: 1.0.1
++ support notify with SignalR notification
+
 2025-06-24
 version: 1.0.0
 + derive from project asserve

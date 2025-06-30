@@ -140,17 +140,37 @@ How to implementation.
 | ROCKET_HOST | this point to rocket chat server url |
 | ROCKET_WEBSOCKET | this point to web socket rocket chat server url |
 
+## How to work with SignalR notification
+1. change setting on `config/default.json` to enable and configure to SignalR notification server with `META_INFO` attribute. ex.
+
+```json
+    "META_INFO": {
+        "notify": true, 
+        "NOTIFY_HUB_URL": "https://api-dev-cloranc.freewillsolutions.com/notify/notificationHub",
+        "NOTIFY_API_URL": "https://api-dev-cloranc.freewillsolutions.com",
+        "NOTIFY_WEB_URL": "https://dev-cloranc.freewillsolutions.com"
+    }
+```
+
+| Attribute | Description |
+| -------- | ----------- |
+| notify | `true` to enable using SignalR notification |
+| NOTIFY_HUB_URL | this point to SignalR connection hub server url (to get alert message) |
+| NOTIFY_API_URL | this point to notification api server url (to get notify info such as latest, weekly, monthly) |
+| NOTIFY_WEB_URL | this point to notification web server url (to open and launch web page) |
+
 ## How to customize menu
 1. Server Side Render (SSR) ex. `http://localhost:8080/index`
     
     Like chat setting by customize on `config/default.json` with `META_INFO` attribute ex.
 
 ```json
-    "META_INFO": {"notify": true, "language": true }
+    "META_INFO": {"chat": true, "notify": true, "language": true }
 ```
 
 | Attribute | Description |
 | -------- | ----------- |
+| chat | `true` to enable display chat menu, default `false`. |
 | notify | `true` to enable display notification menu, default `false`. |
 | language | `false` to disable display language menu, default `true`. |
 
@@ -163,15 +183,19 @@ How to implementation.
         ALLOW_AUTHEN_SAML: "true",
         MULTI_LANGUAGES: ["EN","TH"],
         DEFAULT_LANGUAGE: "EN",
-        META_INFO: { chat: false, notify: false, language: true }
+        META_INFO: { 
+            chat: true, notify: true, language: true, 
+        }
     };
 ```
 
 | Attribute | Description |
 | -------- | ----------- |
-| chat | `true` to enable chat menu, default `false`. |
+| chat | `true` to enable display chat menu, default `false`. |
 | notify | `true` to enable display notification menu, default `false`. |
 | language | `false` to disable display language menu, default `true`. |
+
+(These settings need to corresponding configure with SSR)
 
 ## Login Configuration Variables
 Both platform using same tag but `config/default.json` for SSR and `public/default.js` for SPA.
@@ -194,4 +218,18 @@ Single page application (SPA) can customize more setting via `public/app.config.
 | CDN_URL | to change CDN url. |
 | IMG_URL | to change Image url. |
 
-(All setting can override by login setting configuration)
+with `META_INFO` attribute can settings.
+
+```javascript
+        META_INFO: { 
+            DISPLAY_PAGE_HEADER: false, LOAD_LABEL: true, LOAD_MESSAGE_CODE: true 
+        }
+```
+
+| Attribute | Description |
+| -------- | ----------- |
+| DISPLAY_PAGE_HEADER | `false` to disable display page header title, default `true`. |
+| LOAD_LABEL | `true` to enable load program lable, default `false`. |
+| LOAD_MESSAGE_CODE | `true` to enable load message code, default `false`. |
+
+(All setting can override by login setting configuration with `public/default.js`)
