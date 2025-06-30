@@ -15,7 +15,8 @@
     "META_INFO": {
         "appstype":"", "register": false, "ALLOW_AUTHEN_SAML_ONLY": false, "DISPLAY_PAGE_HEADER": false,
         "chat": false, "ROCKET_HOST": "http://localhost:3000", "ROCKET_WEBSOCKET": "ws://localhost:3000/websocket",
-        "language": true,  "notify": false, 
+        "language": true,  
+        "notify": false, 
         "NOTIFY_HUB_URL": "https://api-dev-cloranc.freewillsolutions.com/notify/notificationHub",
         "NOTIFY_API_URL": "https://api-dev-cloranc.freewillsolutions.com",
         "NOTIFY_WEB_URL": "https://dev-cloranc.freewillsolutions.com"
