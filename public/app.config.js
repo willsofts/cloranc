@@ -1,7 +1,7 @@
 var appVariables = {    
     MULTI_LANGUAGES: ["EN","TH"],
     BASE_CSS: "",
-    META_INFO: { DISPLAY_PAGE_HEADER: false }
+    META_INFO: { LOAD_LABEL: true, LOAD_MESSAGE_CODE: true, DISPLAY_PAGE_HEADER: false }
 };
 function getAppConfigs() {
     return appVariables;
