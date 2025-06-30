@@ -21,7 +21,11 @@ function getCurrentLanguage() {
 }
 function createNotifyConfigure() {
     let token = getTokenKey();
-    return { url: NOTIFY_HUB_URL, username: getCurrentUser(), token: token, headers: { "Authorization": token } };
+    if(NOTIFY_TOKEN_STYLE=="fskey") {
+        return { url: NOTIFY_HUB_URL, username: getCurrentUser(), token: token, param: "fskey="+encodeURIComponent(token), headers: { "Authorization": token } };
+    } else {
+        return { url: NOTIFY_HUB_URL, username: getCurrentUser(), token: token, param: "authtoken="+encodeURIComponent(token), headers: { "Authtoken": token } };
+    }
 }
 async function signalRHubConnection() {
     let cfg = createNotifyConfigure();
@@ -29,7 +33,7 @@ async function signalRHubConnection() {
     if(!cfg.url) return;
     connection = await new signalR.HubConnectionBuilder()
         .withAutomaticReconnect([0, 1000, 5000, 15000])
-        .withUrl(cfg.url+"?fskey="+encodeURIComponent(cfg.token), { headers: cfg.headers })
+        .withUrl(cfg.url+"?"+cfg.param, { headers: cfg.headers })
         .configureLogging(signalR.LogLevel.Debug)
         .build();
     await startSignalR();
@@ -415,8 +419,9 @@ async function notificationOpen(params, ths) {
 }
 
 async function checkAccessTask(workflowId, callback) {
+    let cfg = createNotifyConfigure();
     let data = {
-        "pSessionID": getTokenKey(),
+        "pSessionID": cfg.token,
         "pUsername": "",
         "pInputData": {
             "action": "93",
@@ -427,6 +432,7 @@ async function checkAccessTask(workflowId, callback) {
     $.ajax({
         type: "POST",
         url: NOTIFY_API_URL + "/workflow/api/workflow/callworkflow",
+        headers: cfg.headers,
         dataType: "json",
         contentType: "application/json; charset=UTF-8",
         data: JSON.stringify(data),
@@ -494,9 +500,9 @@ function updateNotificationReaded(params, callback) {
 function load_url_content(url) {
     console.log("load_url_content: url",url);
     if (!url) return false;
-    let tokenkey = getTokenKey();
+    let cfg = createNotifyConfigure();
     let language = getCurrentLanguage();
-    let linkto = `${NOTIFY_WEB_URL}/elastic/${url}&fskey=${tokenkey}&culture=${language}`;
+    let linkto = `${NOTIFY_WEB_URL}/elastic/${url}&${cfg.param}&culture=${language}`;
     window.parent.displayWorkingFrame(linkto);
 }
 function getFsText(texten, textth) {
