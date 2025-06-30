@@ -54,6 +54,7 @@ export const ALWAYS_ACTIVATE_ACCOUNT: boolean = config.env("ALWAYS_ACTIVATE_ACCO
 export const AVATAR_IMAGE_PATH_RANDOM: string = config.env("AVATAR_IMAGE_PATH_RANDOM"); 
 export const AVATAR_IMAGE_BASE64: boolean = config.env("AVATAR_IMAGE_BASE64","true") === "true";
 export const AVATAR_IMAGE_FROM_TEXT: boolean = config.env("AVATAR_IMAGE_FROM_TEXT","false") === "true";
+export const AVATAR_IMAGE_PATH: string = config.env("AVATAR_IMAGE_PATH"); 
 
 export const CHAT_USER: string = config.env("CHAT_USER"); 
 export const CHAT_PASSWORD: string = config.env("CHAT_PASSWORD"); 

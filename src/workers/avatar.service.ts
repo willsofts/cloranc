@@ -4,7 +4,7 @@ import path from "path";
 import mime from "mime-types";
 import { createCanvas } from 'canvas';
 import randomColor from 'randomcolor';
-import { AVATAR_IMAGE_PATH_RANDOM, AVATAR_IMAGE_BASE64, AVATAR_IMAGE_FROM_TEXT } from "../utils/EnvironmentVariable";
+import { AVATAR_IMAGE_PATH_RANDOM, AVATAR_IMAGE_BASE64, AVATAR_IMAGE_FROM_TEXT, AVATAR_IMAGE_PATH } from "../utils/EnvironmentVariable";
 
 const crypto = require('crypto');
 
@@ -37,7 +37,7 @@ const AvatarService : ServiceSchema = {
                 let imgfile = "";
                 //check if photo image is exist?
                 if(photoimage && photoimage.trim().length>0) {
-                    let imgpath = "img/avatar";
+                    let imgpath = AVATAR_IMAGE_PATH || "img/avatar";
                     let photofile = path.join(".","public",imgpath,photoimage);
                     if (fs.existsSync(photofile)) {
                         found = true;
