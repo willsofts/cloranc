@@ -8,7 +8,7 @@
       "name": "fetch",
       "handler": "fetch.service",
       "group": "services",
-      "description": "service for fetch date/time/timestamp",
+      "description": "service for fetch date/time/timestamp and info",
       "tables": null
     },
     {

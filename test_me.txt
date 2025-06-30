@@ -169,3 +169,18 @@ curl -X POST http://localhost:8080/api/dataservice/lists -d "apiname=api_prog&ap
 - get data array using lists by json parameters
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/dataservice/lists -d "{\"apiname\":[\"api_prog\",\"api_prod\"]}"
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/dataservice/lists -d "{\"apiname\":[\"api_prog\",\"api_role\"],\"site\":\"FWS\"}"
+
+test SignalR
+D:\Projects\Cloranc\signalr\SignalRChat
+dotnet run --urls "http://localhost:5000"
+goto http://localhost:8080/notify/noti.html
+try broadcast message with json format:
+{
+	"rOutputData": {
+		"isShow": "Y", 
+		"newMessage": 11,
+		"transaction": [
+			{ "t_Notimessege": "สวัสดี", "e_NotiMessege": "Hello" } 
+		]
+	}
+}

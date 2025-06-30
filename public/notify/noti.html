@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+	<meta http-equiv="Cache-Control" content="no-store">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Expires" content="-1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Me</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <script type="text/javascript" src="/notify/signalr.min.js"></script>
+    <script type="text/javascript" src="/jquery/jquery-3.7.1.min.js"></script>
+    <script>
+        var NOTI_URL = "http://localhost:5000/chathub"; 
+    </script>
+    <script type="text/javascript" src="/notify/noti.js"></script>
+</head>
+<body>
+	<div id="bodylayer">
+        <h3>Signal R</h3>
+        <table>
+            <tr>
+                <td>Name</td><td><input type="text" id="userInput" placeholder="Your name" /></td>
+            </tr>
+            <tr>
+                <td>Message</td><td><textarea id="messageInput" cols="70" rows="10"></textarea></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button id="sendbutton">Send</button>
+                    <button id="bcbutton">Broadcast</button>
+                    <button id="clearbutton">Clear</button>
+                    <button id="removebutton">Clear Chat</button>
+                </td>
+            </tr>
+        </table>
+        
+        <ul id="messagesList"></ul>
+    </div>
+</body>
+</html>
