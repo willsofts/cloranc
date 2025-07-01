@@ -806,6 +806,12 @@ GO
 ALTER TABLE [dbo].[tlabel] SET (LOCK_ESCALATION = TABLE)
 GO
 
+CREATE TABLE [dbo].[tmessage] (
+  [msgcode] varchar(50) COLLATE Thai_CI_AS  NOT NULL,
+  [langcode] varchar(10) COLLATE Thai_CI_AS  NOT NULL,
+  [msgtext] varchar(200) COLLATE Thai_CI_AS DEFAULT NULL NULL
+)
+GO
 
 -- ----------------------------
 -- Records of tlabel
