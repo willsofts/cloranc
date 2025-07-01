@@ -1,5 +1,6 @@
 2025-07-01
 version: 1.0.2
++ fixed login spa default home as first page or work list
 + do not show sub header on first page or work list
 + change config folder for SPA to path public/config
 
