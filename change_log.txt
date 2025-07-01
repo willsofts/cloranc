@@ -1,4 +1,9 @@
-2025-05-30
+2025-07-01
+version: 1.0.2
++ do not show sub header on first page or work list
++ change config folder for SPA to path public/config
+
+2025-06-30
 version: 1.0.1
 + support notify with SignalR notification
 

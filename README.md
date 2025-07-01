@@ -180,7 +180,7 @@ How to implementation.
 
 2. Single Page Application (SPA) ex. `http://localhost:8080/login`
     
-    As same as setting SSR but customize on `public/default.js` with `META_INFO` attribute ex.
+    As same as setting SSR but customize on `public/config/default.js` with `META_INFO` attribute ex.
 
 ```javascript
     var appVariables = {
@@ -202,7 +202,7 @@ How to implementation.
 (These settings need to corresponding configure with SSR)
 
 ## Login Configuration Variables
-Both platform using same tag but `config/default.json` for SSR and `public/default.js` for SPA.
+Both platform using same tag but `config/default.json` for SSR and `public/config/default.js` for SPA.
 
 | Attribute | Description |
 | -------- | ----------- |
@@ -212,7 +212,7 @@ Both platform using same tag but `config/default.json` for SSR and `public/defau
 | DEFAULT_LANGUAGE | to set default language, default `EN`. |
 
 ## Application Configuration Variables
-Single page application (SPA) can customize more setting via `public/app.config.js`.
+Single page application (SPA) can customize more setting via `public/config/app.config.js`.
 
 | Attribute | Description |
 | -------- | ----------- |
@@ -236,4 +236,3 @@ with `META_INFO` attribute can settings.
 | LOAD_LABEL | `true` to enable load program lable, default `false`. |
 | LOAD_MESSAGE_CODE | `true` to enable load message code, default `false`. |
 
-(All setting can override by login setting configuration with `public/default.js`)
