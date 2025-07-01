@@ -103,6 +103,7 @@
 		}
 		function doAfterLogin(body,firstpage) {
 			if(body) firstpage = body.firstpage;
+			defaultUserLanguage(body);
 			startWorking(firstpage);
 			refreshScreen();
 			if(body) {
@@ -117,6 +118,17 @@
 			startNotify();
 			startChating();
 			startReceiveBroadcast();
+		}
+		function defaultUserLanguage(body) {
+			if(body.langcode && body.langcode.trim().length>0) {
+				$("a.lang-linker").each(function(index,element) {
+					let $e = $(element);
+					let lang = $e.attr("data-lang");
+					if(lang==body.langcode) {
+						$e.trigger("click");
+					}
+				});
+			}
 		}
 		function showAvatar(avatar) {
 			if(!avatar || avatar.trim().length==0) return;
