@@ -257,3 +257,10 @@ div.link-button-cover a:hover { background-color: whitesmoke; color: black; }
 #lastclock { margin-right: 5px; }
 #noti_number { display: none; text-align: center; }
 #fsnotifylayer { display: none; }
+#kt_subheader { margin-top: 12px; position: relative; left: 0; top: 0; }
+#kt_content { padding-top: 0px !important; margin-top: 1px !important; }
+@media (max-width: 1024px) {
+	#kt_content { margin-top: 1rem !important; }
+}
+#kt_content.no-subheader { margin-top: 1rem !important; }
+#kt_subheader_wrapper { padding: 0px; }

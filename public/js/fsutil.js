@@ -112,6 +112,7 @@ function open_program(opts) {
 		});
 		startWaiting();
 	}
+	$(window).trigger("resize");
 	recentApplication(appid,url,params,path,newflag,openmethod,caption,treepath);
 }
 function recentApplication(appid,url,params,path,newflag,openmethod,caption,treepath) {
@@ -153,6 +154,7 @@ function stopWaiting() {
 
 function show_subheader(itemname, nameprogram, treepath) {
 	console.log("show_subheader: ",itemname,", ",nameprogram,", ",treepath);
+	$("#kt_content").removeClass("no-subheader");
     $("#kt_subheader").removeClass("dp-none");
     let subheraderlink = '<span class="icon-subheader"><i class="flaticon2-shelter"></i></span>';
     if (treepath && treepath.trim().length > 0) {

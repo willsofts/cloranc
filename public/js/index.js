@@ -194,6 +194,9 @@
 			}
 			if(pages && pages.length>0) {
 				pages.eq(0).trigger("click");
+				$("#kt_subheader").addClass("dp-none");
+				$("#kt_content").addClass("no-subheader");
+				$(window).trigger("resize");
 			} else {
 				load_page_first();
 			}
@@ -575,7 +578,9 @@
 					if($("#kt_subheader").is(":visible")) {
 						ksh = $("#kt_subheader").height();
 					}
-					$("#workingframe").height((wh-kh-ksh) - fs_workingframe_offset);
+					let wfh = (wh-kh-ksh) - fs_workingframe_offset;
+					console.log("workingframe: height",wfh);
+					$("#workingframe").height(wfh);
 			}).trigger("resize");
 			let pos = $("#loginframe").position();
 			if(pos) { mouseX = pos.left; mouseY = pos.top; }
