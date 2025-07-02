@@ -120,7 +120,7 @@
 			startReceiveBroadcast();
 		}
 		function defaultUserLanguage(body) {
-			if(body.langcode && body.langcode.trim().length>0) {
+			if(body && body.langcode && body.langcode.trim().length>0) {
 				$("a.lang-linker").each(function(index,element) {
 					let $e = $(element);
 					let lang = $e.attr("data-lang");
