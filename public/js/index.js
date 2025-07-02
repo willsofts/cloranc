@@ -206,8 +206,10 @@
 			}
 			if(pages && pages.length>0) {
 				pages.eq(0).trigger("click");
-				$("#kt_subheader").addClass("dp-none");
-				$("#kt_content").addClass("no-subheader");
+				if(!(String(META_INFO.DISPLAY_WORKLIST_SUBHEADER)=="true")) {
+					$("#kt_subheader").addClass("dp-none");
+					$("#kt_content").addClass("no-subheader");
+				}
 				$(window).trigger("resize");
 			} else {
 				load_page_first();
