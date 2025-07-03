@@ -2,7 +2,7 @@
 version: 1.0.3
 + can manipulate rocket chat user (create/delete)
 + can upload user text file to create rocket chat user
-+ can open/create chat user cross domain
++ can open/create chat room cross domain
 + sfte005, sfte016 support create/delete rocket chat user
 
 2025-07-01
