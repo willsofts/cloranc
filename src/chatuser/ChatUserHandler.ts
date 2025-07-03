@@ -111,10 +111,11 @@ export class ChatUserHandler extends TknOperateHandler {
             for(let user of users) {
                 try {                
                     let response = await this.createChatUser(user);
+                    response.username = user.username;
                     results.push(response);
                 } catch(ex: any) {
                     this.logger.error(this.constructor.name+".performInserting",ex);
-                    results.push(ex.response ? ex.response.data : { success: false, error: ex.message });
+                    results.push(ex.response ? { ...ex.response.data, username: user.username } : { success: false, username: user.username, error: ex.message });
                 }
             }
             return results;
@@ -139,10 +140,11 @@ export class ChatUserHandler extends TknOperateHandler {
             for(let user of users) {
                 try {                
                     let response = await this.deleteChatUser(user);
+                    response.username = user.username;
                     results.push(response);
                 } catch(ex: any) {
                     this.logger.error(this.constructor.name+".performRemoving",ex);
-                    results.push(ex.response ? ex.response.data : { success: false, error: ex.message });
+                    results.push(ex.response ? { ...ex.response.data, username: user.username } : { success: false, username: user.username, error: ex.message });
                 }
             }
             return results;
