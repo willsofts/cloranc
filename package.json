@@ -1,6 +1,6 @@
 {
   "name": "cloranc",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "This is project introduce to node application with http server and express framework under moleculer engine",
   "main": "index.js",
   "scripts": {
@@ -59,6 +59,7 @@
     "mssql": "^11.0.1",
     "multer": "^2.0.1",
     "mysql2": "^3.11.3",
+    "n-readlines": "^1.0.1",
     "node-rsa": "^1.1.1",
     "nodemailer": "^7.0.3",
     "path": "^0.12.7",
@@ -75,6 +76,7 @@
     "@types/jsbn": "^1.2.30",
     "@types/mime-types": "^3.0.1",
     "@types/multer": "^1.4.7",
+    "@types/n-readlines": "^1.0.6",
     "@types/node": "^18.11.9",
     "@types/randomcolor": "^0.5.9",
     "@types/uuid": "^10.0.0",

@@ -21,6 +21,8 @@
         "NOTIFY_API_URL": "https://api-dev-cloranc.freewillsolutions.com",
         "NOTIFY_WEB_URL": "https://dev-cloranc.freewillsolutions.com"
     },
+    "CHAT_ADMIN_USER": "67ca773e149a3048dfca4772",
+    "CHAT_ADMIN_TOKEN": "5WA3Eo2Mr7YCFWNFToawI3kCgd6ptXsVI5sf-ykmlHK",
     "EXCEPT_LAUNCH_PATH": "page_forgot,page_register",
     "EXCEPT_AUTHORIZE_PATH": "/api-docs,/health,/sign,/passwordpolicy,/fetch,/forgot,/captcha,/login,/auth,/category,/register",
     "CONTENT_SECURITY_PATH": "/,/home,/welcome,/main,/index,/gui",

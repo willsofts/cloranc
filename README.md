@@ -142,6 +142,48 @@ How to implementation.
 
 (In case of using CSP, try to allow rocket host and rocket websocket too)
 
+## How to manipulate Rocket Chat User
+1. create new user
+- invoke from url, api/chatuser/insert
+
+    ex. curl -X POST http://localhost:8080/api/chatuser/insert -d username=user1,user2,user3
+
+- upload file, upload/chatuser/file
+    
+    ex. curl -X POST http://localhost:8080/upload/chatuser/file -F filename=@users.txt
+
+    Upload user file format is:
+    
+        username,email,password
+
+    ex. users.txt
+
+        user1,user1@gmail.com
+        user2,user2@gmail.com
+        user3,user3@gmail.com
+
+    you can defined only username (email & password default by username)
+
+2. delete user
+- invoke from url, api/chatuser/remove
+
+    ex. curl -X POST http://localhost:8080/api/chatuser/remove -d username=user1,user2,user3
+
+All above API need configuration setting on `config/defaul.json`. ex.
+
+    "CHAT_ADMIN_USER": "your-admin-user-id",
+    "CHAT_ADMIN_TOKEN": "your-admin-user-token",
+    "META_INFO": {
+        "ROCKET_HOST": "http://localhost:3000"
+    },
+
+| Attribute | Description |
+| -------- | ----------- |
+| CHAT_ADMIN_USER | this is a grant user id to manipulate chat user come from [Generate Access Token](https://github.com/willsofts/rocketchat)|
+| CHAT_ADMIN_TOKEN | this is a grant user token come from [Generate Access Token](https://github.com/willsofts/rocketchat) |
+| ROCKET_HOST | this point to rocket chat server url |
+
+
 ## How to work with SignalR notification
 1. change setting on `config/default.json` to enable and configure to SignalR notification server with `META_INFO` attribute. ex.
 

@@ -1,0 +1,49 @@
+import { KnModel } from "@willsofts/will-db";
+import { KnRecordSet, KnResultSet } from "@willsofts/will-sql";
+import { Sfte016Handler } from "./Sfte016Handler";
+import { ChatUserInfo, ChatUserNameInfo, ChatUserHandler } from "../chatuser/ChatUserHandler";
+
+export class RocketSfte016Handler extends Sfte016Handler {
+    protected override async doCreating(context: any, model: KnModel): Promise<KnResultSet> {
+        let rs = await super.doCreating(context,model);
+        if(rs.rows.length > 0) {
+            let handler = new ChatUserHandler();
+            handler.obtain(this.broker,this.logger);
+            let vi = await handler.validateConfigure();
+            if(vi.valid) {
+                let row = rs.rows[0];
+                let userid = row.userid;
+                let usernames = row.username.split("@");
+                let username = usernames[0];
+                let email = row.email || username + (usernames[1] ? "@"+usernames[1] : "@gmail.com");
+                let chatuser : ChatUserInfo = {
+                    username: userid, name: username, email: email, password: userid, active: true 
+                };
+                handler.performInserting([chatuser])
+                .then(rs => this.logger.info(this.constructor.name+".doCreating",rs))
+                .catch(ex => this.logger.error(ex));
+            }
+        }
+        return rs;
+    }
+
+    protected override async doClearing(context: any, model: KnModel): Promise<KnRecordSet> {
+        let rs = await super.doClearing(context,model);
+        if(rs.records > 0) {
+            let userid = context.params.userid;
+            if(userid && userid.trim().length > 0) {
+                let handler = new ChatUserHandler();
+                handler.obtain(this.broker,this.logger);
+                let vi = await handler.validateConfigure();
+                if(vi.valid) {
+                    let chatuser : ChatUserNameInfo = { username: userid };
+                    handler.performRemoving([chatuser])
+                    .then(rs => this.logger.info(this.constructor.name+".doClearing",rs))
+                    .catch(ex => this.logger.error(ex));
+                }
+            }
+        }
+        return rs;
+    }
+
+}

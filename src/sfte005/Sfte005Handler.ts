@@ -4,7 +4,7 @@ import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "
 import { HTTP } from "@willsofts/will-api";
 import { Utilities } from "@willsofts/will-util";
 import { PasswordLibrary } from "@willsofts/will-lib";
-import { DEFAULT_PRIVILEGES } from "../utils/EnvironmentVariable";
+import { DEFAULT_PRIVILEGES, CREATE_USER_UUID } from "../utils/EnvironmentVariable";
 import { TknOperateHandler } from '@willsofts/will-serv';
 import { KnUtility } from '@willsofts/will-core';
 import { KnPageUtility } from '@willsofts/will-core';
@@ -292,12 +292,18 @@ export class Sfte005Handler extends TknOperateHandler {
         return [Utilities.translateVariables(msg, record),tmp];	
     }
 
+    protected createUserId(username: string) : string {
+        if(CREATE_USER_UUID) return uuid();
+        //rocket chat user do not accept @ sign in user name
+        return username.replaceAll("@",".");
+    }
+
     public async insertUserTable(context: KnContextInfo, model: KnModel, db: KnDBConnector, found: boolean) : Promise<KnRecordSet> {
         let result = this.createRecordSet();
         let site = context.params.site;
         if(!site || site.trim()=="") site = this.userToken?.site;
         let curdate = Utilities.now();
-        context.params.userid = uuid();
+        context.params.userid = this.createUserId(context.params.username);
         let plib = new PasswordLibrary();
         let passwordexpiredate = await plib.getUserExpireDate(db, context.params.userid, curdate);
         let userpassword = context.params.userpassword;
@@ -306,7 +312,7 @@ export class Sfte005Handler extends TknOperateHandler {
         }
         let displayname = context.params.displayname;
         if(!displayname || displayname.trim().length==0) displayname = context.params.usertname+" "+context.params.usertsurname;
-        let record = { userfullname: context.params.usertname+" "+context.params.usertsurname, displayname: displayname, 
+        let record = { userid: context.params.userid, userfullname: context.params.usertname+" "+context.params.usertsurname, displayname: displayname, 
             username: context.params.username, userpassword: userpassword, passwordexpiredate: passwordexpiredate,
             email: context.params.email, mobile: context.params.mobile, lineid: context.params.lineid
         };

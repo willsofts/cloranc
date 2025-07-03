@@ -56,6 +56,9 @@ export const AVATAR_IMAGE_BASE64: boolean = config.env("AVATAR_IMAGE_BASE64","tr
 export const AVATAR_IMAGE_FROM_TEXT: boolean = config.env("AVATAR_IMAGE_FROM_TEXT","false") === "true";
 export const AVATAR_IMAGE_PATH: string = config.env("AVATAR_IMAGE_PATH"); 
 
+export const ROCKET_CHAT_URL: string = config.env("ROCKET_CHAT_URL"); 
+export const CHAT_ADMIN_USER: string = config.env("CHAT_ADMIN_USER"); 
+export const CHAT_ADMIN_TOKEN: string = config.env("CHAT_ADMIN_TOKEN"); 
 export const CHAT_USER: string = config.env("CHAT_USER"); 
 export const CHAT_PASSWORD: string = config.env("CHAT_PASSWORD"); 
 export const NOTIFY_USER: string = config.env("NOTIFY_USER"); 
@@ -63,3 +66,4 @@ export const NOTIFY_TOKEN: string = config.env("NOTIFY_TOKEN");
 export const NOTIFY_TOKEN_STYLE: string = config.env("NOTIFY_STYLE"); 
 export const NOTIFY_USER_DEFAULT: boolean = config.env("NOTIFY_USER_DEFAULT","false") === "true"; 
 export const NOTIFY_TOKEN_DEFAULT: boolean = config.env("NOTIFY_TOKEN_DEFAULT","false") === "true"; 
+export const CREATE_USER_UUID: boolean = config.env("CREATE_USER_UUID","false") === "true"; 

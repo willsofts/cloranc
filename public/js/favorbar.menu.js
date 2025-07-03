@@ -10,7 +10,7 @@
 			}
 			function addBlankMenuItem(alink) {
 				let seqno = alink.attr("seqno");
-				$blank = $("<a href=\"javascript:void(0);\" class=\"kt-grid-nav__item tile fa-box-title fav-blank\" title=\"New Favorite\" seqno=\""+seqno+"\"><span class=\"kt-grid-nav__icon\"><img class=\"fa fa-app-image\" src=\""+CDN_URL+"/img/apps/fs_icon.png\" /></span><span class=\"kt-grid-nav__title font-size-custom-h-14\">New Favorite</span></a>");
+				$blank = $("<a href=\"javascript:void(0);\" class=\"kt-grid-nav__item tile fa-box-title fav-blank\" title=\"New Favorite\" seqno=\""+seqno+"\"><span class=\"kt-grid-nav__icon\"><img class=\"fa fa-app-image\" src=\""+IMG_URL+"/img/apps/fs_icon.png\" /></span><span class=\"kt-grid-nav__title font-size-custom-h-14\">New Favorite</span></a>");
 				$blank.click(function(evt) { 
 					evt.stopPropagation();
 					fs_current_favor_item = $(this);
@@ -28,8 +28,8 @@
 				}
 			}
 			function setupTodo(alink) {
-				if(!CDN_URL) CDN_URL = "";
-				let $del = $("<li><img src=\""+CDN_URL+"/img/delete_icon.png\" title=\"Delete\" width=\"25px\" height=\"25px\"/></li>");
+				if(!IMG_URL) IMG_URL = "";
+				let $del = $("<li><img src=\""+IMG_URL+"/img/delete_icon.png\" title=\"Delete\" width=\"25px\" height=\"25px\"/></li>");
 				$del.click(function(evt) { 
 					evt.stopPropagation();
 					let fs_user = $("#main_user").val();
@@ -68,7 +68,7 @@
 				if(!fs_prog || !fs_title || !fs_icon) return;
 				let fs_seqno = alink.attr("seqno");
 				let fs_user = $("#main_user").val();
-				let $img = $("<img class=\"fa fa-app-image\" src=\""+CDN_URL+"/img/apps/"+fs_icon+"\"></img>");
+				let $img = $("<img class=\"fa fa-app-image\" src=\""+IMG_URL+"/img/apps/"+fs_icon+"\"></img>");
 				let $div = $("<span class=\"kt-grid-nav__icon\"></span>").append($img);
 				let $span = $("<span class=\"kt-grid-nav__title font-size-custom-h-14\">"+fs_title+"</span>");
 				let $newlink = $("<a href=\"javascript:void(0);\" class=\"kt-grid-nav__item tile fa-box-title fav-app\" pid=\""+fs_prog+"\" seqno=\""+fs_seqno+"\"></a>");
@@ -93,7 +93,7 @@
 								if(!iconfile || $.trim(iconfile)=="") {
 									iconfile = "application.png";
 								}
-								$img.attr("src",CDN_URL+"/img/apps/"+iconfile);
+								$img.attr("src",IMG_URL+"/img/apps/"+iconfile);
 								$newlink.attr("data-path",row.progpath?row.progpath:"");
 								$newlink.attr("data-new",row.newflag?row.newflag:"");
 								$newlink.attr("data-method",row.openmethod?row.openmethod:"");

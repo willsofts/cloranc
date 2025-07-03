@@ -184,3 +184,11 @@ try broadcast message with json format:
 		]
 	}
 }
+
+test create/delete rocket chat user
+- create user 
+curl -X POST http://localhost:8080/api/chatuser/insert -d username=user1,user2,user3
+- delete user
+curl -X POST http://localhost:8080/api/chatuser/remove -d username=user1,user2,user3
+- upload file to create bulk user
+curl -X POST http://localhost:8080/upload/chatuser/file -F filename=@D:\node\willsofts\cloranc\src\chatuser\users.txt

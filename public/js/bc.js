@@ -22,7 +22,7 @@ function startReceiveBroadcast() {
         });
     }
 }
-function openChatRoom(roomname) {
+function openChatRoom(roomname,callback) {
     console.log("bc: openChatRoom",roomname);
     if(roomname && roomname.trim().length > 0) {
         let chatingframe = document.getElementById("chatingframe");
@@ -31,6 +31,7 @@ function openChatRoom(roomname) {
             try { 
                 chatingwindow.openChatRoom(roomname);
                 $("#fschatinglayer").show();
+                if(callback) callback();
             } catch(ex) { console.error(ex); }
         }
     }
@@ -44,6 +45,23 @@ function createChatRoom(roomname,callback) {
             try { 
                 chatingwindow.createChatRoom(roomname,callback);
             } catch(ex) { console.error(ex); }
+        }
+    }
+}
+function handleIncommingMessage(payload) {
+    if(payload.archetype=="willsofts" && payload.type=="chat") {
+        if(payload.method=="openChatRoom") {
+            openChatRoom(payload.roomname,() => {
+                if(payload.callback) {
+                    sendMessageToFrame({...payload});
+                }
+            });
+        } else if(payload.method=="createChatRoom") {
+            createChatRoom(payload.roomname,() => {
+                if(payload.callback) {
+                    sendMessageToFrame({...payload});
+                }
+            });
         }
     }
 }

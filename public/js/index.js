@@ -623,6 +623,9 @@
 				let payload = JSON.parse(e.data);
 				if(payload.type=="accessorinfo") {					
 					sendMessageInterface();
+				} else {
+					//in bc.js
+					handleIncommingMessage(payload);				
 				}
 			} catch(ex) { }
 		}

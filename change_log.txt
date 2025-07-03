@@ -1,3 +1,10 @@
+2025-07-03
+version: 1.0.3
++ can manipulate rocket chat user (create/delete)
++ can upload user text file to create rocket chat user
++ can open/create chat user cross domain
++ sfte005, sfte016 support create/delete rocket chat user
+
 2025-07-01
 version: 1.0.2
 + fixed login spa default home as first page or work list

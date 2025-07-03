@@ -11,7 +11,7 @@ import { KnPageUtility } from '@willsofts/will-core';
 import { KnNotifyConfig } from '@willsofts/will-core';
 import { TknAccountHandler } from "@willsofts/will-serv";
 import { OPERATE_HANDLERS } from "@willsofts/will-serv";
-import { DEFAULT_PRIVILEGES } from "../utils/EnvironmentVariable";
+import { DEFAULT_PRIVILEGES, CREATE_USER_UUID } from "../utils/EnvironmentVariable";
 import { TknOperateHandler } from '@willsofts/will-serv';
 import { Sfte007Handler } from "../sfte007/Sfte007Handler";
 import { ALWAYS_ACTIVATE_ACCOUNT } from "../utils/EnvironmentVariable";
@@ -376,12 +376,18 @@ export class Sfte016Handler extends TknOperateHandler {
         return [Utilities.translateVariables(msg, record),tmp];	
     }
 
+    protected createUserId(username: string) : string {
+        if(CREATE_USER_UUID) return uuid();
+        //rocket chat user do not accept @ sign in user name
+        return username.replaceAll("@",".");
+    }
+
     public async insertUserTable(context: KnContextInfo, model: KnModel, db: KnDBConnector, found: boolean, status: string = "A") : Promise<KnRecordSet> {
         let result = this.createRecordSet();
         let site = context.params.site;
         if(!site || site.trim().length==0) site = this.userToken?.site;
         let curdate = Utilities.now();
-        context.params.userid = uuid();
+        context.params.userid = this.createUserId(context.params.username);
         let plib = new PasswordLibrary();
         let passwordexpiredate = await plib.getUserExpireDate(db, context.params.userid, curdate);
         let userpassword = context.params.userpassword;
@@ -392,7 +398,7 @@ export class Sfte016Handler extends TknOperateHandler {
         let activateurl = await noti.getActivateURL(db);
         let displayname = context.params.displayname;
         if(!displayname || displayname.trim().length==0) displayname = context.params.usertname+" "+context.params.usertsurname;
-        let record = { userfullname: context.params.usertname+" "+context.params.usertsurname, displayname: displayname, 
+        let record = { userid: context.params.userid, userfullname: context.params.usertname+" "+context.params.usertsurname, displayname: displayname, 
             username: context.params.username, userpassword: userpassword, passwordexpiredate: passwordexpiredate,
             email: context.params.email, mobile: context.params.mobile, lineid: context.params.lineid, activateurl: activateurl
         };

@@ -6,7 +6,7 @@ function getAppConfig(key) {
     return appVariables[key];
 }
 console.log("appConfigs",appVariables);
-function openChatRoom(roomname) {
+function openChatRoom(roomname,callback) {
     console.log("app.config: openChatRoom",roomname);
     if(roomname && roomname.trim().length > 0) {
         let chatingframe = document.getElementById("chatingframe");
@@ -15,6 +15,7 @@ function openChatRoom(roomname) {
             try { 
                 chatingwindow.openChatRoom(roomname);
                 $("#fschatinglayer").show();
+                if(callback) callback();
             } catch(ex) { console.error(ex); }
         }
     }
