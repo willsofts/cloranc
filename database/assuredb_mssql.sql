@@ -156,6 +156,8 @@ CREATE TABLE [dbo].[tattachfile] (
   [attachgroup] varchar(50) COLLATE Thai_CI_AS DEFAULT NULL NULL,
   [attachpath] varchar(350) COLLATE Thai_CI_AS DEFAULT NULL NULL,
   [attachurl] varchar(250) COLLATE Thai_CI_AS DEFAULT NULL NULL,
+  [attachbucket] varchar(100) COLLATE Thai_CI_AS DEFAULT NULL NULL,
+  [attachdir] varchar(250) COLLATE Thai_CI_AS DEFAULT NULL NULL,
   [attachsize] bigint DEFAULT NULL NULL,
   [attachstream] text COLLATE Thai_CI_AS  NULL
 )
@@ -391,7 +393,8 @@ CREATE TABLE [dbo].[tconstant] (
   [nameen] varchar(100) COLLATE Thai_CI_AS  NOT NULL,
   [nameth] varchar(100) COLLATE Thai_CI_AS  NOT NULL,
   [seqno] int DEFAULT NULL NULL,
-  [iconfile] varchar(100) COLLATE Thai_CI_AS DEFAULT NULL NULL
+  [iconfile] varchar(100) COLLATE Thai_CI_AS DEFAULT NULL NULL,
+  [typestyle] varchar(50) COLLATE Thai_CI_AS DEFAULT NULL NULL
 )
 GO
 

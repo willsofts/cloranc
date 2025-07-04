@@ -91,8 +91,10 @@ CREATE TABLE IF NOT EXISTS `tattachfile` (
   `attachremark` varchar(250) DEFAULT NULL,
   `mimetype` varchar(50) DEFAULT NULL,
   `attachgroup` varchar(50) DEFAULT NULL,
-  `attachpath` varchar(350) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `attachpath` varchar(350) DEFAULT NULL,
   `attachurl` varchar(250) DEFAULT NULL,
+  `attachbucket` VARCHAR(100) DEFAULT NULL,
+  `attachdir` VARCHAR(250) DEFAULT NULL,
   `attachsize` bigint DEFAULT NULL,
   `attachstream` longtext,
   PRIMARY KEY (`attachid`),
@@ -228,8 +230,9 @@ CREATE TABLE IF NOT EXISTS `tconstant` (
   `nameth` varchar(100) NOT NULL,
   `seqno` int DEFAULT NULL,
   `iconfile` varchar(100) DEFAULT NULL,
+  `typestyle` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`typename`,`typeid`)
-) ENGINE=InnoDB DEFAULT CHARSET=tis620 COMMENT='table keep constant/category description';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep constant/category description';
 
 INSERT INTO `tconstant` (`typename`, `typeid`, `nameen`, `nameth`, `seqno`, `iconfile`) VALUES
 	('tactive', '0', 'Active', 'ใช้งาน', 1, NULL),
