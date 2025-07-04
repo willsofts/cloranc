@@ -1,3 +1,15 @@
+2025-07-04
+version: 1.0.4
++ support send more parameter culture when launch screen
++ notify send more parameter culture value when open work list
+(using tconstant.typestyle as a culture value, default by current language)  
++ alter table
+ALTER TABLE `tconstant`
+	ADD COLUMN `typestyle` VARCHAR(50) NULL DEFAULT NULL AFTER `iconfile`;
+
+UPDATE tconstant SET typestyle='en' WHERE  typename='tlanguage' AND typeid='EN';
+UPDATE tconstant SET typestyle='th' WHERE  typename='tlanguage' AND typeid='TH';
+
 2025-07-03
 version: 1.0.3
 + can manipulate rocket chat user (create/delete)

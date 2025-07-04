@@ -1,9 +1,18 @@
+import { v4 as uuid } from 'uuid';
 import { KnModel } from "@willsofts/will-db";
 import { KnRecordSet, KnResultSet } from "@willsofts/will-sql";
 import { Sfte005Handler } from "./Sfte005Handler";
 import { ChatUserInfo, ChatUserNameInfo, ChatUserHandler } from "../chatuser/ChatUserHandler";
+import { CREATE_USER_UUID } from "../utils/EnvironmentVariable";
 
 export class RocketSfte005Handler extends Sfte005Handler {
+
+    protected override createUserId(username: string) : string {
+        if(CREATE_USER_UUID) return uuid();
+        //rocket chat user do not accept @ sign in user name
+        return username.replaceAll("@",".");
+    }
+
     protected override async doCreating(context: any, model: KnModel): Promise<KnResultSet> {
         let rs = await super.doCreating(context,model);
         if(rs.rows.length > 0) {

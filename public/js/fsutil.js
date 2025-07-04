@@ -88,7 +88,8 @@ function open_program(opts) {
 	if(url && $.trim(url)!="") {
 		appurl = "/load/"+appid; //+"?seed="+Math.random()+(params?"&"+params:"");
 	}
-	console.log("open : "+appurl);
+	let culture = getDefaultCulture();
+	console.log("open : "+appurl,", language",fs_default_language,", culture",culture);
 	html = openmethod == "GET" ? "GET" : html;
 	$("#page_login").hide();
 	let authtoken = getAccessorToken();
@@ -97,7 +98,7 @@ function open_program(opts) {
 			method: html?"GET":"POST",
 			url : appurl,
 			windowName: "fs_window_"+appid,
-			params: "seed="+Math.random()+"&authtoken="+authtoken+"&language="+fs_default_language+(params?"&"+params:"")
+			params: "seed="+Math.random()+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
 		});
 		awin.focus();
 	} else {
@@ -108,7 +109,7 @@ function open_program(opts) {
 			method: html?"GET":"POST",
 			url : appurl,
 			windowName: target,
-			params: "seed="+Math.random()+"&authtoken="+authtoken+"&language="+fs_default_language+(params?"&"+params:"")
+			params: "seed="+Math.random()+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
 		});
 		startWaiting();
 	}
@@ -186,4 +187,38 @@ function clearSubHeader() {
 	$("#kt_subheader").removeClass("dp-none");
 	$("#subheader_link").empty();
 	$("#subheader_wrapper").empty();
+}
+function getDefaultCulture() {
+	let record = undefined;
+	let langs = getStorage("tklanguage");
+	if(langs) {
+		record = langs.find(item => item.typeid == fs_default_language);
+	}
+	return record ? record.typestyle || fs_default_language : fs_default_language;
+}
+function fetchMoreInfo() {
+	fetchLanguages();
+}
+function fetchLanguages() {
+	if(getStorage("tklanguage")) return;
+	let authtoken = getAccessorToken();
+	jQuery.ajax({
+		url: API_URL+"/api/category/lists",
+		data: { names: "tklanguage" },
+		headers : { "authtoken": authtoken },
+		type: "POST",
+		dataType: "json",
+		contentType: defaultContentType,
+		error : function(transport,status,errorThrown) { 
+			console.error(errorThrown);
+		},
+		success: function(data) { 
+			if(data.body) {
+				let rows = data.body[0].resultset.rows;
+				if(rows) {
+					setStorage("tklanguage",rows);
+				}
+			}
+		}
+	});	
 }

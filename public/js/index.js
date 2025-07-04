@@ -158,6 +158,7 @@
 			$('#page_login').hide();
 			createMenu(); 
 			startupPage(firstpage); 
+			fetchMoreInfo();
 		}
 		function createMenu(){
 			$("#aside_header").show();

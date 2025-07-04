@@ -378,8 +378,7 @@ export class Sfte016Handler extends TknOperateHandler {
 
     protected createUserId(username: string) : string {
         if(CREATE_USER_UUID) return uuid();
-        //rocket chat user do not accept @ sign in user name
-        return username.replaceAll("@",".");
+        return username
     }
 
     public async insertUserTable(context: KnContextInfo, model: KnModel, db: KnDBConnector, found: boolean, status: string = "A") : Promise<KnRecordSet> {

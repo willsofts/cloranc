@@ -19,6 +19,15 @@ function getCurrentUser() {
 function getCurrentLanguage() {
     return fs_default_language || "EN";
 }
+function getCurrentCulture() {
+    let deflang = getCurrentLanguage();
+	let record = undefined;
+	let langs = getStorage("tklanguage");
+	if(langs) {
+		record = langs.find(item => item.typeid == deflang);
+	}
+	return record ? record.typestyle || deflang : deflang;
+}
 function createNotifyConfigure() {
     let token = getTokenKey();
     if(NOTIFY_TOKEN_STYLE=="fskey") {
@@ -501,8 +510,8 @@ function load_url_content(url) {
     console.log("load_url_content: url",url);
     if (!url) return false;
     let cfg = createNotifyConfigure();
-    let language = getCurrentLanguage();
-    let linkto = `${NOTIFY_WEB_URL}/elastic/${url}&${cfg.param}&culture=${language}`;
+    let culture = getCurrentCulture();
+    let linkto = `${NOTIFY_WEB_URL}/elastic/${url}&${cfg.param}&culture=${culture}`;
     window.parent.displayWorkingFrame(linkto);
 }
 function getFsText(texten, textth) {
