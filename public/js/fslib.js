@@ -1771,10 +1771,10 @@ function getDH() {
     }
     return null;
 }
-function sendMessageInterface() {
+function sendMessageInterface(type,win) {
 	let info = getAccessorInfo();
-	let msg = {type: "storage", archetype: "willsofts", API_URL: API_URL, BASE_URL: BASE_URL, CDN_URL: CDN_URL, IMG_URL: IMG_URL, DEFAULT_LANGUAGE: fs_default_language, API_TOKEN: API_TOKEN, BASE_STORAGE: BASE_STORAGE, SECURE_STORAGE: SECURE_STORAGE, BASE_CSS: BASE_CSS, MULTI_LANGUAGES: MULTI_LANGUAGES, META_INFO: META_INFO, accessorinfo: info};
-	sendMessageToFrame(msg);
+	let msg = {type: type || "storage", archetype: "willsofts", API_URL: API_URL, BASE_URL: BASE_URL, CDN_URL: CDN_URL, IMG_URL: IMG_URL, DEFAULT_LANGUAGE: fs_default_language, API_TOKEN: API_TOKEN, BASE_STORAGE: BASE_STORAGE, SECURE_STORAGE: SECURE_STORAGE, BASE_CSS: BASE_CSS, MULTI_LANGUAGES: MULTI_LANGUAGES, META_INFO: META_INFO, accessorinfo: info};
+	sendMessageToFrame(msg,win);
 }
 function sendMessageToFrame(data,win) {
     if(!data) return false;
