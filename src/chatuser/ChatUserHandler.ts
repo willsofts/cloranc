@@ -2,7 +2,7 @@ import { KnModel } from "@willsofts/will-db";
 import { HTTP } from "@willsofts/will-api";
 import { KnContextInfo, KnValidateInfo } from '@willsofts/will-core';
 import { TknOperateHandler } from '@willsofts/will-serv';
-import { CHAT_ADMIN_USER, CHAT_ADMIN_TOKEN, META_INFO, ROCKET_CHAT_URL } from "../utils/EnvironmentVariable";
+import { CHAT_ADMIN_USER, CHAT_ADMIN_TOKEN, META_INFO, ROCKET_CHAT_URL, CHAT_PASSWORD } from "../utils/EnvironmentVariable";
 import { VerifyError } from "@willsofts/will-core";
 import LineByLine from "n-readlines";
 import axios from 'axios';
@@ -67,7 +67,7 @@ export class ChatUserHandler extends TknOperateHandler {
                             username: username,                         
                             name: username,
                             email: texts[1] || username+"@gmail.com", 
-                            password: texts[2] || username,
+                            password: texts[2] || CHAT_PASSWORD || username,
                             active: true
                         };
                         results.push(user);
@@ -86,7 +86,13 @@ export class ChatUserHandler extends TknOperateHandler {
                 let userary = usertext.split(",");
                 for(let username of userary) {
                     if(username && username.trim().length > 0) {
-                        results.push({username: username, email: username+"@gmail.com", name: username, password: username, active: true});
+                        results.push({
+                            username: username, 
+                            email: username+"@gmail.com", 
+                            name: username, 
+                            password: CHAT_PASSWORD || username, 
+                            active: true
+                        });
                     }
                 }
             }
