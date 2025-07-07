@@ -10,6 +10,17 @@
     <title>Work List</title>
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
+    <script>
+		window.onmessage = function(e) {
+			console.log("worklist: onmessage:",e.data);
+			try {
+				let payload = JSON.parse(e.data);
+				if(payload.archetype=="willsofts" && payload.type=="appinfo") {					
+					console.log("accessor info:",payload.accessorinfo);
+				}
+			} catch(ex) { console.error(ex); }
+		}
+    </script>
 </head>
 <body>
 	<div id="bodylayer" class="container">
