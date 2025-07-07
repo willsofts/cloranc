@@ -14,7 +14,7 @@
     "XFRAME_OPTION": "false",
     "DISABLE_DIFFIE": "true",
     "META_INFO": {
-        "appstype":"", "register": false, "ALLOW_AUTHEN_SAML_ONLY": false, "DISPLAY_PAGE_HEADER": false,
+        "appstype":"", "register": false, "ALLOW_AUTHEN_SAML_ONLY": false, "DISPLAY_PAGE_HEADER": false, "DISABLE_DIFFIE": true,
         "chat": false, "ROCKET_HOST": "http://localhost:3000", "ROCKET_WEBSOCKET": "ws://localhost:3000/websocket",
         "language": true,  
         "notify": false, 
