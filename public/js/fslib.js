@@ -1779,7 +1779,7 @@ function sendMessageInterface(type,win) {
 function sendMessageToFrame(data,win) {
     if(!data) return false;
     try {
-		console.log("sendMessageToFrame:",data);
+		console.log("sendMessageToFrame:",data,", win",win);
         data.archetype = "willsofts";
         if(win) {
             win.postMessage(JSON.stringify(data), "*");	

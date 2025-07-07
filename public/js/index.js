@@ -561,14 +561,14 @@
 			});
 			$("#workingframe").on("load",function() { 
 				try{stopWaiting();}catch(ex){}
-				if(!String(META_INFO.AUTO_INJECT_INFO)=="false") {
+				if(!(String(META_INFO.AUTO_INJECT_INFO)=="false")) {
 					sendMessageInterface("appinfo",document.getElementById('workingframe').contentWindow); 
 				}
 				if(ALERT_BEFORE_TIMEOUT) try{initWorkingTimer();}catch(ex){} 
 			});
 			$("#workingframe2").on("load",function() { 
 				try{stopWaiting();}catch(ex){}
-				if(!String(META_INFO.AUTO_INJECT_INFO)=="false") {
+				if(!(String(META_INFO.AUTO_INJECT_INFO)=="false")) {
 					sendMessageInterface("appinfo",document.getElementById('workingframe2').contentWindow);
 				}
 			});
@@ -610,7 +610,6 @@
 				if(!valid) {
 					displayLogin();
 				} else {
-					sendMessageInterface(json.body);
 					verifyAfterLogin(json.body);
 				}
 			});
