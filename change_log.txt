@@ -1,3 +1,7 @@
+2025-07-07
+version: 1.0.5
++ support auto inject info to screen worker
+
 2025-07-04
 version: 1.0.4
 + support send more parameter culture when launch screen
