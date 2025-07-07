@@ -1,6 +1,8 @@
 2025-07-07
 version: 1.0.5
 + support auto inject info to screen worker
++ fixed signin display expired date 
+(fix date instance creation by using Utilities.date function instead)
 
 2025-07-04
 version: 1.0.4
