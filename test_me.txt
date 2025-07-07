@@ -171,10 +171,13 @@ curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/datas
 curl -X POST -H "Content-Type: application/json" http://localhost:8080/api/dataservice/lists -d "{\"apiname\":[\"api_prog\",\"api_role\"],\"site\":\"FWS\"}"
 
 test SignalR
-D:\Projects\Cloranc\signalr\SignalRChat
+- run SignalRChat
+goto D:\Projects\Cloranc\signalr\SignalRChat
 dotnet run --urls "http://localhost:5000"
+- open chat
 goto http://localhost:8080/notify/noti.html
-try broadcast message with json format:
+try to chat message:
+try to broadcast message in json format when integrate with menu:
 {
 	"rOutputData": {
 		"isShow": "Y", 
