@@ -34,6 +34,10 @@ get user info by user uuid
 curl -X POST http://localhost:8080/api/sign/fetchtoken?useruuid=?
 curl -X POST http://localhost:8080/api/sign/fetchtoken/?
 
+get user info (roles, groups, branches)
+curl http://localhost:8080/api/userinfo/get?authtoken=?
+curl -X POST -H "AuthToken: ?" http://localhost:8080/api/userinfo/get
+
 validate token
 curl -X POST -H "AuthToken: ?" http://localhost:8080/api/sign/validatetoken
 curl -X POST http://localhost:8080/api/sign/validatetoken -d authtoken=?
