@@ -28,7 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "@willsofts/will-api": "^1.0.15",
-    "@willsofts/will-core": "^1.1.41",
+    "@willsofts/will-core": "^1.1.42",
     "@willsofts/will-db": "^1.0.63",
     "@willsofts/will-dh": "^1.0.2",
     "@willsofts/will-lib": "^1.0.36",
@@ -36,7 +36,7 @@
     "@willsofts/will-saml": "^1.0.5",
     "@willsofts/will-serv": "^1.0.65",
     "@willsofts/will-sql": "^1.0.36",
-    "@willsofts/will-util": "^1.0.26",
+    "@willsofts/will-util": "^1.0.27",
     "activedirectory": "^0.7.2",
     "axios": "^1.9.0",
     "bcrypt": "^5.1.0",
