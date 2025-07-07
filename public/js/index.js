@@ -600,7 +600,6 @@
 						ksh = $("#kt_subheader").height();
 					}
 					let wfh = (wh-kh-ksh) - fs_workingframe_offset;
-					console.log("workingframe: height",wfh);
 					$("#workingframe").height(wfh);
 			}).trigger("resize");
 			let pos = $("#loginframe").position();
