@@ -280,11 +280,20 @@ with `META_INFO` attribute can settings.
 
 ## How to cached access info into Redis
 This use package library [ioredis](https://www.npmjs.com/package/ioredis). 
-In order to cached access info into Redis can setting by `config/default.json` with tag `REDIS_CONFIG`.
+In order to cached access info into Redis can setting by `config/default.json` with the following tag.
 
 ```json
-    "REDIS_CONFIG": { "host": "127.0.0.1", "port": 6379 }
+    "REDIS_CONFIG": { "host": "127.0.0.1", "port": 6379 },
+    "REDIS_TIMEOUT": 3600000,
 ```
+
+| Attribute | Description |
+| -------- | ----------- |
+| REDIS_CONFIG | to defined configuration of Redis connection. see more [Redis Config](#redis-config)|
+| REDIS_TIMEOUT | to defined time to live of Redis key, default 1 hour. |
+
+### Redis Config
+This is redis configurations
 
 | Attribute | Description |
 | -------- | ----------- |
