@@ -1,3 +1,18 @@
+2025-07-08
+version: 1.0.6
++ create new table keep user/pwd for chat user (table name is tchatuser)
++ effect api: api/chatuser & upload/chatuser
++ effect screen: 
+	- chat screen find out password from table tchatuser
+	(in case not found will alert message box)
+	- sfte005 & sfte016 
+
+CREATE TABLE IF NOT EXISTS `tchatuser` (
+  `username` varchar(50) NOT NULL COMMENT 'tuser.userid',
+  `userpassword` varchar(50) NOT NULL,
+  PRIMARY KEY (`username`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep chat user';
+
 2025-07-07
 version: 1.0.5
 + support auto inject info to screen worker

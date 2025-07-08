@@ -1,0 +1,14 @@
+[
+	{
+		"language": "TH",
+		"label": [
+			{"name": "caption", "value": "Chat"},
+			{"name": "chatusernotfound", "value": "ขออภัย, ไม่พบชื่อบัญชีผู้ใช้ในการสนทนา"}		]
+	},
+	{
+		"language": "EN",
+		"label": [
+			{"name": "caption", "value": "Chat"},
+			{"name": "chatusernotfound", "value": "Sorry, Chat account info not found."}		]
+	}
+]

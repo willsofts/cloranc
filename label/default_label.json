@@ -46,6 +46,7 @@
 			{"name": "uploadbutton", "value": "อัพโหลด"},
 			{"name": "consendbutton", "value": "ส่งแบบสอบถาม"},
 			{"name": "modalheadertitle_new", "value": "สร้างใหม่"},
+			{"name": "caution", "value": "คำเตือน"},
 			{"name": "removebutton", "value": "ลบ"}		]
 	},
 	{
@@ -95,6 +96,7 @@
 			{"name": "uploadbutton", "value": "Upload"},
 			{"name": "consendbutton", "value": "Send"},
 			{"name": "modalheadertitle_new", "value": "Add New"},
+			{"name": "caution", "value": "CAUTION"},
 			{"name": "removebutton", "value": "Remove"}		]
 	}
 ]

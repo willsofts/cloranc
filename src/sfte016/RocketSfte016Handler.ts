@@ -26,9 +26,9 @@ export class RocketSfte016Handler extends Sfte016Handler {
                 let username = usernames[0];
                 let email = row.email || username + (usernames[1] ? "@"+usernames[1] : "@gmail.com");
                 let chatuser : ChatUserInfo = {
-                    username: userid, name: username, email: email, password: userid, active: true 
+                    username: userid, name: username, email: email, password: handler.createNewPassword(), active: true 
                 };
-                handler.performInserting([chatuser])
+                handler.performInserting(context,[chatuser])
                 .then(rs => this.logger.info(this.constructor.name+".doCreating",rs))
                 .catch(ex => this.logger.error(ex));
             }
@@ -46,7 +46,7 @@ export class RocketSfte016Handler extends Sfte016Handler {
                 let vi = await handler.validateConfigure();
                 if(vi.valid) {
                     let chatuser : ChatUserNameInfo = { username: userid };
-                    handler.performRemoving([chatuser])
+                    handler.performRemoving(context,[chatuser])
                     .then(rs => this.logger.info(this.constructor.name+".doClearing",rs))
                     .catch(ex => this.logger.error(ex));
                 }

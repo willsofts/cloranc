@@ -1,40 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>Assure</title>		
+		<title><%=label.get('project_title','Cloranc')%></title>		
 		<%- include('../asset/meta') %>		
 		<%- include('../asset/stylesmain') %>		
-		<%- include('../asset/scriptsmain') %>		
-		<% if(!(meta.info?.appstype == "W")) { %>		
+		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/metronic/plugins/global/plugins.bundle-min.css" />
+		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/metronic/css/style.bundle-min.css" />
+		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/metronic/css/skins/header/base/light-min.css" />
+		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/metronic/css/skins/header/menu/light-min.css" />
+		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/metronic/css/skins/brand/dark-min.css" />
+		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/metronic/css/skins/aside/dark-min.css" />
+		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/app.custom.css" />
+		<link rel="stylesheet" href="<%=meta.cdn_url%>/assets/app.setting.css" />
+		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/app.setting.js"></script>
+		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/metronic/plugins/global/plugins.bundle.js"></script>
+		<script type="text/javascript" src="<%=meta.cdn_url%>/assets/metronic/js/scripts.bundle.js"></script>
+		<%- include('../asset/scriptsmain') %>
+		<% if(!(meta.info?.appstype == "WEB")) { %>		
 		<script type="text/javascript" src="<%=meta.cdn_url%>/js/msal-browser.js" defer></script>
 		<script type="text/javascript" src="<%=meta.cdn_url%>/js/auth.js" defer></script>
 		<% } %>
-		<script type="text/javascript" src="<%=meta.cdn_url%>/js/index.js" defer></script>
+		<script type="text/javascript" src="<%=meta.cdn_url%>/js/index.js"></script>
 	</head>
-	<body class="portalbody portalbody-off body-login">
-		<nav id="navigatebar" class="navbar navbar-expand navigatebar-top fa-hidden">
-			<%- include('../partials/main_header') %>		
-		</nav>
-		<nav id="sidebarmenu" class="sidebar sidebar-menu main sidebar-hide fliph navbar-expand fa-hidden">
-			<div id="sidebarheader" class="sidebar-header">
-				<div class="input-group-search has-search">
-					<span id="searchspan" class="fa fa-search form-control-search" aria-hidden="true"></span>
-					<input type="text" id="sidemenusearchtext" class="form-control form-control-input-search input-md" placeholder="Search" />
-				</div>
-			</div>
-			<div id="sidebarlayer" class="sidebar-layer sidebar left">				
-			</div>
-		</nav>
-		<%- include('../partials/page_login') %>		
-		<div id="fsworkinglayer" class="working-class working-control-class">
-			<div id="pagecontainer" class="pt-pager"></div> 
-			<iframe id="workingframe" name="workingframe" width="100%" class="working-frame" title=""></iframe>
-		</div>
+	<body class="portalbody portalbody-off body-login kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--fixed kt-subheader--solid kt-aside--enabled kt-aside--fixed kt-page--loading">		
+        <div id="kt_header_mobile" class="kt-header-mobile  kt-header-mobile--fixed fa-hidden">
+            <div class="kt-header-mobile__logo">
+                <a href="javascript:void(0)" class="home-page-linker" id="mobilehomepagelinker">
+                    <img alt="Logo" src="/img/app_logo_title.png" />
+                </a>
+            </div>
+            <div class="kt-header-mobile__toolbar">
+                <button class="kt-header-mobile__topbar-toggler" id="kt_header_mobile_subheader_toggler"><i class="flaticon-exclamation-2"></i></button>
+                <button class="kt-header-mobile__toggler kt-header-mobile__toggler--left" id="kt_aside_mobile_toggler"><span></span></button>
+                <button class="kt-header-mobile__topbar-toggler" id="kt_header_mobile_topbar_toggler"><i class="flaticon-more"></i></button>
+            </div>
+        </div>
+        <div id="aside_header" class="kt-grid kt-grid--hor kt-grid--root fa-hidden">
+            <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page">
+                <%- include('../partials/metro_sider') %>
+                <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor kt-wrapper" id="kt_wrapper">
+                    <%- include('../partials/metro_header') %>
+                    <div id="kt_subheader" class="kt-subheader kt-grid__item">
+                        <div id="kt_subheader_container" class="kt-container kt-container--fluid">
+                            <div class="kt-subheader__main">
+                                <span class="kt-subheader__separator kt-hidden"></span>
+                                <div class="kt-subheader__breadcrumbs" id="subheader_link">
+                                </div>
+                            </div>
+                            <div id="kt_subheader_wrapper" class="kt-subheader__toolbar">
+                                <div class="kt-subheader__wrapper" id="subheader_wrapper">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor mt-3 pt-5" id="kt_content">
+                        <div id="fsworkinglayer" class="working-class working-control-class" >
+                            <div id="pagecontainer" class="pt-pager"></div>
+                            <iframe id="workingframe" name="workingframe" width="100%" title="Working"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="nn_alert_container" class="nn-alert-container first-push"></div>
+        <div id="kt_alert_container" class="kt-alert-continer first-push"></div>
+        <div id="fsworkinglayer2" class="working-class working-control-class" >
+            <iframe id="workingframe2" name="workingframe2" width="100%" title="Working"></iframe>
+        </div>
+		<%- include('../partials/page_login') %>
 		<% if(meta.info?.chat) {%>
 		<div id="fschatinglayer" class="chating-class chating-control-class">
 			<iframe id="chatingframe" name="chatingframe" width="100%" class="chating-frame" title="Chating"></iframe>
 		</div>
-		<%}%>	
+		<%}%>
+		<% if(meta.info?.notify) {%>
+        <div id="fsnotifylayer" class="notify-class notify-control-class">
+            <iframe id="notifyframe" name="notifyframe" width="100%" class="notify-frame" title="Notify"></iframe>
+        </div>  
+		<%}%>
 		<%- include('../partials/page_waiting') %>		
 	</body>
 </html>
