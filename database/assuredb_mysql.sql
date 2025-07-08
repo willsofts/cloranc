@@ -115,6 +115,11 @@ CREATE TABLE IF NOT EXISTS `tcaptcha` (
   PRIMARY KEY (`capid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+CREATE TABLE IF NOT EXISTS `tchatuser` (
+  `username` varchar(50) NOT NULL COMMENT 'tuser.userid',
+  `userpassword` varchar(50) NOT NULL,
+  PRIMARY KEY (`username`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='table keep chat user';
 
 CREATE TABLE IF NOT EXISTS `tcomp` (
   `site` varchar(50) NOT NULL,

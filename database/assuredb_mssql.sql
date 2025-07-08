@@ -195,6 +195,13 @@ ALTER TABLE [dbo].[tcaptcha] SET (LOCK_ESCALATION = TABLE)
 GO
 
 
+CREATE TABLE [dbo].[tchatuser] (
+  [username] varchar(50) COLLATE Thai_CI_AS  NOT NULL,
+  [userpassword] varchar(50) COLLATE Thai_CI_AS  NOT NULL,
+  CONSTRAINT [PK_tchatuser] PRIMARY KEY ([username])
+)
+GO
+
 -- ----------------------------
 -- Records of tcaptcha
 -- ----------------------------
