@@ -6,6 +6,7 @@ version: 1.0.6
 	- chat screen find out password from table tchatuser
 	(in case not found will alert message box)
 	- sfte005 & sfte016 
++ can cached access info into Redis
 
 CREATE TABLE IF NOT EXISTS `tchatuser` (
   `username` varchar(50) NOT NULL COMMENT 'tuser.userid',

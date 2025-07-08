@@ -28,7 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "@willsofts/will-api": "^1.0.15",
-    "@willsofts/will-core": "^1.1.42",
+    "@willsofts/will-core": "^1.1.43",
     "@willsofts/will-db": "^1.0.63",
     "@willsofts/will-dh": "^1.0.2",
     "@willsofts/will-lib": "^1.0.36",
@@ -50,6 +50,7 @@
     "express": "^4.21.2",
     "express-session": "^1.18.1",
     "find-prime": "^3.0.1",
+    "ioredis": "^5.6.1",
     "jaeger-client": "^3.19.0",
     "jsbn": "^1.1.0",
     "jsonwebtoken": "^9.0.2",

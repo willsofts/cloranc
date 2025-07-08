@@ -278,3 +278,17 @@ with `META_INFO` attribute can settings.
 | LOAD_LABEL | `true` to enable load program lable, default `false`. |
 | LOAD_MESSAGE_CODE | `true` to enable load message code, default `false`. |
 
+## How to cached access info into Redis
+This use package library [ioredis](https://www.npmjs.com/package/ioredis). 
+In order to cached access info into Redis can setting by `config/default.json` with tag `REDIS_CONFIG`.
+
+```json
+    "REDIS_CONFIG": { "host": "127.0.0.1", "port": 6379 }
+```
+
+| Attribute | Description |
+| -------- | ----------- |
+| host | to defined Redis server name or address. |
+| port | to defined port number of Redis server. |
+| password | to specified access password if required. |
+| db | to specified access database index if needed. |
