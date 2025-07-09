@@ -279,7 +279,7 @@ with `META_INFO` attribute can settings.
 | LOAD_MESSAGE_CODE | `true` to enable load message code, default `false`. |
 
 ## How to cached access info into Redis
-This use package library [ioredis](https://www.npmjs.com/package/ioredis). 
+Template can cached access info into Redis storage, this use package library [ioredis](https://www.npmjs.com/package/ioredis). \
 In order to cached access info into Redis can setting by `config/default.json` with the following tag.
 
 ```json
