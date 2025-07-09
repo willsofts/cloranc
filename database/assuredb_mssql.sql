@@ -157,7 +157,8 @@ CREATE TABLE [dbo].[tattachfile] (
   [attachpath] varchar(350) COLLATE Thai_CI_AS DEFAULT NULL NULL,
   [attachurl] varchar(250) COLLATE Thai_CI_AS DEFAULT NULL NULL,
   [attachbucket] varchar(100) COLLATE Thai_CI_AS DEFAULT NULL NULL,
-  [attachdir] varchar(250) COLLATE Thai_CI_AS DEFAULT NULL NULL,
+  [attachdir] varchar(350) COLLATE Thai_CI_AS DEFAULT NULL NULL,
+  [attachkey] varchar(350) COLLATE Thai_CI_AS DEFAULT NULL NULL,
   [attachsize] bigint DEFAULT NULL NULL,
   [attachstream] text COLLATE Thai_CI_AS  NULL
 )
