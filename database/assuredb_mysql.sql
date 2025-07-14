@@ -91,6 +91,7 @@ CREATE TABLE IF NOT EXISTS `tattachfile` (
   `attachremark` varchar(250) DEFAULT NULL,
   `mimetype` varchar(50) DEFAULT NULL,
   `attachgroup` varchar(50) DEFAULT NULL,
+  `attachstate` varchar(50) DEFAULT NULL,
   `attachpath` varchar(350) DEFAULT NULL,
   `attachurl` varchar(250) DEFAULT NULL,
   `attachbucket` VARCHAR(100) DEFAULT NULL,
