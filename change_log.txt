@@ -1,3 +1,8 @@
+2025-07-29
+version: 1.0.7
++ fixed bug menu system open screen with external url
++ notify/notify.js set time out wait for start up broadcasting
+
 2025-07-08
 version: 1.0.6
 + create new table keep user/pwd for chat user (table name is tchatuser)
