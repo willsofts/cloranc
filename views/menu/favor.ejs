@@ -11,7 +11,7 @@
                 let iconfile = r.iconfile;
                 if(!iconfile || iconfile.trim().length ==0) iconfile = "application.png";
 %>
-<a href="javascript:void(0)" class="kt-grid-nav__item tile fa-box-title fav-app" seqno="<%=index+1%>" pid="<%=r.programid%>" url="<%=r.url%>" data-path="<%=r.progpath%>" data-new="<%=r.newflag%>" data-method="<%=r.openmethod%>" title="<%=r.programid%>" data-caption="<%=r.shortname%>" data-tree="Shortcut Program#CUT#">
+<a href="javascript:void(0)" class="kt-grid-nav__item tile fa-box-title fav-app" seqno="<%=index+1%>" pid="<%=r.programid%>" url="<%=r.url%>" data-path="<%=r.progpath%>" data-new="<%=r.newflag%>" data-method="<%=r.openmethod%>" data-proxy="<%=r.proxyflag%>" title="<%=r.programid%>" data-caption="<%=r.shortname%>" data-tree="Shortcut Program#CUT#">
     <span class="kt-grid-nav__icon">
         <img class="fa fa-app-image" src="<%=meta.cdn_url%>/img/apps/<%=iconfile%>" alt=""/>
     </span>

@@ -1,6 +1,6 @@
 {
   "name": "cloranc",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "This is project introduce to node application with http server and express framework under moleculer engine",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
   "license": "ISC",
   "dependencies": {
     "@willsofts/will-api": "^1.0.15",
-    "@willsofts/will-core": "^1.1.43",
+    "@willsofts/will-core": "^1.1.44",
     "@willsofts/will-db": "^1.0.63",
     "@willsofts/will-dh": "^1.0.2",
     "@willsofts/will-lib": "^1.0.36",

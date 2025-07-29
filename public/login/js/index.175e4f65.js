@@ -156,7 +156,7 @@ function openProgram(app, accessor, favorite, tree, callback) {
   }
   if (url && url.trim().length > 0) {
     //appurl = getBaseUrl()+"/load/"+appid; 
-    appurl = url + "/" + appid;
+    appurl = url; // + "/" + appid;
     if (apath && apath.trim().length > 0) {
       if (isValidUrl(apath)) {
         appurl = apath;
@@ -176,7 +176,7 @@ function openProgram(app, accessor, favorite, tree, callback) {
       method: html ? "GET" : "POST",
       url: appurl,
       windowName: "fs_window_" + appid,
-      params: "seed=" + Math.random() + "&authtoken=" + authtoken + "&culture=" + culture + "&language=" + deflang + (params ? "&" + params : "")
+      params: "seed=" + Math.random() + "&program=" + appid + "&authtoken=" + authtoken + "&culture=" + culture + "&language=" + deflang + (params ? "&" + params : "")
     });
     awin.focus();
   } else {
@@ -186,7 +186,7 @@ function openProgram(app, accessor, favorite, tree, callback) {
       method: html ? "GET" : "POST",
       url: appurl,
       windowName: "workingframe",
-      params: "seed=" + Math.random() + "&authtoken=" + authtoken + "&culture=" + culture + "&language=" + deflang + (params ? "&" + params : "")
+      params: "seed=" + Math.random() + "&program=" + appid + "&authtoken=" + authtoken + "&culture=" + culture + "&language=" + deflang + (params ? "&" + params : "")
     });
     (0,will_app/* startWaiting */.eF)();
   }
@@ -1287,7 +1287,7 @@ const MetroSiderMenu_exports_ = /*#__PURE__*/(0,exportHelper/* default */.A)(Met
 
 
 
-const buildVersion = "1.0.6";
+const buildVersion = "1.0.7";
 const menuData = {
   sidemap: {},
   sidelist: {}
@@ -2850,7 +2850,7 @@ const SSOPanel_exports_ = /*#__PURE__*/(0,exportHelper/* default */.A)(SSOPanelv
 
 
 
-const LoginFormvue_type_script_lang_js_buildVersion = "20250708-161702";
+const LoginFormvue_type_script_lang_js_buildVersion = "20250729-150813";
 const formData = {
   username: '',
   password: '',
@@ -5219,7 +5219,7 @@ const FactorForm_exports_ = /*#__PURE__*/(0,exportHelper/* default */.A)(FactorF
 
 
 
-const programVersion = "1.0.6";
+const programVersion = "1.0.7";
 /* harmony default export */ var VueSurevue_type_script_lang_js = ({
   components: {
     MetroSiderBar: MetroSiderBar,
@@ -5748,4 +5748,4 @@ console.log("window.jQuery version", window.jQuery.fn.jquery);
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=index.c71c6758.js.map
+//# sourceMappingURL=index.175e4f65.js.map

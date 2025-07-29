@@ -36,7 +36,7 @@
 						let $e = $(this);
 						let pid = $e.attr("data-pid");
 						let url = $e.attr("data-url");						
-						open_page({appid: pid, url: url, path: $e.attr("data-path"), newflag: $e.attr("data-new"), openmethod: $e.attr("data-method"), caption: $e.attr("data-caption"), treepath: $e.attr("data-tree")});
+						open_page({appid: pid, url: url, path: $e.attr("data-path"), newflag: $e.attr("data-new"), openmethod: $e.attr("data-method"), proxyflag:$e.attr("data-proxy"), caption: $e.attr("data-caption"), treepath: $e.attr("data-tree")});
 					});
 				});
 			}

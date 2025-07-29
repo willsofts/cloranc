@@ -23,7 +23,7 @@
 				let url = alink.attr("url");
 				if(pid && pid!="") {
 					alink.click(function() { 
-						open_page({appid: pid,url: url, path: alink.attr("data-path"), newflag: alink.attr("data-new"), openmethod: alink.attr("data-method"), caption: alink.attr("data-caption") || alink.find("span").html(), treepath: alink.attr("data-tree") || "Shortcut Program#CUT#"}); 
+						open_page({appid: pid,url: url, path: alink.attr("data-path"), newflag: alink.attr("data-new"), proxyflag: alink.attr("data-proxy"), openmethod: alink.attr("data-method"), caption: alink.attr("data-caption") || alink.find("span").html(), treepath: alink.attr("data-tree") || "Shortcut Program#CUT#"}); 
 					});
 				}
 			}
@@ -97,6 +97,7 @@
 								$newlink.attr("data-path",row.progpath?row.progpath:"");
 								$newlink.attr("data-new",row.newflag?row.newflag:"");
 								$newlink.attr("data-method",row.openmethod?row.openmethod:"");
+								$newlink.attr("data-proxy",row.proxyflag?row.proxyflag:"");
 								$newlink.attr("data-caption",fs_title);
 							}
 							$newlink.insertBefore(alink);

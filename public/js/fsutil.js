@@ -98,7 +98,7 @@ function open_program(opts) {
 			method: html?"GET":"POST",
 			url : appurl,
 			windowName: "fs_window_"+appid,
-			params: "seed="+Math.random()+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
+			params: "seed="+Math.random()+"&program="+appid+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
 		});
 		awin.focus();
 	} else {
@@ -109,7 +109,7 @@ function open_program(opts) {
 			method: html?"GET":"POST",
 			url : appurl,
 			windowName: target,
-			params: "seed="+Math.random()+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
+			params: "seed="+Math.random()+"&program="+appid+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
 		});
 		startWaiting();
 	}
@@ -139,7 +139,7 @@ function recentApplication(appid,url,params,path,newflag,openmethod,caption,tree
 				let $li = $("<li></li>");
 				let $alink = $("<a href='javascript:void(0)'></a>");
 				let description = row["description"];
-				$alink.addClass("dropdown-item").click(() => { open_page({appid,url,params,path,newflag,openmethod,caption: description,treepath}); }).html(description);
+				$alink.addClass("dropdown-item").click(() => { open_page({appid,url,params,path,newflag,openmethod,proxyflag,caption: description,treepath}); }).html(description);
 				$li.append($alink).attr("appid",appid).attr("url",url).appendTo($rlist);	
 				$("#recentcaret").show();
 			}

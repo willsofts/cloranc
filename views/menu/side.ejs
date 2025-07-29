@@ -13,10 +13,11 @@ function createMenuTree(lang,menu,progmap,counter,treepath) {
             let url = prg?.url;
             let path = prg?.progpath;
             let newflag = prg?.newflag;
-            let openmethod = prg?.openmethod;  
+            let openmethod = prg?.openmethod;
+            let proxyflag = prg?.proxyflag;  
         %>
     <li class="kt-menu__item">
-        <a href="javascript:void(0);" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
+        <a href="javascript:void(0);" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" data-proxy="<%=proxyflag%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
             <span class="kt-menu__link-text span-menu-label" data-en="<%=nameen%>" data-th="<%=nameth%>"><%=progname%></span>
         </a>
@@ -101,11 +102,12 @@ if(data.dataset?.sidemap && data.dataset?.sidelist) {
                     let progtype = element["progtype"];
                     let newflag = element["newflag"];
                     let openmethod = element["openmethod"];
+                    let proxyflag = element["proxyflag"];
                     let treepath = groupname+"#CUT#";
                     if("I"!=progtype) {                
                     %>
                     <li class="kt-menu__item">
-                        <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
+                        <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" data-proxy="<%=proxyflag%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
                             <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                             <span class="kt-menu__link-text span-menu-label" data-en="<%=element.progname%>" data-th="<%=element.prognameth%>"><%=progname%></span>
                         </a>
@@ -133,10 +135,11 @@ if(data.dataset?.sidemap && data.dataset?.sidelist) {
                         let path = program["progpath"];
                         let newflag = program["newflag"];
                         let openmethod = program["openmethod"];
+                        let proxyflag = program["proxyflag"];
                         let treepath = groupname+"#CUT#";
                         %>
                         <li class="kt-menu__item">
-                            <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>"  data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
+                            <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>"  data-new="<%=newflag%>" data-method="<%=openmethod%>" data-proxy="<%=proxyflag%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
                                 <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                 <span class="kt-menu__link-text span-menu-label" data-en="<%=program.progname%>" data-th="<%=program.prognameth%>"><%=progname%></span>
                             </a>
@@ -165,11 +168,12 @@ if(data.dataset?.sidemap && data.dataset?.sidelist) {
                                 let progtype = element["progtype"];
                                 let newflag = element["newflag"];
                                 let openmethod = element["openmethod"];
+                                let proxyflag = element["proxyflag"];
                                 let treepath = groupname+"#CUT#"
                                 if("I"!=progtype) {
                                 %>
                                 <li class="kt-menu__item">
-                                    <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
+                                    <a href="javascript:void(0)" class="fa-link-menu-tree kt-menu__link fa-link-menu-item menu-desktop" data-pid="<%=progid%>" data-url="<%=url%>" data-path="<%=path%>" data-new="<%=newflag%>" data-method="<%=openmethod%>" data-proxy="<%=proxyflag%>" title="<%=progid%>" data-tree="<%=treepath%>" data-caption="<%=progname%>">
                                         <i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i>
                                         <span class="kt-menu__link-text span-menu-label" data-en="<%=element.progname%>" data-th="<%=element.prognameth%>"><%=progname %></span>
                                     </a>
