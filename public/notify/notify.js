@@ -53,7 +53,7 @@ async function startSignalR() {
         console.log("SignalR Connected.");
         connection.onclose(() => { console.warn("Disconnected!"); });
         connection.onreconnected(() => { console.log("Reconnected!"); });
-        setupBroadcasting();
+        setTimeout(() => setupBroadcasting(), 1000);
     } catch (err) {
         console.log(err);
         setTimeout(() => startSignalR(), 5000);
@@ -63,6 +63,7 @@ async function setupBroadcasting() {
     let username = getCurrentUser();
     if (username) {
         connection.on('broadcastNotification', function (group, message) {
+            console.log("broadcastNotification: group",group,", message",message);
             let objNoti = JSON.parse(message);
             console.log("-notiMessage:", objNoti);
             showBroadcastNotification(objNoti);
