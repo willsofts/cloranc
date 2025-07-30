@@ -17,10 +17,10 @@ export class Sfte003Handler extends TknOperateHandler {
             nameen: { type: "STRING" },
             nameth: { type: "STRING" },
             seqno: { type: "INTEGER" },
-            url: { type: "STRING" },
+            url: { type: "STRING", updated: true, defaultValue: null },
             verified: { type: "STRING", created: true, updated: true },
             centerflag: { type: "STRING", created: true, updated: true },
-            iconfile: { type: "STRING" },
+            iconfile: { type: "STRING", updated: true, defaultValue: null },
             editdate: { type: "DATE", selected: false, created: true, updated: true, defaultValue: null },
             edittime: { type: "TIME", selected: false, created: true, updated: true, defaultValue: null },
             edituser: { type: "STRING", selected: false, created: true, updated: true, defaultValue: null }
