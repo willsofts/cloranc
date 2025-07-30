@@ -1,3 +1,6 @@
+2025-07-30
++ fixed sfte003/vfte003 product info cannot update url blank
+
 2025-07-29
 version: 1.0.7
 + fixed bug menu system open screen with external url
