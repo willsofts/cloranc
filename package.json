@@ -58,7 +58,7 @@
     "moleculer": "^0.14.34",
     "moleculer-web": "^0.10.4",
     "mssql": "^11.0.1",
-    "multer": "^2.0.1",
+    "multer": "^2.0.2",
     "mysql2": "^3.11.3",
     "n-readlines": "^1.0.1",
     "node-rsa": "^1.1.1",
