@@ -41,6 +41,13 @@ curl -X POST -H "AuthToken: ?" http://localhost:8080/api/userinfo/get
 validate token
 curl -X POST -H "AuthToken: ?" http://localhost:8080/api/sign/validatetoken
 curl -X POST http://localhost:8080/api/sign/validatetoken -d authtoken=?
+can ignore expired : 
+curl -X POST -H "AuthToken: ?" http://localhost:8080/api/sign/validatetoken?expired=false
+curl -X POST http://localhost:8080/api/sign/validatetoken -d "expired=false&authtoken=?"
+
+verify token : check expired & check from persistence
+curl -X POST -H "AuthToken: ?" http://localhost:8080/api/sign/verifytoken
+curl -X POST http://localhost:8080/api/sign/verifytoken -d authtoken=?
 
 renew token
 curl -X POST -H "AuthToken: ?" http://localhost:8080/api/sign/renewtoken -d state=?&nonce=?
