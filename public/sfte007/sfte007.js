@@ -343,6 +343,7 @@ function setupEntryComponents() {
 	$("#branchflag").click(function() { 
 		if($("#branchflag").is(":checked")) {
 			$("#accessbranchesfieldset").attr("disabled",false);
+			$("input.branch-class",$("#accessbranchesfieldset")).attr("checked",true);
 		} else {
 			$("#accessbranchesfieldset").attr("disabled",true);	
 			$("input.branch-class",$("#accessbranchesfieldset")).attr("checked",false);
