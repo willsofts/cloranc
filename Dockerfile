@@ -1,4 +1,4 @@
-FROM node:20.18.0
+FROM node:20.19.0
 
 ARG NPM_TOKEN
 ENV NODE_ENV=production
@@ -9,7 +9,9 @@ WORKDIR /usr/node/app
 COPY package.json /usr/node/app/
 COPY .npmrc /usr/node/app/
 
-RUN npm install --omit=dev
+RUN npm install --omit=dev && \
+    npm cache clean --force && \
+    rm -rf /root/.npm 
 
 COPY . /usr/node/app
 
