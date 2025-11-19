@@ -1287,7 +1287,7 @@ const MetroSiderMenu_exports_ = /*#__PURE__*/(0,exportHelper/* default */.A)(Met
 
 
 
-const buildVersion = "1.0.7";
+const buildVersion = "1.0.8";
 const menuData = {
   sidemap: {},
   sidelist: {}
@@ -2850,7 +2850,7 @@ const SSOPanel_exports_ = /*#__PURE__*/(0,exportHelper/* default */.A)(SSOPanelv
 
 
 
-const LoginFormvue_type_script_lang_js_buildVersion = "20250729-150813";
+const LoginFormvue_type_script_lang_js_buildVersion = "20251119-095130";
 const formData = {
   username: '',
   password: '',
@@ -5219,7 +5219,7 @@ const FactorForm_exports_ = /*#__PURE__*/(0,exportHelper/* default */.A)(FactorF
 
 
 
-const programVersion = "1.0.7";
+const programVersion = "1.0.8";
 /* harmony default export */ var VueSurevue_type_script_lang_js = ({
   components: {
     MetroSiderBar: MetroSiderBar,
@@ -5748,4 +5748,4 @@ console.log("window.jQuery version", window.jQuery.fn.jquery);
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=index.175e4f65.js.map
+//# sourceMappingURL=index.a8d6bc21.js.map
