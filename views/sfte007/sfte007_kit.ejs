@@ -86,7 +86,7 @@
 		if(isz > 0) {
 			let index = -1;
 			let counter = isz;
-			let max = 2;
+			let max = 3;
 			do {
 	%>
 						<div class="row row-height">
@@ -97,7 +97,7 @@
 						let key = branchkey[index];
 						let branchname = branchmap[key];
 	%>
-							<div class="col-height col-md-5">
+							<div class="col-height col-md-4">
 	<div class="checkbox checkbox form-check"><input type="checkbox" value="<%=key%>" id="userbranches_<%=index%>" name="userbranches" class="form-control input-md branch-class form-check-input" <%=page.checked(key,data.dataset?.userbranches)%> /><label for="userbranches_<%=index%>" class="control-label form-check-label"><%=branchname%></label></div>
 							</div>
 	<%					
