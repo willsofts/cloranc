@@ -1,7 +1,7 @@
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 3018:
+/***/ 4986:
 /***/ (function(__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -710,37 +710,37 @@ var exportHelper = __webpack_require__(1241);
 const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(SearchFormvue_type_script_lang_js, [['render',SearchFormvue_type_template_id_0550a3ba_render]])
 
 /* harmony default export */ var SearchForm = (__exports__);
-;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/EntryForm.vue?vue&type=template&id=1b7c1d3a
+;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/EntryForm.vue?vue&type=template&id=0ed0cedc
 
-const EntryFormvue_type_template_id_1b7c1d3a_hoisted_1 = {
+const EntryFormvue_type_template_id_0ed0cedc_hoisted_1 = {
   class: "modal-title"
 };
-const EntryFormvue_type_template_id_1b7c1d3a_hoisted_2 = {
+const EntryFormvue_type_template_id_0ed0cedc_hoisted_2 = {
   class: "row row-height"
 };
-const EntryFormvue_type_template_id_1b7c1d3a_hoisted_3 = {
+const EntryFormvue_type_template_id_0ed0cedc_hoisted_3 = {
   class: "col-height col-md-8"
 };
-const EntryFormvue_type_template_id_1b7c1d3a_hoisted_4 = {
+const EntryFormvue_type_template_id_0ed0cedc_hoisted_4 = {
   for: "username"
 };
-const EntryFormvue_type_template_id_1b7c1d3a_hoisted_5 = /*#__PURE__*/(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", {
+const EntryFormvue_type_template_id_0ed0cedc_hoisted_5 = /*#__PURE__*/(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", {
   class: "required"
 }, "*", -1);
-const EntryFormvue_type_template_id_1b7c1d3a_hoisted_6 = {
+const EntryFormvue_type_template_id_0ed0cedc_hoisted_6 = {
   key: 0,
   class: "has-error"
 };
-const EntryFormvue_type_template_id_1b7c1d3a_hoisted_7 = {
+const EntryFormvue_type_template_id_0ed0cedc_hoisted_7 = {
   class: "row row-height"
 };
-const EntryFormvue_type_template_id_1b7c1d3a_hoisted_8 = {
+const EntryFormvue_type_template_id_0ed0cedc_hoisted_8 = {
   class: "col-height col-md-4"
 };
-const EntryFormvue_type_template_id_1b7c1d3a_hoisted_9 = {
+const EntryFormvue_type_template_id_0ed0cedc_hoisted_9 = {
   class: "col-height col-md-4"
 };
-const EntryFormvue_type_template_id_1b7c1d3a_hoisted_10 = {
+const EntryFormvue_type_template_id_0ed0cedc_hoisted_10 = {
   class: "row row-height"
 };
 const _hoisted_11 = {
@@ -894,14 +894,14 @@ const _hoisted_58 = {
 const _hoisted_59 = /*#__PURE__*/(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("em", {
   class: "fa fa-close fa-btn-icon"
 }, null, -1);
-function EntryFormvue_type_template_id_1b7c1d3a_render(_ctx, _cache, $props, $setup, $data, $options) {
+function EntryFormvue_type_template_id_0ed0cedc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_InputMask = (0,runtime_core_esm_bundler/* resolveComponent */.g2)("InputMask");
   const _component_DialogForm = (0,runtime_core_esm_bundler/* resolveComponent */.g2)("DialogForm");
   return (0,runtime_core_esm_bundler/* openBlock */.uX)(), (0,runtime_core_esm_bundler/* createBlock */.Wv)(_component_DialogForm, {
     ref: "dialogForm"
   }, {
-    header: (0,runtime_core_esm_bundler/* withCtx */.k6)(() => [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("h4", EntryFormvue_type_template_id_1b7c1d3a_hoisted_1, (0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.title_edit), 1)]),
-    default: (0,runtime_core_esm_bundler/* withCtx */.k6)(() => [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_1b7c1d3a_hoisted_2, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_1b7c1d3a_hoisted_3, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", EntryFormvue_type_template_id_1b7c1d3a_hoisted_4, (0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.username_label), 1), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", {
+    header: (0,runtime_core_esm_bundler/* withCtx */.k6)(() => [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("h4", EntryFormvue_type_template_id_0ed0cedc_hoisted_1, (0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.title_edit), 1)]),
+    default: (0,runtime_core_esm_bundler/* withCtx */.k6)(() => [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_0ed0cedc_hoisted_2, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_0ed0cedc_hoisted_3, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", EntryFormvue_type_template_id_0ed0cedc_hoisted_4, (0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.username_label), 1), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", {
       class: (0,shared_esm_bundler/* normalizeClass */.C4)(["input-group has-validation", {
         'has-error': $setup.v$.username.$error
       }])
@@ -911,17 +911,17 @@ function EntryFormvue_type_template_id_1b7c1d3a_render(_ctx, _cache, $props, $se
       "onUpdate:modelValue": _cache[0] || (_cache[0] = $event => $setup.localData.username = $event),
       id: "username",
       picture: "(50)x"
-    }, null, 8, ["modelValue"]), EntryFormvue_type_template_id_1b7c1d3a_hoisted_5], 2), $setup.v$.username.$error ? ((0,runtime_core_esm_bundler/* openBlock */.uX)(), (0,runtime_core_esm_bundler/* createElementBlock */.CE)("span", EntryFormvue_type_template_id_1b7c1d3a_hoisted_6, (0,shared_esm_bundler/* toDisplayString */.v_)($setup.v$.username.$errors[0].$message), 1)) : (0,runtime_core_esm_bundler/* createCommentVNode */.Q3)("", true)])]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_1b7c1d3a_hoisted_7, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_1b7c1d3a_hoisted_8, [(0,runtime_core_esm_bundler/* withDirectives */.bo)((0,runtime_core_esm_bundler/* createElementVNode */.Lk)("input", {
+    }, null, 8, ["modelValue"]), EntryFormvue_type_template_id_0ed0cedc_hoisted_5], 2), $setup.v$.username.$error ? ((0,runtime_core_esm_bundler/* openBlock */.uX)(), (0,runtime_core_esm_bundler/* createElementBlock */.CE)("span", EntryFormvue_type_template_id_0ed0cedc_hoisted_6, (0,shared_esm_bundler/* toDisplayString */.v_)($setup.v$.username.$errors[0].$message), 1)) : (0,runtime_core_esm_bundler/* createCommentVNode */.Q3)("", true)])]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_0ed0cedc_hoisted_7, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_0ed0cedc_hoisted_8, [(0,runtime_core_esm_bundler/* withDirectives */.bo)((0,runtime_core_esm_bundler/* createElementVNode */.Lk)("input", {
       type: "text",
       "onUpdate:modelValue": _cache[1] || (_cache[1] = $event => $setup.localData.usertname = $event),
       class: "form-control input-md",
       readonly: ""
-    }, null, 512), [[runtime_dom_esm_bundler/* vModelText */.Jo, $setup.localData.usertname]])]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_1b7c1d3a_hoisted_9, [(0,runtime_core_esm_bundler/* withDirectives */.bo)((0,runtime_core_esm_bundler/* createElementVNode */.Lk)("input", {
+    }, null, 512), [[runtime_dom_esm_bundler/* vModelText */.Jo, $setup.localData.usertname]])]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_0ed0cedc_hoisted_9, [(0,runtime_core_esm_bundler/* withDirectives */.bo)((0,runtime_core_esm_bundler/* createElementVNode */.Lk)("input", {
       type: "text",
       "onUpdate:modelValue": _cache[2] || (_cache[2] = $event => $setup.localData.usertsurname = $event),
       class: "form-control input-md",
       readonly: ""
-    }, null, 512), [[runtime_dom_esm_bundler/* vModelText */.Jo, $setup.localData.usertsurname]])])]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_1b7c1d3a_hoisted_10, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", _hoisted_11, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", _hoisted_12, (0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.email_label), 1), (0,runtime_core_esm_bundler/* withDirectives */.bo)((0,runtime_core_esm_bundler/* createElementVNode */.Lk)("input", {
+    }, null, 512), [[runtime_dom_esm_bundler/* vModelText */.Jo, $setup.localData.usertsurname]])])]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", EntryFormvue_type_template_id_0ed0cedc_hoisted_10, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", _hoisted_11, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", _hoisted_12, (0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.email_label), 1), (0,runtime_core_esm_bundler/* withDirectives */.bo)((0,runtime_core_esm_bundler/* createElementVNode */.Lk)("input", {
       type: "text",
       "onUpdate:modelValue": _cache[3] || (_cache[3] = $event => $setup.localData.email = $event),
       class: "form-control input-md",
@@ -942,8 +942,9 @@ function EntryFormvue_type_template_id_1b7c1d3a_render(_ctx, _cache, $props, $se
       "false-value": "0",
       id: "branchflag",
       "onUpdate:modelValue": _cache[5] || (_cache[5] = $event => $setup.localData.branchflag = $event),
-      class: "form-control input-md form-check-input"
-    }, null, 512), [[runtime_dom_esm_bundler/* vModelCheckbox */.lH, $setup.localData.branchflag]]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", _hoisted_26, (0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.branchflag_label), 1)])])])])])]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", _hoisted_27, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", _hoisted_28, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("fieldset", {
+      class: "form-control input-md form-check-input",
+      onChange: _cache[6] || (_cache[6] = (...args) => $options.branchChanged && $options.branchChanged(...args))
+    }, null, 544), [[runtime_dom_esm_bundler/* vModelCheckbox */.lH, $setup.localData.branchflag]]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", _hoisted_26, (0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.branchflag_label), 1)])])])])])]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", _hoisted_27, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", _hoisted_28, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("fieldset", {
       id: "accessbranchesfieldset",
       disabled: !$options.isAccessBranch
     }, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", _hoisted_30, [((0,runtime_core_esm_bundler/* openBlock */.uX)(true), (0,runtime_core_esm_bundler/* createElementBlock */.CE)(runtime_core_esm_bundler/* Fragment */.FK, null, (0,runtime_core_esm_bundler/* renderList */.pI)($options.branchLists(), (branch, index) => {
@@ -957,7 +958,7 @@ function EntryFormvue_type_template_id_1b7c1d3a_render(_ctx, _cache, $props, $se
         }, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", _hoisted_31, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", _hoisted_32, [(0,runtime_core_esm_bundler/* withDirectives */.bo)((0,runtime_core_esm_bundler/* createElementVNode */.Lk)("input", {
           type: "checkbox",
           value: item.id,
-          "onUpdate:modelValue": _cache[6] || (_cache[6] = $event => $setup.localData.userbranches = $event),
+          "onUpdate:modelValue": _cache[7] || (_cache[7] = $event => $setup.localData.userbranches = $event),
           class: "form-control input-md form-check-input"
         }, null, 8, _hoisted_33), [[runtime_dom_esm_bundler/* vModelCheckbox */.lH, $setup.localData.userbranches]]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("span", _hoisted_34, (0,shared_esm_bundler/* toDisplayString */.v_)(item.text), 1)])])]);
       }), 128))]);
@@ -972,7 +973,7 @@ function EntryFormvue_type_template_id_1b7c1d3a_render(_ctx, _cache, $props, $se
         }, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", _hoisted_41, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", _hoisted_42, [(0,runtime_core_esm_bundler/* withDirectives */.bo)((0,runtime_core_esm_bundler/* createElementVNode */.Lk)("input", {
           type: "checkbox",
           value: item.id,
-          "onUpdate:modelValue": _cache[7] || (_cache[7] = $event => $setup.localData.userroles = $event),
+          "onUpdate:modelValue": _cache[8] || (_cache[8] = $event => $setup.localData.userroles = $event),
           class: "form-control input-md form-check-input"
         }, null, 8, _hoisted_43), [[runtime_dom_esm_bundler/* vModelCheckbox */.lH, $setup.localData.userroles]]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("span", _hoisted_44, (0,shared_esm_bundler/* toDisplayString */.v_)(item.text), 1)])])]);
       }), 128))]);
@@ -987,7 +988,7 @@ function EntryFormvue_type_template_id_1b7c1d3a_render(_ctx, _cache, $props, $se
         }, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("div", _hoisted_51, [(0,runtime_core_esm_bundler/* createElementVNode */.Lk)("label", _hoisted_52, [(0,runtime_core_esm_bundler/* withDirectives */.bo)((0,runtime_core_esm_bundler/* createElementVNode */.Lk)("input", {
           type: "checkbox",
           value: item.id,
-          "onUpdate:modelValue": _cache[8] || (_cache[8] = $event => $setup.localData.usergroups = $event),
+          "onUpdate:modelValue": _cache[9] || (_cache[9] = $event => $setup.localData.usergroups = $event),
           class: "form-control input-md form-check-input"
         }, null, 8, _hoisted_53), [[runtime_dom_esm_bundler/* vModelCheckbox */.lH, $setup.localData.usergroups]]), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("span", _hoisted_54, (0,shared_esm_bundler/* toDisplayString */.v_)(item.text), 1)])])]);
       }), 128))]);
@@ -997,17 +998,17 @@ function EntryFormvue_type_template_id_1b7c1d3a_render(_ctx, _cache, $props, $se
       ref: "resetfactorbutton",
       id: "resetfactorbutton",
       class: "btn btn-dark btn-sm",
-      onClick: _cache[9] || (_cache[9] = (...args) => $options.resetFactorClick && $options.resetFactorClick(...args))
+      onClick: _cache[10] || (_cache[10] = (...args) => $options.resetFactorClick && $options.resetFactorClick(...args))
     }, [_hoisted_56, (0,runtime_core_esm_bundler/* createTextVNode */.eW)((0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.reset_factor_button), 1)], 512)) : (0,runtime_core_esm_bundler/* createCommentVNode */.Q3)("", true)])) : (0,runtime_core_esm_bundler/* createCommentVNode */.Q3)("", true), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("button", {
       ref: "updatebutton",
       id: "updatebutton",
       class: "btn btn-dark btn-sm",
-      onClick: _cache[10] || (_cache[10] = (...args) => $options.updateClick && $options.updateClick(...args))
+      onClick: _cache[11] || (_cache[11] = (...args) => $options.updateClick && $options.updateClick(...args))
     }, [_hoisted_57, (0,runtime_core_esm_bundler/* createTextVNode */.eW)((0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.update_button), 1)], 512), (0,runtime_core_esm_bundler/* createElementVNode */.Lk)("button", _hoisted_58, [_hoisted_59, (0,runtime_core_esm_bundler/* createTextVNode */.eW)((0,shared_esm_bundler/* toDisplayString */.v_)($props.labels.cancel_button), 1)])]),
     _: 1
   }, 512);
 }
-;// CONCATENATED MODULE: ./src/components/EntryForm.vue?vue&type=template&id=1b7c1d3a
+;// CONCATENATED MODULE: ./src/components/EntryForm.vue?vue&type=template&id=0ed0cedc
 
 // EXTERNAL MODULE: ./node_modules/@vuelidate/core/dist/index.mjs
 var dist = __webpack_require__(7760);
@@ -1332,15 +1333,29 @@ const EntryFormvue_type_script_lang_js_defaultData = {
           });
         }
       });
+    },
+    branchChanged(event) {
+      if (event.target.checked) {
+        let branches = [];
+        let tcategory = this.$props.dataCategory["tcompbranch"];
+        if (tcategory) {
+          for (let it of tcategory) {
+            branches.push(it.id);
+          }
+        }
+        this.localData.userbranches = branches;
+      } else {
+        this.localData.userbranches = [];
+      }
     }
   }
 });
 ;// CONCATENATED MODULE: ./src/components/EntryForm.vue?vue&type=script&lang=js
  
-;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/EntryForm.vue?vue&type=style&index=0&id=1b7c1d3a&lang=css
+;// CONCATENATED MODULE: ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/EntryForm.vue?vue&type=style&index=0&id=0ed0cedc&lang=css
 // extracted by mini-css-extract-plugin
 
-;// CONCATENATED MODULE: ./src/components/EntryForm.vue?vue&type=style&index=0&id=1b7c1d3a&lang=css
+;// CONCATENATED MODULE: ./src/components/EntryForm.vue?vue&type=style&index=0&id=0ed0cedc&lang=css
 
 ;// CONCATENATED MODULE: ./src/components/EntryForm.vue
 
@@ -1350,7 +1365,7 @@ const EntryFormvue_type_script_lang_js_defaultData = {
 ;
 
 
-const EntryForm_exports_ = /*#__PURE__*/(0,exportHelper/* default */.A)(EntryFormvue_type_script_lang_js, [['render',EntryFormvue_type_template_id_1b7c1d3a_render]])
+const EntryForm_exports_ = /*#__PURE__*/(0,exportHelper/* default */.A)(EntryFormvue_type_script_lang_js, [['render',EntryFormvue_type_template_id_0ed0cedc_render]])
 
 /* harmony default export */ var EntryForm = (EntryForm_exports_);
 ;// CONCATENATED MODULE: ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/AppVfte007.vue?vue&type=script&lang=js
@@ -1362,7 +1377,7 @@ const EntryForm_exports_ = /*#__PURE__*/(0,exportHelper/* default */.A)(EntryFor
 
 
 
-const buildVersion = "20250706-111403";
+const buildVersion = "20251119-093341";
 /* harmony default export */ var AppVfte007vue_type_script_lang_js = ({
   components: {
     PageHeader: will_control_umd.PageHeader,
@@ -1760,9 +1775,9 @@ console.info("Vue version", runtime_core_esm_bundler/* version */.rE);
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [504], function() { return __webpack_require__(3018); })
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [504], function() { return __webpack_require__(4986); })
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=index.edf16035.js.map
+//# sourceMappingURL=index.fdcf244b.js.map
