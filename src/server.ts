@@ -7,6 +7,7 @@ import { TknSAMLManager } from '@willsofts/will-serv';
 import { TknReportManager } from '@willsofts/will-serv';
 import { TknUploadFileManager } from "@willsofts/will-serv";
 import { TknDocumentManager } from "@willsofts/will-serv";
+import "express-async-errors";
 
 const ExpressService : ServiceSchema = {
     name: "api",
