@@ -1,4 +1,10 @@
+2025-11-28
+version: 1.0.9
++ using express async errors handler
++ fix bug SAML error
+
 2025-07-30
+version: 1.0.8
 + fixed sfte003/vfte003 product info cannot update url blank
 
 2025-07-29

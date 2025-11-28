@@ -12,3 +12,5 @@ docker_push.bat
 docker-compose.yml
 Dockerfile
 test_me.txt
+.npm_token
+.npmrc_secret
