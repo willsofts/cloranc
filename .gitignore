@@ -4,6 +4,8 @@
 /declaration
 /coverage
 /logs
+/images
+/pdf
 /yarn-error.log
 
 # local env files
@@ -25,3 +27,4 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+.npmrc_secret
