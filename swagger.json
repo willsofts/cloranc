@@ -13,8 +13,20 @@
             "name": "Signin",
             "description": "How to signin into system"
         }, {
+            "name": "UserInfo",
+            "description": "To get user info"
+        }, {
             "name": "Data Service",
             "description": "Data Discover Service"
+        }, {
+            "name": "Health Check",
+            "description": "Health Check Service"
+        }, {
+            "name": "Fetch Service",
+            "description": "Fetch Service"
+        }, {
+            "name": "Label Service",
+            "description": "Label Service"
         }
     ],
     "schemes": ["http", "https"],
@@ -45,7 +57,137 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "$ref": "#/definitions/SigninResponse"
+                            "$ref": "#/definitions/JSONResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/sign/account": {
+            "post": {
+                "tags": ["Signin"],
+                "summary": "Get user or account information",
+                "description": "",
+                "operationId": "account",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
+                "parameters": [{
+                        "name": "authtoken",
+                        "in": "formData",
+                        "description": "Authorized Token",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/JSONResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/sign/accesstoken": {
+            "post": {
+                "tags": ["Signin"],
+                "summary": "Get access information",
+                "description": "",
+                "operationId": "accessToken",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
+                "security": [{"token": []}],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/JSONResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/sign/verifytoken": {
+            "post": {
+                "tags": ["Signin"],
+                "summary": "To verify access token",
+                "description": "",
+                "operationId": "verifyToken",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
+                "parameters": [{
+                        "name": "authtoken",
+                        "in": "formData",
+                        "description": "Authorized Token",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/JSONResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/sign/renewtoken": {
+            "post": {
+                "tags": ["Signin"],
+                "summary": "To renew access token",
+                "description": "",
+                "operationId": "renewToken",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
+                "parameters": [{
+                        "name": "authtoken",
+                        "in": "formData",
+                        "description": "Authorized Token",
+                        "required": true,
+                        "type": "string"
+                    }, {
+                        "name": "state",
+                        "in": "formData",
+                        "description": "User's state",
+                        "required": true,
+                        "type": "string"
+                    }, {
+                        "name": "nonce",
+                        "in": "formData",
+                        "description": "User's nonce",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/JSONResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/userinfo/get": {
+            "post": {
+                "tags": ["UserInfo"],
+                "summary": "Get user information",
+                "description": "",
+                "operationId": "getUserInfo",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
+                "security": [{"token": []}],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/JSONResponse"
                         }
                     }
                 }
@@ -59,6 +201,7 @@
                 "operationId": "groups",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
+                "security": [{"token": []}],
                 "parameters": [{
                         "in": "body",
                         "name": "body",
@@ -87,6 +230,7 @@
                 "operationId": "lists",
                 "consumes": ["application/json"],
                 "produces": ["application/json"],
+                "security": [{"token": []}],
                 "parameters": [{
                     "in": "body",
                     "name": "body",
@@ -102,6 +246,192 @@
                         "description": "successful operation",
                         "schema": {
                             "$ref": "#/definitions/DataListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/health/check": {
+            "get": {
+                "tags": ["Health Check"],
+                "summary": "Health check of the system",
+                "description": "Check if the system is running and get basic info.",
+                "operationId": "healthCheck",
+                "produces": ["application/json"],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": { "type": "string", "example": "OK" },
+                                "hostname": { "type": "string" },
+                                "pid": { "type": "integer" }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/fetch/time": {
+            "get": {
+                "tags": ["Fetch Service"],
+                "summary": "Get current date/time/timestamp",
+                "description": "คืนค่าเวลาปัจจุบันในรูปแบบต่าง ๆ (date, time, datetime, timestamp)",
+                "operationId": "fetchTime",
+                "produces": ["application/json"],
+                "parameters": [{
+                    "name": "name",
+                    "in": "query",
+                    "description": "ชนิดข้อมูลที่ต้องการ (current, date, time, datetime)",
+                    "required": false,
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": { "$ref": "#/definitions/JSONReply" }
+                    }
+                }
+            }
+        },
+        "/fetch/config": {
+            "get": {
+                "tags": ["Fetch Service"],
+                "summary": "Get config value",
+                "description": "อ่านค่า config จากระบบ",
+                "operationId": "fetchConfig",
+                "produces": ["application/json"],
+                "parameters": [{
+                    "name": "name",
+                    "in": "query",
+                    "description": "ชื่อ config ที่ต้องการอ่าน",
+                    "required": false,
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": { "$ref": "#/definitions/JSONReply" }
+                    }
+                }
+            }
+        },
+        "/fetch/session": {
+            "get": {
+                "tags": ["Fetch Service"],
+                "summary": "Get session id",
+                "description": "คืนค่า session id ปัจจุบัน",
+                "operationId": "fetchSession",
+                "produces": ["application/json"],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": { "type": "string" }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/fetch/version": {
+            "get": {
+                "tags": ["Fetch Service"],
+                "summary": "Get version info",
+                "description": "คืนค่าข้อมูลเวอร์ชันของระบบ",
+                "operationId": "fetchVersion",
+                "produces": ["application/json"],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": { "type": "string" },
+                                "version": { "type": "string" },
+                                "description": { "type": "string" }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/fetch/info": {
+            "get": {
+                "tags": ["Fetch Service"],
+                "summary": "Get system info",
+                "description": "คืนค่าข้อมูลระบบและ session",
+                "operationId": "fetchInfo",
+                "produces": ["application/json"],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "sid": { "type": "string" },
+                                "hostname": { "type": "string" },
+                                "name": { "type": "string" },
+                                "version": { "type": "string" },
+                                "description": { "type": "string" }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/label/get": {
+            "post": {
+                "tags": ["Label Service"],
+                "summary": "To get label like map entities",
+                "description": "",
+                "operationId": "getLabel",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
+                "security": [{"token": []}],
+                "parameters": [{
+                        "name": "labelname",
+                        "in": "formData",
+                        "description": "label name",
+                        "required": false,
+                        "type": "string"
+                    }                    
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/JSONResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/label/list": {
+            "post": {
+                "tags": ["Label Service"],
+                "summary": "To get label as list",
+                "description": "",
+                "operationId": "listLabel",
+                "consumes": ["application/x-www-form-urlencoded"],
+                "produces": ["application/json"],
+                "security": [{"token": []}],
+                "parameters": [{
+                        "name": "labelname",
+                        "in": "formData",
+                        "description": "label name",
+                        "required": false,
+                        "type": "string"
+                    }                    
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/JSONResponse"
                         }
                     }
                 }
@@ -122,7 +452,7 @@
                 "model": { "type": "string" },
                 "method": { "type": "string" },
                 "errorcode": { "type": "string" },
-                "errorflag": { "type": "string", "enum": ["Y", "N"] },
+                "errorflag": { "type": "string", "enum": ["N","Y"] },
                 "errordesc": { "type": "string" }
             }
         },
@@ -143,7 +473,7 @@
                 }
             }
         },
-        "SigninResponse": {
+        "JSONResponse": {
             "$ref": "#/definitions/JSONReply"
         },
         "CategoryRequest": {
