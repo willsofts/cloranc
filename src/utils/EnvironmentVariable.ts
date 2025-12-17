@@ -44,6 +44,7 @@ export const DISPLAY_PROGRAM_CONTROL: boolean = config.env("DISPLAY_PROGRAM_CONT
 
 export const EXCEPT_LAUNCH_PATH: string = config.env("EXCEPT_LAUNCH_PATH","page_forgot");
 export const DEFAULT_PRIVILEGES: string = config.env("DEFAULT_PRIVILEGES","OPERATOR");
+export const DEFAULT_PASSWORD: string = config.env("DEFAULT_PASSWORD","password");
 
 export const CONTENT_SECURITY_POLICY: string = config.env("CONTENT_SECURITY_POLICY","");
 export const CONTENT_SECURITY_PATH: string = config.env("CONTENT_SECURITY_PATH","");
