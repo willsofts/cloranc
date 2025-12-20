@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Authenticate Information</title>
@@ -39,10 +39,10 @@
 	Your client application can access by 3 way : 	
 	</p>
 	<h4>Simple Authentication</h4>
-	<table class="code-table">
+	<table class="code-table" aria-label="Simple Authentication">
 		<tr>
-			<th>Simple</th>
-			<th></th>
+			<th scope="row">Simple</th>
+			<th scope="row"></th>
 		</tr>
 	</table>
 	<pre tabindex="-1">
@@ -52,10 +52,10 @@
 	This is the simple way to authenticate by make request with POST method specified by parameters passing username and password.	
 	</p>
 	<h4>Basic Authentication</h4>
-	<table class="code-table">
+	<table class="code-table" aria-label="Basic Authentication">
 		<tr>
-			<th>Basic</th>
-			<th></th>
+			<th scope="row">Basic</th>
+			<th scope="row"></th>
 		</tr>
 	</table>
 	<pre tabindex="-1">
@@ -68,10 +68,10 @@
 	<p>
 	To use RSA with basic authenticate must encrypt data in format username:password by public key from client register including header with Client ID.  
 	</p>
-	<table class="code-table">
+	<table class="code-table" aria-label="RSA With Basic Authentication">
 		<tr>
-			<th>RSA</th>
-			<th></th>
+			<th scope="row">RSA</th>
+			<th scope="row"></th>
 		</tr>
 	</table>
 	<pre tabindex="-1">
@@ -80,10 +80,10 @@
 	</pre>
 	<h3>Encrypt With Public Key</h3>
 	<textarea id="copyarea"></textarea>
-	<table class="code-table">
+	<table class="code-table" aria-label="Encrypt With Public Key">
 		<tr>
-			<th><span>Java</span></th>
-			<th><a href="javascript:void(0)" tabindex="-1" class="copy-button" style="float:right;" onclick="copyCode('javacode')">Copy</a></th>
+			<th scope="row"><span>Java</span></th>
+			<th scope="row"><a href="javascript:void(0)" tabindex="-1" class="copy-button" style="float:right;" onclick="copyCode('javacode')">Copy</a></th>
 		</tr>
 	</table>
 	<pre tabindex="-1" id="javacode">
@@ -168,10 +168,10 @@ public class EncryptText {
 }	
 	</pre>
 	
-	<table class="code-table">
+	<table class="code-table" aria-label="Node">
 		<tr>
-			<th><span>Node</span></th>
-			<th><a href="javascript:void(0)" tabindex="-1" class="copy-button" style="float:right;" onclick="copyCode('nodejs')">Copy</a></th>
+			<th scope="row"><span>Node</span></th>
+			<th scope="row"><a href="javascript:void(0)" tabindex="-1" class="copy-button" style="float:right;" onclick="copyCode('nodejs')">Copy</a></th>
 		</tr>
 	</table>
 	<pre tabindex="-1" id="nodejs">
@@ -203,10 +203,10 @@ const encryptedData = crypto.publicEncrypt({
 
 console.log("encrypt",encryptedData.toString("base64"));
 	</pre>	
-	<table class="code-table">
+	<table class="code-table" aria-label="C#">
 		<tr>
-			<th><span>C#</span></th>
-			<th><a href="javascript:void(0)" tabindex="-1" class="copy-button" style="float:right;" onclick="copyCode('csharp')">Copy</a></th>
+			<th scope="row"><span>C#</span></th>
+			<th scope="row"><a href="javascript:void(0)" tabindex="-1" class="copy-button" style="float:right;" onclick="copyCode('csharp')">Copy</a></th>
 		</tr>
 	</table>
 	<pre tabindex="-1" id="csharp">

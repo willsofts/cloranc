@@ -664,13 +664,14 @@
 			});
 		}
 		function openChating() {
+			let seed = new Date().getTime();
 			let authtoken = getAccessorToken();
 			let appurl = "/gui/chat";
 			submitWindow({
 				method: "POST",
 				url : appurl,
 				windowName: "chatingframe",
-				params: "seed="+Math.random()+"&authtoken="+authtoken+"&language="+fs_default_language
+				params: "seed="+seed+"&authtoken="+authtoken+"&language="+fs_default_language
 			});	
 		}
 		function startChating() {
@@ -685,13 +686,14 @@
 			}
 		}
 		function openNotify() {
+			let seed = new Date().getTime();
 			let authtoken = getAccessorToken();
 			let appurl = "/gui/notify";
 			submitWindow({
 				method: "POST",
 				url : appurl,
 				windowName: "notifyframe",
-				params: "seed="+Math.random()+"&authtoken="+authtoken+"&language="+fs_default_language
+				params: "seed="+seed+"&authtoken="+authtoken+"&language="+fs_default_language
 			});	
 		}
 		function startNotify() {

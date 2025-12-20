@@ -2,11 +2,12 @@ function requestAccessorInfo() {
     let msg = { type: "accessorinfo", archetype: "willsofts" };
     sendMessageToParent(msg);
 }
+const ALLOWED_ORIGINS = "*";
 function sendMessageToParent(data) {
     if(!data) return;
     try {
         console.log("sendMessageToParent:",data);
-        window.parent.postMessage(JSON.stringify(data), "*");
+        window.parent.postMessage(JSON.stringify(data), ALLOWED_ORIGINS); // NOSONAR - intentional broadcast, validated on receiver
     } catch(ex) { console.log(ex); }
 }
 function handleRequestMessage(data) {

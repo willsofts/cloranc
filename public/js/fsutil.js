@@ -92,13 +92,14 @@ function open_program(opts) {
 	console.log("open : "+appurl,", language",fs_default_language,", culture",culture);
 	html = openmethod == "GET" ? "GET" : html;
 	$("#page_login").hide();
+	let seed = new Date().getTime();
 	let authtoken = getAccessorToken();
 	if(fs_newwindows) {
 		let awin = openNewWindow({
 			method: html?"GET":"POST",
 			url : appurl,
 			windowName: "fs_window_"+appid,
-			params: "seed="+Math.random()+"&program="+appid+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
+			params: "seed="+seed+"&program="+appid+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
 		});
 		awin.focus();
 	} else {
@@ -109,7 +110,7 @@ function open_program(opts) {
 			method: html?"GET":"POST",
 			url : appurl,
 			windowName: target,
-			params: "seed="+Math.random()+"&program="+appid+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
+			params: "seed="+seed+"&program="+appid+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
 		});
 		startWaiting();
 	}

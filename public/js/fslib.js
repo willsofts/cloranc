@@ -1715,12 +1715,18 @@ function getRequestID() {
 	}
 	return fs_requestid;
 }
+function randomize() {
+	const crypto = window.crypto || window.msCrypto;
+	let array = new Uint32Array(1);
+	crypto.getRandomValues(array);	
+	return array[0];
+}	
 function generateUUID() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();
   } else {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      const r = (Math.random() * 16) | 0;
+      const r = (randomize() * 16) | 0;
       const v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });

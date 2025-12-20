@@ -107,12 +107,12 @@ div.fa-list-panel { margin-top: 8px; }
 .fa-partition-toggle { margin-left: 2px; margin-right: 2px; }
 
 button.btn-closing:before { 
-	font-family: FontAwesome;
+	font-family: FontAwesome, serif, sans-serif;
 	content: "\f00d";
 	color: black;	
 }
 button.btn-close:before { 
-	font-family: FontAwesome;
+	font-family: FontAwesome, serif, sans-serif;
 	content: "\f00d";	
 	color: black;
 }

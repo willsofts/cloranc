@@ -5,9 +5,16 @@ const getPrimes = function (min, max) {
 	}
 	return Object.values(result.slice(min));
 };
-	
+
+function randomize() {
+	const crypto = window.crypto || window.msCrypto;
+	let array = new Uint32Array(1);
+	crypto.getRandomValues(array);	
+	return array[0];
+}	
+
 const getRandomNum = function(min, max) {
-	return Math.floor(Math.random() * (max - min + 1) + min);
+	return Math.floor(randomize() * (max - min + 1) + min);
 };
 	
 const getRandomPrime =function (min, max) {

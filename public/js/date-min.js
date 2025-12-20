@@ -1,1 +1,66 @@
-var MONTH_NAMES=new Array("January","February","March","April","May","June","July","August","September","October","November","December","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");var DAY_NAMES=new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sun","Mon","Tue","Wed","Thu","Fri","Sat");function LZ(a){return(a<0||a>9?"":"0")+a}function isDate(c,b){var a=getDateFromFormat(c,b);if(a==0){return false}return true}function compareDates(e,f,c,d){var b=getDateFromFormat(e,f);var a=getDateFromFormat(c,d);if(b==0||a==0){return -1}else{if(b>a){return 1}}return 0}function formatingDate(I,D){D=D+"";var l="";var v=0;var G="";var f="";var j=I.getYear()+"";var g=I.getMonth()+1;var F=I.getDate();var o=I.getDay();var n=I.getHours();var x=I.getMinutes();var q=I.getSeconds();var t,u,b,r,J,e,C,B,z,p,N,n,L,i,a,A;var w=new Object();if(j.length<4){j=""+(j-0+1900)}w.y=""+j;w.yyyy=j;w.yy=j.substring(2,4);w.M=g;w.MM=LZ(g);w.MMM=MONTH_NAMES[g-1];w.NNN=MONTH_NAMES[g+11];w.d=F;w.dd=LZ(F);w.E=DAY_NAMES[o+7];w.EE=DAY_NAMES[o];w.H=n;w.HH=LZ(n);if(n==0){w.h=12}else{if(n>12){w.h=n-12}else{w.h=n}}w.hh=LZ(w.h);if(n>11){w.K=n-12}else{w.K=n}w.k=n+1;w.KK=LZ(w.K);w.kk=LZ(w.k);if(n>11){w.a="PM"}else{w.a="AM"}w.m=x;w.mm=LZ(x);w.s=q;w.ss=LZ(q);while(v<D.length){G=D.charAt(v);f="";while((D.charAt(v)==G)&&(v<D.length)){f+=D.charAt(v++)}if(w[f]!=null){l=l+w[f]}else{l=l+f}}return l}function _isInteger(c){var b="1234567890";for(var a=0;a<c.length;a++){if(b.indexOf(c.charAt(a))==-1){return false}}return true}function _getInt(f,d,e,c){for(var a=c;a>=e;a--){var b=f.substring(d,d+a);if(b.length<e){return null}if(_isInteger(b)){return b}}return null}function getDateFromFormat(w,p){w=w+"";p=p+"";var v=0;var l=0;var r="";var f="";var u="";var h,g;var b=new Date();var j=b.getYear();var t=b.getMonth()+1;var s=1;var d=b.getHours();var q=b.getMinutes();var n=b.getSeconds();var k="";while(l<p.length){r=p.charAt(l);f="";while((p.charAt(l)==r)&&(l<p.length)){f+=p.charAt(l++)}if(f=="yyyy"||f=="yy"||f=="y"){if(f=="yyyy"){h=4;g=4}if(f=="yy"){h=2;g=2}if(f=="y"){h=2;g=4}j=_getInt(w,v,h,g);if(j==null){return 0}v+=j.length;if(j.length==2){if(j>70){j=1900+(j-0)}else{j=2000+(j-0)}}}else{if(f=="MMM"||f=="NNN"){t=0;for(var o=0;o<MONTH_NAMES.length;o++){var e=MONTH_NAMES[o];if(w.substring(v,v+e.length).toLowerCase()==e.toLowerCase()){if(f=="MMM"||(f=="NNN"&&o>11)){t=o+1;if(t>12){t-=12}v+=e.length;break}}}if((t<1)||(t>12)){return 0}}else{if(f=="EE"||f=="E"){for(var o=0;o<DAY_NAMES.length;o++){var m=DAY_NAMES[o];if(w.substring(v,v+m.length).toLowerCase()==m.toLowerCase()){v+=m.length;break}}}else{if(f=="MM"||f=="M"){t=_getInt(w,v,f.length,2);if(t==null||(t<1)||(t>12)){return 0}v+=t.length}else{if(f=="dd"||f=="d"){s=_getInt(w,v,f.length,2);if(s==null||(s<1)||(s>31)){return 0}v+=s.length}else{if(f=="hh"||f=="h"){d=_getInt(w,v,f.length,2);if(d==null||(d<1)||(d>12)){return 0}v+=d.length}else{if(f=="HH"||f=="H"){d=_getInt(w,v,f.length,2);if(d==null||(d<0)||(d>23)){return 0}v+=d.length}else{if(f=="KK"||f=="K"){d=_getInt(w,v,f.length,2);if(d==null||(d<0)||(d>11)){return 0}v+=d.length}else{if(f=="kk"||f=="k"){d=_getInt(w,v,f.length,2);if(d==null||(d<1)||(d>24)){return 0}v+=d.length;d--}else{if(f=="mm"||f=="m"){q=_getInt(w,v,f.length,2);if(q==null||(q<0)||(q>59)){return 0}v+=q.length}else{if(f=="ss"||f=="s"){n=_getInt(w,v,f.length,2);if(n==null||(n<0)||(n>59)){return 0}v+=n.length}else{if(f=="a"){if(w.substring(v,v+2).toLowerCase()=="am"){k="AM"}else{if(w.substring(v,v+2).toLowerCase()=="pm"){k="PM"}else{return 0}}v+=2}else{if(w.substring(v,v+f.length)!=f){return 0}else{v+=f.length}}}}}}}}}}}}}}if(v!=w.length){return 0}if(t==2){if(((j%4==0)&&(j%100!=0))||(j%400==0)){if(s>29){return 0}}else{if(s>28){return 0}}}if((t==4)||(t==6)||(t==9)||(t==11)){if(s>30){return 0}}if(d<12&&k=="PM"){d=d-0+12}else{if(d>11&&k=="AM"){d-=12}}var a=new Date(j,t-1,s,d,q,n);return a.getTime()}function parseDate(h){var f=(arguments.length==2)?arguments[1]:false;generalFormats=new Array("y-M-d","MMM d, y","MMM d,y","y-MMM-d","d-MMM-y","MMM d");monthFirst=new Array("M/d/y","M-d-y","M.d.y","MMM-d","M/d","M-d");dateFirst=new Array("d/M/y","d-M-y","d.M.y","d-MMM","d/M","d-M");var b=new Array("generalFormats",f?"dateFirst":"monthFirst",f?"monthFirst":"dateFirst");var g=null;for(var e=0;e<b.length;e++){var a=window[b[e]];for(var c=0;c<a.length;c++){g=getDateFromFormat(h,a[c]);if(g!=0){return new Date(g)}}}return null}function parsingDate(text){if("TH"==fs_default_language){var txts=text.split("/");text=(txts.length>0?txts[0]:"")+"/"+(txts.length>1?txts[1]:"");if(txts.length>2){var y=eval(txts[2])-543;text=text+"/"+y}}return parseDate(text,true)};
+var MONTH_NAMES=new Array('January','February','March','April','May','June','July','August','September','October','November','December','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');var DAY_NAMES=new Array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sun','Mon','Tue','Wed','Thu','Fri','Sat');function LZ(x){return(x<0||x>9?"":"0")+x}
+function isDate(val,format){var date=getDateFromFormat(val,format);if(date==0){return false;}
+return true;}
+function compareDates(date1,dateformat1,date2,dateformat2){var d1=getDateFromFormat(date1,dateformat1);var d2=getDateFromFormat(date2,dateformat2);if(d1==0||d2==0){return-1;}
+else if(d1>d2){return 1;}
+return 0;}
+function formatingDate(date,format){format=format+"";var result="";var i_format=0;var c="";var token="";var y=date.getYear()+"";var M=date.getMonth()+1;var d=date.getDate();var E=date.getDay();var H=date.getHours();var m=date.getMinutes();var s=date.getSeconds();var yyyy,yy,MMM,MM,dd,hh,h,mm,ss,ampm,HH,H,KK,K,kk,k;var value=new Object();if(y.length<4){y=""+(y-0+1900);}
+value["y"]=""+y;value["yyyy"]=y;value["yy"]=y.substring(2,4);value["M"]=M;value["MM"]=LZ(M);value["MMM"]=MONTH_NAMES[M-1];value["NNN"]=MONTH_NAMES[M+11];value["d"]=d;value["dd"]=LZ(d);value["E"]=DAY_NAMES[E+7];value["EE"]=DAY_NAMES[E];value["H"]=H;value["HH"]=LZ(H);if(H==0){value["h"]=12;}
+else if(H>12){value["h"]=H-12;}
+else{value["h"]=H;}
+value["hh"]=LZ(value["h"]);if(H>11){value["K"]=H-12;}else{value["K"]=H;}
+value["k"]=H+1;value["KK"]=LZ(value["K"]);value["kk"]=LZ(value["k"]);if(H>11){value["a"]="PM";}
+else{value["a"]="AM";}
+value["m"]=m;value["mm"]=LZ(m);value["s"]=s;value["ss"]=LZ(s);while(i_format<format.length){c=format.charAt(i_format);token="";while((format.charAt(i_format)==c)&&(i_format<format.length)){token+=format.charAt(i_format++);}
+if(value[token]!=null){result=result+value[token];}
+else{result=result+token;}}
+return result;}
+function _isInteger(val){var digits="1234567890";for(var i=0;i<val.length;i++){if(digits.indexOf(val.charAt(i))==-1){return false;}}
+return true;}
+function _getInt(str,i,minlength,maxlength){for(var x=maxlength;x>=minlength;x--){var token=str.substring(i,i+x);if(token.length<minlength){return null;}
+if(_isInteger(token)){return token;}}
+return null;}
+function getDateFromFormat(val,format){val=val+"";format=format+"";var i_val=0;var i_format=0;var c="";var token="";var token2="";var x,y;var now=new Date();var year=now.getYear();var month=now.getMonth()+1;var date=1;var hh=now.getHours();var mm=now.getMinutes();var ss=now.getSeconds();var ampm="";while(i_format<format.length){c=format.charAt(i_format);token="";while((format.charAt(i_format)==c)&&(i_format<format.length)){token+=format.charAt(i_format++);}
+if(token=="yyyy"||token=="yy"||token=="y"){if(token=="yyyy"){x=4;y=4;}
+if(token=="yy"){x=2;y=2;}
+if(token=="y"){x=2;y=4;}
+year=_getInt(val,i_val,x,y);if(year==null){return 0;}
+i_val+=year.length;if(year.length==2){if(year>70){year=1900+(year-0);}
+else{year=2000+(year-0);}}}
+else if(token=="MMM"||token=="NNN"){month=0;for(var i=0;i<MONTH_NAMES.length;i++){var month_name=MONTH_NAMES[i];if(val.substring(i_val,i_val+month_name.length).toLowerCase()==month_name.toLowerCase()){if(token=="MMM"||(token=="NNN"&&i>11)){month=i+1;if(month>12){month-=12;}
+i_val+=month_name.length;break;}}}
+if((month<1)||(month>12)){return 0;}}
+else if(token=="EE"||token=="E"){for(var i=0;i<DAY_NAMES.length;i++){var day_name=DAY_NAMES[i];if(val.substring(i_val,i_val+day_name.length).toLowerCase()==day_name.toLowerCase()){i_val+=day_name.length;break;}}}
+else if(token=="MM"||token=="M"){month=_getInt(val,i_val,token.length,2);if(month==null||(month<1)||(month>12)){return 0;}
+i_val+=month.length;}
+else if(token=="dd"||token=="d"){date=_getInt(val,i_val,token.length,2);if(date==null||(date<1)||(date>31)){return 0;}
+i_val+=date.length;}
+else if(token=="hh"||token=="h"){hh=_getInt(val,i_val,token.length,2);if(hh==null||(hh<1)||(hh>12)){return 0;}
+i_val+=hh.length;}
+else if(token=="HH"||token=="H"){hh=_getInt(val,i_val,token.length,2);if(hh==null||(hh<0)||(hh>23)){return 0;}
+i_val+=hh.length;}
+else if(token=="KK"||token=="K"){hh=_getInt(val,i_val,token.length,2);if(hh==null||(hh<0)||(hh>11)){return 0;}
+i_val+=hh.length;}
+else if(token=="kk"||token=="k"){hh=_getInt(val,i_val,token.length,2);if(hh==null||(hh<1)||(hh>24)){return 0;}
+i_val+=hh.length;hh--;}
+else if(token=="mm"||token=="m"){mm=_getInt(val,i_val,token.length,2);if(mm==null||(mm<0)||(mm>59)){return 0;}
+i_val+=mm.length;}
+else if(token=="ss"||token=="s"){ss=_getInt(val,i_val,token.length,2);if(ss==null||(ss<0)||(ss>59)){return 0;}
+i_val+=ss.length;}
+else if(token=="a"){if(val.substring(i_val,i_val+2).toLowerCase()=="am"){ampm="AM";}
+else if(val.substring(i_val,i_val+2).toLowerCase()=="pm"){ampm="PM";}
+else{return 0;}
+i_val+=2;}
+else{if(val.substring(i_val,i_val+token.length)!=token){return 0;}
+else{i_val+=token.length;}}}
+if(i_val!=val.length){return 0;}
+if(month==2){if(((year%4==0)&&(year%100!=0))||(year%400==0)){if(date>29){return 0;}}
+else{if(date>28){return 0;}}}
+if((month==4)||(month==6)||(month==9)||(month==11)){if(date>30){return 0;}}
+if(hh<12&&ampm=="PM"){hh=hh-0+12;}
+else if(hh>11&&ampm=="AM"){hh-=12;}
+var newdate=new Date(year,month-1,date,hh,mm,ss);return newdate.getTime();}
+function parseDate(val){var preferEuro=(arguments.length==2)?arguments[1]:false;generalFormats=new Array('y-M-d','MMM d, y','MMM d,y','y-MMM-d','d-MMM-y','MMM d');monthFirst=new Array('M/d/y','M-d-y','M.d.y','MMM-d','M/d','M-d');dateFirst=new Array('d/M/y','d-M-y','d.M.y','d-MMM','d/M','d-M');var checkList=new Array('generalFormats',preferEuro?'dateFirst':'monthFirst',preferEuro?'monthFirst':'dateFirst');var d=null;for(var i=0;i<checkList.length;i++){var l=window[checkList[i]];for(var j=0;j<l.length;j++){d=getDateFromFormat(val,l[j]);if(d!=0){return new Date(d);}}}
+return null;}
+function parsingDate(text){if("TH"==fs_default_language){var txts=text.split("/");text=(txts.length>0?txts[0]:"")+"/"+(txts.length>1?txts[1]:"");if(txts.length>2){var y=parseInt(txts[2])-543;text=text+"/"+y;}}
+return parseDate(text,true);}

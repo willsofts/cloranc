@@ -61,6 +61,7 @@ async function startSignalR() {
 }
 async function setupBroadcasting() {
     let username = getCurrentUser();
+    console.log("setupBroadcasting: username",username);
     if (username) {
         connection.on('broadcastNotification', function (group, message) {
             console.log("broadcastNotification: group",group,", message",message);
@@ -125,7 +126,7 @@ function showBroadcastNotification(datanotification) {
         }
     }
 }
-async function getNewNotification(action, isAlert) {
+async function getNewNotification(action, isAlert, numofRecords, isShow) {
     let cfg = createNotifyConfigure();
     let username = getCurrentUser();
     let urlstr = NOTIFY_API_URL + "/notify/api/Junt/GetNotificationLatest/" + username;

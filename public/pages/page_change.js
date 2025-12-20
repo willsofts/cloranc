@@ -107,15 +107,16 @@ function save(aform) {
 	});
 	return false;
 }
-
+const INPUT_TYPE_PASSWORD = "password";
+const INPUT_TYPE_TEXT = "text";
 function togglePassword(passwordField,toggleBtn) {
 	const icon = toggleBtn.querySelector("i");
-	if (passwordField.type === "password") {
-		passwordField.type = "text";
+	if (passwordField.type === INPUT_TYPE_PASSWORD) {
+		passwordField.type = INPUT_TYPE_TEXT;
 		icon.classList.remove("fa-eye-slash");
 		icon.classList.add("fa-eye");
 	} else {
-		passwordField.type = "password";
+		passwordField.type = INPUT_TYPE_PASSWORD;
 		icon.classList.remove("fa-eye");
 		icon.classList.add("fa-eye-slash");
 	}

@@ -38,12 +38,12 @@ function setupComponents() {
 	});		
 	$("#savebuttondialoginsert").click(function() { 
 		disableControls($("#savebuttondialoginsert"));
-		save(fsinsertform,true);
+		save(fsinsertform);
 		return false;			
 	});
 	$("#updatebuttondialoginsert").click(function() { 
 		disableControls($("#updatebuttondialoginsert"));
-		update(fsinsertform,true);
+		update(fsinsertform);
 		return false;			
 	});
 	$("#iconstyleswitcher").styleswitcher({$styleInput: $("#iconstyledialog")});

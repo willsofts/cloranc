@@ -339,7 +339,7 @@ function parsingDate(text) {
 		var txts = text.split("/");
 		text = (txts.length>0?txts[0]:"")+"/"+(txts.length>1?txts[1]:"");
 		if(txts.length>2) {
-			var y = eval(txts[2])-543;
+			var y = parseInt(txts[2])-543;
 			text = text+"/"+y;
 		}
 	}

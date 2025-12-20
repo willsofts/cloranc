@@ -165,7 +165,9 @@ async function apiLogin() {
 }
 
 function naiveId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return Date.now().toString(36) + array[0].toString(36).substr(2);
 }        
 
 // Get the room ID

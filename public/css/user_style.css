@@ -21,10 +21,10 @@
     src: url('/assets/Kanit/Kanit-Bold.ttf') format('opentype');
 }
 body {
-	font-family: 'Kanit-Light' !important;
+	font-family: 'Kanit-Light', serif, sans-serif !important;
 }
 td {
-	font-family: 'Kanit-Light' !important;
+	font-family: 'Kanit-Light', serif, sans-serif !important;
 }
 
 .pt-page.pt-page-current.pt-page-controller{
@@ -64,7 +64,7 @@ body {
   width: 100%;
   height: calc(1.5em + 1.3rem + 2px);
   padding: 0.65rem 1rem;
- font-family: "Kanit-Light" !important;
+ font-family: "Kanit-Light", serif, sans-serif !important;
     font-size: 14px !important;
     color: #181c32 !important;
   font-weight: 400;
@@ -137,7 +137,7 @@ select.form-control:focus::-ms-value {
   color: #181c32 !important;
   background-color: #ffffff !important;
   border-color: #E4E6EF !important;
-  font-family: "Kanit-Medium" !important;
+  font-family: "Kanit-Medium", serif, sans-serif !important;
   font-size: 16px !important;
   min-width: 100px;
 }
@@ -150,7 +150,7 @@ select.form-control:focus::-ms-value {
   color: #ffffff !important;
   background-color: #0abb87 !important;
   border-color: #0abb87 !important;
-  font-family: "Kanit-Medium" !important;
+  font-family: "Kanit-Medium", serif, sans-serif !important;
   font-size: 16px !important;
       min-width: 100px;
 }
@@ -163,49 +163,48 @@ select.form-control:focus::-ms-value {
 	color: #5d77ff !important;
     background-color: #fff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 #savebutton{
 	color: #fff !important;
     background-color: #5d77ff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 #savebuttondialoginsert{
 	color: #fff !important;
     background-color: #5d77ff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 #cancelbuttondialoginsert{
 	color: #5d77ff !important;
     background-color: #fff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 #updatebuttondialoginsert{
 	color: #fff !important;
     background-color: #5d77ff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 #cancelbutton{
 	color: #5d77ff !important;
     background-color: #fff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 #resetbutton{
 	color: #fff !important;
     background-color: #f64e60 !important;
-    color: #fff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
     border: 1px solid #f64e60;
 }
@@ -213,7 +212,7 @@ select.form-control:focus::-ms-value {
 	color: #fff !important;
     background-color: #5d77ff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 #addprogbutton i{
@@ -226,35 +225,35 @@ select.form-control:focus::-ms-value {
 	color: #fff !important;
     background-color: #5d77ff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 input[value=Save] {
  	color: #fff !important;
     background-color: #5d77ff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 input[value=Cancel] {
  	color: #5d77ff !important;
     background-color: #fff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 input[value=บันทึก] {
  	color: #fff !important;
     background-color: #5d77ff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 input[value=ยกเลิก] {
  	color: #5d77ff !important;
     background-color: #fff !important;
     border-color: #5d77ff !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
     font-size: 16px !important;
 }
 th > a > label {
@@ -263,7 +262,7 @@ th > a > label {
     text-transform: initial;
     color: #181c32 !important;
     font-size: 14px !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
 }
 th > label {
 	font-weight: 600 !important;
@@ -271,7 +270,7 @@ th > label {
     text-transform: initial;
     color: #181c32 !important;
     font-size: 14px !important;
-    font-family: "Kanit-Medium" !important;
+    font-family: "Kanit-Medium", serif, sans-serif !important;
 }
 th {
     background-color: #ebedf3 !important;
@@ -286,13 +285,13 @@ th {
     background-color: #ffffff;
 }
 #datatablebody tr td a {
-    font-family: "Kanit-Light" !important;
+    font-family: "Kanit-Light", serif, sans-serif !important;
     font-size: 14px !important;
     color: #181c32 !important;
     font-weight: 400;
 }
 .control-label {
-    font-family: "Kanit-Light" !important;
+    font-family: "Kanit-Light", serif, sans-serif !important;
     font-size: 14px !important;
     color: #181c32 !important;
     font-weight: 400;

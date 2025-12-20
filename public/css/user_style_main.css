@@ -21,7 +21,7 @@
     src: url('/assets/Kanit/Kanit-Bold.ttf') format('opentype');
 }
 body {
-	font-family: 'Kanit-Light' !important;
+	font-family: 'Kanit-Light', serif, sans-serif !important;
 	background: #EEF0F8;
 }
 .body-login { background: white; }

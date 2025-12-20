@@ -12,30 +12,60 @@
     <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
     <script>
         function openChatRoom() {
-            window.parent.openChatRoom(roomname.value);
+            if(openoption.value=="CROSS") {
+                let data = { archetype: "willsofts", type: "chat", method: "openChatRoom", roomname: roomname.value, callback: "afterOpen" };
+                window.parent.postMessage(JSON.stringify(data), "*");	
+            } else {
+                window.parent.openChatRoom(roomname.value,function() { console.log("after open chat room ..."); });
+            }
         }
         function createChatRoom() {
-            window.parent.createChatRoom(roomname.value,function() { openChatRoom(); });
+            if(openoption.value=="CROSS") {
+                let data = { archetype: "willsofts", type: "chat", method: "createChatRoom", roomname: roomname.value, callback: "afterCreate" };
+                window.parent.postMessage(JSON.stringify(data), "*");	
+            } else {
+                window.parent.createChatRoom(roomname.value,function() { openChatRoom(); });
+            }
         }
         window.onload = function() {
 			openbutton.onclick = openChatRoom;
 			createbutton.onclick = createChatRoom;
 		}
+        //in case of cross domain and defined callback then check it back onmessage function
+        window.onmessage = function(e) {
+            console.log("chat onmessage:",e.data);
+            try {
+                let payload = JSON.parse(e.data);
+                if(payload.callback == "afterCreate") {
+                    openChatRoom();
+                }
+            } catch(ex) { console.log(ex); }
+        }
     </script>
 </head>
 <body>
     <h3>Open Chat</h3>
 	<div id="bodylayer" class="container">
-        <div class="row">
-            <div class="col-md-2 text-right"><label>Room Name</label></div>
-            <div class="col-md-3">
-                <input type="text" id="roomname" class="form-control input-md"/>
-            </div>
-            <div class="col-md">
-                <button id="openbutton" class="btn btn-dark btn-sm">Open</button>
-                <button id="createbutton" class="btn btn-dark btn-sm">Create</button>
-            </div>
-        </div>
+        <table aria-label="Open Chat">
+            <thead><tr><th scope="row"></th><th scope="row"></th></tr></thead>
+            <tr>
+                <td>Open Policy</td>
+                <td>
+                    <select id="openoption" class="form-control input-md">
+                        <option value="SAME" selected>Same Domain</option>
+                        <option value="CROSS">Cross Domain</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Room Name</td>
+                <td><input type="text" id="roomname" class="form-control input-md"/></td>
+                <td>
+                    <button id="openbutton" class="btn btn-dark btn-sm">Open</button>
+                    <button id="createbutton" class="btn btn-dark btn-sm">Create</button>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>

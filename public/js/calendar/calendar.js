@@ -127,7 +127,7 @@ function openMonthCalendar(src) {
 					let mstr = texts[0];
 					let ystr = texts[1];
 					if(mstr!="" && ystr!="") {
-						let ayear = eval(ystr);
+						let ayear = parseInt(ystr);
 						let amonth = fs_calendar_month_names.indexOf(mstr);	
 						$(this).datepicker('option', 'defaultDate', new Date(ayear, amonth, 1));
 						$(this).datepicker('setDate', new Date(ayear, amonth, 1));
