@@ -56,6 +56,8 @@ This project contains examples API that can invoke by [curl](https://curl.se/dow
 * curl -v http://localhost:8080/api/fetch/error (with http status 500)
 * curl -X POST http://localhost:8080/api/fetch/time/current (RESTful api return current time milliseconds)
 
+This project also support [swagger](https://swagger.io/) api documents that come with `swagger.json`. you can visit [http://localhost:8080/api-docs](http://localhost:8080/api-docs) for more detail.
+
 ## Features
 
 #### Data Discover Service
