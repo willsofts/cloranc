@@ -1,4 +1,4 @@
-import { KnModel, KnOperation } from "@willsofts/will-db";
+import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
 import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
@@ -66,10 +66,10 @@ export class Sftu003Handler extends TknOperateHandler {
         return Promise.resolve(vi);
     }
 
-    protected override buildFilterQuery(context: KnContextInfo, model: KnModel, knsql: KnSQLInterface, selector: string, action?: string, subaction?: string): KnSQLInterface {
-        if(this.isCollectMode(action)) {
+    protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
+        if(this.isCollectMode(actions.action)) {
             let params = context.params;
-            knsql.append(selector);
+            knsql.append(actions.selector);
             knsql.append(" from ");
             knsql.append(model.name);
             let filter = " where ";
@@ -101,7 +101,7 @@ export class Sftu003Handler extends TknOperateHandler {
             }
             return knsql;    
         }
-        return super.buildFilterQuery(context, model, knsql, selector, action, subaction);
+        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {

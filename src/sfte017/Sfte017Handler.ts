@@ -39,7 +39,7 @@ export class Sfte017Handler extends TknOperateHandler {
         }
         return Promise.resolve(vi);
     }
-    protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery): KnSQLInterface {
+    protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting): KnSQLInterface {
         if(this.isCollectMode(actions.action)) {
             let eng = KnUtility.isEnglish(context);
             let params = context.params;
@@ -96,7 +96,7 @@ export class Sfte017Handler extends TknOperateHandler {
             }
             return knsql;    
         }
-        return super.buildFiltersQuery(context, model, knsql, actions);
+        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
     }
 
     protected override buildOrderQuery(context: any, model: KnModel, knsql: KnSQLInterface, pageSetting: KnPageSetting, actions?: KnActionQuery): KnSQLInterface {

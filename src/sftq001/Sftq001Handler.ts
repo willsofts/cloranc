@@ -1,4 +1,4 @@
-import { KnModel, KnOperation } from "@willsofts/will-db";
+import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnSQLInterface } from "@willsofts/will-sql";
 import { Utilities } from "@willsofts/will-util";
 import { KnContextInfo, KnDataTable } from "@willsofts/will-core";
@@ -25,11 +25,11 @@ export class Sftq001Handler extends TknOperateHandler {
         prefixNaming: true
     };
 
-    protected override buildFilterQuery(context: KnContextInfo, model: KnModel, knsql: KnSQLInterface, selector: string, action?: string, subaction?: string): KnSQLInterface {
-        if(this.isCollectMode(action)) {
+    protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
+        if(this.isCollectMode(actions.action)) {
             let params = context.params;
-            let counting = "count"==subaction;
-            knsql.append(selector);
+            let counting = KnOperation.COUNT==actions.subaction;
+            knsql.append(actions.selector);
             if(!counting) {
                 knsql.append(", tprog.progname ");
                 knsql.append(", tuser.username ");
@@ -79,7 +79,7 @@ export class Sftq001Handler extends TknOperateHandler {
             }
             return knsql;    
         }
-        return super.buildFilterQuery(context, model, knsql, selector, action, subaction);
+        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
     }
 
     public override async getDataSearch(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {

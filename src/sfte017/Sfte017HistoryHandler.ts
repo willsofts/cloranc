@@ -33,7 +33,7 @@ export class Sfte017HistoryHandler extends TknOperateHandler {
         return Promise.resolve(vi);
     }
 
-    protected override buildFiltersQuery(context: KnContextInfo, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery): KnSQLInterface {
+    protected override buildFiltersQuery(context: KnContextInfo, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting): KnSQLInterface {
         if(this.isCollectMode(actions.action)) {
             let params = context.params;
             knsql.append(actions.selector);
@@ -47,7 +47,7 @@ export class Sfte017HistoryHandler extends TknOperateHandler {
             }
             return knsql;    
         }
-        return super.buildFiltersQuery(context, model, knsql, actions);
+        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
     }
 
     protected override buildOrderQuery(context: any, model: KnModel, knsql: KnSQLInterface, pageSetting: KnPageSetting, actions?: KnActionQuery): KnSQLInterface {

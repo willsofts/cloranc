@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { KnModel, KnOperation } from "@willsofts/will-db";
+import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
 import { Utilities } from "@willsofts/will-util";
@@ -69,12 +69,12 @@ export class Sfte016Handler extends TknOperateHandler {
         return Promise.resolve(vi);
     }
 
-    protected override buildFilterQuery(context: KnContextInfo, model: KnModel, knsql: KnSQLInterface, selector: string, action?: string, subaction?: string): KnSQLInterface {
-        if(this.isCollectMode(action)) {
+    protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
+        if(this.isCollectMode(actions.action)) {
             let eng = KnUtility.isEnglish(context);
             let params = context.params;
-            let counting = KnOperation.COUNT==subaction;
-            knsql.append(selector);
+            let counting = KnOperation.COUNT==actions.subaction;
+            knsql.append(actions.selector);
             if(!counting) {
                 knsql.append(",tuserinfo.userbranch,tuserinfo.usertname,tuserinfo.usertsurname,");
                 knsql.append("tuserinfo.userename,tuserinfo.useresurname,");
@@ -129,7 +129,7 @@ export class Sfte016Handler extends TknOperateHandler {
             }
             return knsql;    
         }
-        return super.buildFilterQuery(context, model, knsql, selector, action, subaction);
+        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {

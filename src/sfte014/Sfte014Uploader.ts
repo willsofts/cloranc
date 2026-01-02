@@ -36,7 +36,7 @@ export class Sfte014Uploader extends TknUploadRouter {
             let ctx = await this.createContext(req);
 			ctx.params.file = req.file;
 			let handler = new Sfte014Handler();
-			handler.obtain(this.service?.broker,this.logger);
+			handler.obtain(this.broker,this.logger);
 			let rs = await handler.importData(ctx);
 			response.body = rs;
 			res.end(JSON.stringify(response));

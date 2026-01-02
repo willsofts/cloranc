@@ -36,7 +36,7 @@ export class ChatUserUploader extends TknUploadRouter {
             let ctx = await this.createContext(req);
 			ctx.params.file = req.file;
 			let handler = new ChatUserHandler();
-			handler.obtain(this.service?.broker,this.logger);
+			handler.obtain(this.broker,this.logger);
 			let rs = await handler.insert(ctx);
 			response.body = rs;
 			res.end(JSON.stringify(response));

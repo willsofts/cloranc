@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { KnModel, KnOperation } from "@willsofts/will-db";
+import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
 import { TknOperateHandler } from '@willsofts/will-serv';
@@ -70,11 +70,11 @@ export class Sfte014Handler extends TknOperateHandler {
         return Promise.resolve(vi);
     }
 
-    protected override buildFilterQuery(context: KnContextInfo, model: KnModel, knsql: KnSQLInterface, selector: string, action?: string, subaction?: string): KnSQLInterface {
-        if(this.isCollectMode(action)) {
+    protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
+        if(this.isCollectMode(actions.action)) {
             let params = context.params;
-            let counting = KnOperation.COUNT==subaction;
-            knsql.append(selector);
+            let counting = KnOperation.COUNT==actions.subaction;
+            knsql.append(actions.selector);
             if(!counting) {
                 knsql.append(", tconstant.nameen as langname ");
             }
@@ -92,7 +92,7 @@ export class Sfte014Handler extends TknOperateHandler {
             }
             return knsql;    
         }
-        return super.buildFilterQuery(context, model, knsql, selector, action, subaction);
+        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
     }
 
     /* override to handle launch router when invoked from menu */

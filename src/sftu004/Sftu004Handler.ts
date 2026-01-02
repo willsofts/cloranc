@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { KnModel, KnOperation, KnActionQuery } from "@willsofts/will-db";
+import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
 import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
@@ -70,15 +70,15 @@ export class Sftu004Handler extends TknOperateHandler {
         return Promise.resolve(vi);
     }
 
-    protected override buildFiltersQuery(context: KnContextInfo, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery): KnSQLInterface {
+    protected override buildFiltersQuery(context: KnContextInfo, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting): KnSQLInterface {
         if(this.isCollectMode(actions.action)) {
             let params = context.params;
             knsql.append(actions.selector);
             knsql.append(" from ");
             knsql.append(model.name);
             knsql.append(" where site = ?site and userid = ?userid ");
-            knsql.set("site",this.userToken?.site);
-            knsql.set("userid",this.userToken?.userid);
+            knsql.set("site",this.userToken?.site || params.site);
+            knsql.set("userid",this.userToken?.userid || params.userid);
             if(params.keyname && params.keyname!="") {
                 knsql.append("and keyname LIKE ?keyname ");
                 knsql.set("keyname","%"+params.keyname+"%");
@@ -99,7 +99,7 @@ export class Sftu004Handler extends TknOperateHandler {
             }
             return knsql;    
         }
-        return super.buildFiltersQuery(context, model, knsql, actions);
+        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
