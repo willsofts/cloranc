@@ -1,4 +1,4 @@
-var connection;
+let connection;
 $(function() {
     $("#sendbutton").on("click",function() { sendMessage(); });
     $("#bcbutton").on("click",function() { broadcastMessage(); });

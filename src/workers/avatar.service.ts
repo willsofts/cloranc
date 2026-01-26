@@ -1,12 +1,12 @@
 import { ServiceSchema } from "moleculer";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import mime from "mime-types";
 import { createCanvas } from 'canvas';
 import randomColor from 'randomcolor';
 import { AVATAR_IMAGE_PATH_RANDOM, AVATAR_IMAGE_BASE64, AVATAR_IMAGE_FROM_TEXT, AVATAR_IMAGE_PATH } from "../utils/EnvironmentVariable";
 
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 
 function generateImageFromText(text: string, width: number = 50, height: number = 50) {
     const canvas = createCanvas(width, height);
@@ -20,66 +20,60 @@ function generateImageFromText(text: string, width: number = 50, height: number 
     ctx.fillText(firstChar, width / 2, height / 2);
     return canvas.toDataURL('image/png');
 }
-
+function findAvatarFromPhoto(photoimage?: string) {
+    if (!photoimage) return null;
+    const imgpath = AVATAR_IMAGE_PATH || "img/avatar";
+    const photofile = path.join(".", "public", imgpath, photoimage);
+    if (!fs.existsSync(photofile)) return null;
+    return {
+        avatar: `/${imgpath}/${photoimage}`,
+        imgfile: photofile
+    };
+}
+function findAvatarFromRandomDir(userid: string, directory: string, ranpath: string) {
+    if (!fs.existsSync(directory)) return null;
+    const files = fs.readdirSync(directory);
+    if (!files.length) return null;
+    const matched = files.find(f => f.includes(userid));
+    if (matched) {
+        return {
+            avatar: `/${ranpath}/${matched}`,
+            imgfile: path.join(directory, matched)
+        };
+    }
+    const index = files.length > 1
+        ? crypto.createHash("sha256").update(userid).digest().readUInt32BE(0) % files.length
+        : 0;
+    return {
+        avatar: `/${ranpath}/${files[index]}`,
+        imgfile: path.join(directory, files[index])
+    };
+}
+function convertToBase64(imgfile: string) {
+    const mimeType = mime.lookup(imgfile);
+    const imageData = fs.readFileSync(imgfile);
+    return `data:${mimeType};base64,${imageData.toString("base64")}`;
+}
 const AvatarService : ServiceSchema = {
     name: "avatar",
     actions: {
         image(ctx: any) {
-            this.logger.debug("ctx",ctx);
-            let userid = ctx.params.userid;
-            let photoimage = ctx.params.photoimage;
-            if(!userid || userid.trim().length==0) userid = "anonymous";
-            let ranpath = AVATAR_IMAGE_PATH_RANDOM || "assets/metronic/media/users";
-            let directory = path.join(".","public",ranpath);
+            let userid = ctx.params.userid?.trim() || "anonymous";
+            const photoimage = ctx.params.photoimage;
+            const ranpath = AVATAR_IMAGE_PATH_RANDOM || "img/users";
+            const directory = path.join(".","public",ranpath);
             let avatar = "";
+            let imgfile = "";
             try {
-                let found = false;
-                let imgfile = "";
-                //check if photo image is exist?
-                if(photoimage && photoimage.trim().length>0) {
-                    let imgpath = AVATAR_IMAGE_PATH || "img/avatar";
-                    let photofile = path.join(".","public",imgpath,photoimage);
-                    if (fs.existsSync(photofile)) {
-                        found = true;
-                        avatar = "/"+imgpath+"/"+photoimage;
-                        imgfile = photofile;
-                    }
+                const photoResult = findAvatarFromPhoto(photoimage);
+                const randomResult = photoResult ? null : findAvatarFromRandomDir(userid, directory, ranpath);
+                const result = photoResult || randomResult;
+                if (result) {
+                    avatar = result.avatar;
+                    imgfile = result.imgfile;
                 }
-                if(!found) {
-                    if (fs.existsSync(directory)) {
-                        //find out number of files in random directory
-                        const files = fs.readdirSync(directory);
-                        for(let file of files) {
-                            if(file.indexOf(userid)>=0) {
-                                found = true;
-                                avatar = "/"+ranpath+"/"+file;
-                                imgfile = path.join(directory,file);
-                            }
-                        }
-                        if(!found) {
-                            //try to random user image file with userid hash mod with number of files in random dir
-                            if(files && files.length > 1) {
-                                const hash = crypto.createHash('sha256').update(userid).digest();
-                                const hint = hash.readUInt32BE(0);
-                                let index = hint % files.length;
-                                avatar = "/"+ranpath+"/"+files[index];
-                                imgfile = path.join(directory,files[index]);
-                                found = true;
-                            } else {
-                                avatar = "/"+ranpath+"/"+files[0];
-                                imgfile = path.join(directory,files[0]);
-                                found = true;
-                            }
-                        }
-                    } else {
-                        this.logger.warn("Directory does not exist "+directory);
-                    }
-                }
-                if(found && imgfile && AVATAR_IMAGE_BASE64) {
-                    const mimeType = mime.lookup(imgfile);
-                    const imageData = fs.readFileSync(imgfile);
-                    const base64Image = imageData.toString('base64');
-                    avatar = `data:${mimeType};base64,${base64Image}`;
+                if (imgfile && AVATAR_IMAGE_BASE64) {
+                    avatar = convertToBase64(imgfile);
                 }
                 if(!avatar && AVATAR_IMAGE_FROM_TEXT) {
                     avatar = generateImageFromText(userid);

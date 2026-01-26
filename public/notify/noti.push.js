@@ -6,9 +6,8 @@ $(function(){
 });
 function createAlert(opts){
     console.log("createAlert:",opts);
-    var icon,
+    let icon,
         title,
-        text,
         alertTemplate,
         color, 
         duration,
@@ -19,7 +18,6 @@ function createAlert(opts){
     }
     icon = opts.icon || 'info-circle';
     title = opts.title || 'New notification';
-    text = opts.text || '',
     color = opts.color || 'blue'; 
     isFade = opts.isFade || false;
     serial = opts.serial || undefined; 
@@ -38,11 +36,11 @@ function createAlert(opts){
 							'</div>'+
 						'</div>';
     let $alert = $(alertTemplate);
-    if(!isFade) {
-        $alert.appendTo(container).removeClass('show').hide();
-    } else {
+    if(isFade) {
         $alert.appendTo(container);
         intervalNewNotificationAlert($alert,duration);
+    } else {
+        $alert.appendTo(container).removeClass('show').hide();
     }
     let alertShow = container.find(".alert.show");
     if(alertShow.length > 5) { //max display
@@ -56,11 +54,11 @@ function hideAlert($alert){
 function intervalNewNotificationAlert($alert,duration,countdown){   
     if(countdown) clearInterval(countdown);
     countdown = setInterval(function () {
-        if (!--duration) { 
+        if (--duration) { 
+            intervalNewNotificationAlert($alert,duration,countdown);
+        } else { 
             hideAlert($alert);
             clearInterval(countdown);
-        } else { 
-            intervalNewNotificationAlert($alert,duration,countdown);
         }
     }, 1000);
 }
@@ -74,7 +72,7 @@ window.onmessage = function(e) {
 function handleRequestMessage(data) {
     if(data.archetype=="willsofts" && data.type=="language") {
         if(data.language && data.language.trim().length>0) {
-            fs_default_language = data.language;
+            setDefaultLanguage(data.language);
         }
     }
 }

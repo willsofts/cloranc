@@ -1,9 +1,7 @@
 import { KnModel, KnOperation, KnPageSetting, KnActionQuery } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
-import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
-import { VerifyError } from '@willsofts/will-core';
-import { KnUtility } from '@willsofts/will-core';
+import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable, KnUtility } from '@willsofts/will-core';
 import { Utilities } from "@willsofts/will-util";
 import { TknOperateHandler } from '@willsofts/will-serv';
 
@@ -39,64 +37,71 @@ export class Sfte017Handler extends TknOperateHandler {
         }
         return Promise.resolve(vi);
     }
-    protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting): KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let eng = KnUtility.isEnglish(context);
-            let params = context.params;
-            let counting = KnOperation.COUNT==actions.subaction;
-            knsql.append(actions.selector);
-            if(!counting) {
-                if(eng) {
-                    knsql.append(", tuserinfo.userename as username, ");
-                    knsql.append("tuserinfo.useresurname as usersurname ");
-                }else {
-                    knsql.append(", tuserinfo.usertname as username, ");
-                    knsql.append("tuserinfo.usertsurname as usersurname ");
-                }
-            }
-            knsql.append(" from ");
-            knsql.append(model.name);
-            knsql.append(" LEFT JOIN tuserinfo ON tuserinfo.userid = tuserfactor.userid ");  
-            let filter = " where ";
-            if(params.userid && params.userid!="") {
-                knsql.append(filter).append(model.name).append(".userid LIKE ?userid ");
-                knsql.set("userid","%"+params.userid+"%");
-                filter = " and ";
-            }
-            if(params.username && params.username!="") {
-                if(eng) {
-                    knsql.append(filter).append(" tuserinfo.userename like ?username or useresurname like ?usersurname ");
-                } else {
-                    knsql.append(filter).append(" tuserinfo.usertname like ?username or usertsurname like ?usersurname ");
-                }
-                knsql.set("username","%"+params.username+"%");
-                knsql.set("usersurname","%"+params.username+"%");
-                filter = " and ";
-            }
-            if(params.email && params.email!="") {
-                knsql.append(filter).append("tuserfactor.email LIKE ?email ");
-                knsql.set("email","%"+params.email+"%");
-                filter = " and ";
-            }
-            if(params.fromdate && params.fromdate!="") {
-                let fromdate = Utilities.parseDate(params.fromdate);
-                if(fromdate) {
-                    knsql.append(filter).append(model.name).append(".createdate >= ?fromdate ");
-                    knsql.set("fromdate",fromdate);
-                    filter = " and ";
-                }
-            }
-            if(params.todate && params.todate!="") {
-                let todate = Utilities.parseDate(params.todate);
-                if(todate) {
-                    knsql.append(filter).append(model.name).append(".createdate <= ?todate ");
-                    knsql.set("todate",todate);
-                    filter = " and ";
-                }
-            }
-            return knsql;    
+
+    private appendSelect(knsql: KnSQLInterface, counting: boolean, isEnglish: boolean) {
+        if (counting) return;
+        if(isEnglish) {
+            knsql.append(", tuserinfo.userename as username, ");
+            knsql.append("tuserinfo.useresurname as usersurname ");
+        } else {
+            knsql.append(", tuserinfo.usertname as username, ");
+            knsql.append("tuserinfo.usertsurname as usersurname ");
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+    }
+
+    private buildConditions(params: any, model: KnModel, knsql: KnSQLInterface, isEnglish: boolean): string[] {
+        const conditions: string[] = [];
+        if(Utilities.hasValue(params.userid)) {
+            conditions.push(model.name+".userid LIKE ?userid ");
+            knsql.set("userid","%"+params.userid+"%");
+        }
+        if(Utilities.hasValue(params.username)) {
+            if(isEnglish) {
+                conditions.push(" tuserinfo.userename like ?username or useresurname like ?usersurname ");
+            } else {
+                conditions.push(" tuserinfo.usertname like ?username or usertsurname like ?usersurname ");
+            }
+            knsql.set("username","%"+params.username+"%");
+            knsql.set("usersurname","%"+params.username+"%");
+        }
+        if(Utilities.hasValue(params.email)) {
+            conditions.push("tuserfactor.email LIKE ?email ");
+            knsql.set("email","%"+params.email+"%");
+        }
+        if(Utilities.hasValue(params.fromdate)) {
+            let fromdate = Utilities.parseDate(params.fromdate);
+            if(fromdate) {
+                conditions.push(model.name+".createdate >= ?fromdate ");
+                knsql.set("fromdate",fromdate);
+            }
+        }
+        if(Utilities.hasValue(params.todate)) {
+            let todate = Utilities.parseDate(params.todate);
+            if(todate) {
+                conditions.push(model.name+".createdate <= ?todate ");
+                knsql.set("todate",todate);
+            }
+        }
+        return conditions;
+    }
+
+    protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting): KnSQLInterface {
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        }
+        let eng = KnUtility.isEnglish(context);
+        let params = context.params;
+        let counting = KnOperation.COUNT==actions.subaction;
+        knsql.append(actions.selector);
+        this.appendSelect(knsql, counting, eng);
+        knsql.append(" from ");
+        knsql.append(model.name);
+        knsql.append(" LEFT JOIN tuserinfo ON tuserinfo.userid = tuserfactor.userid ");
+        const conditions = this.buildConditions(params, model, knsql, eng);  
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override buildOrderQuery(context: any, model: KnModel, knsql: KnSQLInterface, pageSetting: KnPageSetting, actions?: KnActionQuery): KnSQLInterface {
@@ -120,7 +125,7 @@ export class Sfte017Handler extends TknOperateHandler {
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -131,9 +136,9 @@ export class Sfte017Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -174,7 +179,7 @@ export class Sfte017Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -184,9 +189,9 @@ export class Sfte017Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 

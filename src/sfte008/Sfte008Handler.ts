@@ -3,8 +3,7 @@ import { KnDBConnector, KnSQLInterface, KnRecordSet, KnResultSet, KnSQL } from "
 import { HTTP } from "@willsofts/will-api";
 import { Utilities } from "@willsofts/will-util";
 import { TknOperateHandler } from '@willsofts/will-serv';
-import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
-import { VerifyError } from '@willsofts/will-core';
+import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
 
 export class Sfte008Handler extends TknOperateHandler {
 
@@ -28,7 +27,7 @@ export class Sfte008Handler extends TknOperateHandler {
         sql.set("edittime",now,"TIME");
         sql.set("edituser",this.userToken?.userid);
         let menutext = context.params.menutext;
-        if(typeof menutext !== "string") {
+        if(typeof menutext === "object") {
             sql.set("menutext",JSON.stringify(menutext));
         } else {
             sql.set("menutext",menutext);
@@ -45,31 +44,33 @@ export class Sfte008Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            knsql.append(actions.selector);
-            knsql.append(" from ");
-            knsql.append(model.name);
-            let filter = " where ";
-            if(params.groupname && params.groupname!="") {
-                knsql.append(filter).append("groupname LIKE ?groupname");
-                knsql.set("groupname","%"+params.groupname+"%");
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        knsql.append(actions.selector);
+        knsql.append(" from ");
+        knsql.append(model.name);
+        if(params.groupname && params.groupname!="") {
+            conditions.push("groupname LIKE ?groupname");
+            knsql.set("groupname","%"+params.groupname+"%");
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -86,12 +87,12 @@ export class Sfte008Handler extends TknOperateHandler {
             return dt;
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
         }
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, db, context.params.groupname);
             if(rs.rows.length>0) {
@@ -101,9 +102,9 @@ export class Sfte008Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -155,6 +156,117 @@ export class Sfte008Handler extends TknOperateHandler {
         return map;
     }
 
+    public async getProgramLists(context: KnContextInfo, db: KnDBConnector, groupname: string) : Promise<Set<string>> {
+        let prglist = new Set<string>();
+        let knsql = new KnSQL();
+        knsql.append("select tproggrp.programid,tprog.progtype ");
+        knsql.append("from tproggrp ");
+        knsql.append("LEFT JOIN tprog ON tprog.programid = tproggrp.programid ");
+        knsql.append("where tproggrp.groupname = ?groupname ");
+        knsql.set("groupname",groupname);
+        this.dump(knsql);
+        let rs = await knsql.executeQuery(db,context);
+        if(rs.rows.length>0) {
+            for(let row of rs.rows) {
+                let progid = row.programid;
+                let progtype = row.progtype;
+                //ignore program plugin (I) or Internal (N)
+                let ignoreProg = "I"==progtype || "N"==progtype;
+                if(!ignoreProg) {
+                    prglist.add(progid);
+                }
+            }    
+        }
+        return prglist;
+    }
+
+    public async updatePermitsGroup(context: KnContextInfo, db: KnDBConnector, map: Map<string,any>, groupname: string) : Promise<KnRecordSet> {
+        let result = this.createRecordSet();
+        let delsql = new KnSQL();
+        delsql.append("delete from tpperm ");
+        delsql.append("where groupid = ?groupid ");
+        delsql.append("and progid = ?progid ");
+        let knsql = new KnSQL();
+        knsql.append("insert into tpperm (groupid,progid,permname,permvalue) ");
+        knsql.append("values(?groupid,?progid,?permname,?permvalue)");
+        for(let [progid,item] of map) {
+            delsql.set("groupid",groupname);
+            delsql.set("progid",progid);
+            this.dump(delsql);
+            await delsql.executeUpdate(db,context);
+            let permits = item?.permits;
+            if(permits) {
+                for(let permname in permits) {
+                    let permvalue = permits[permname];
+                    knsql.set("groupid",groupname);
+                    knsql.set("progid",progid);
+                    knsql.set("permname",permname);
+                    knsql.set("permvalue",String(permvalue));
+                    this.dump(knsql);
+                    let rs = await knsql.executeUpdate(db,context);
+                    result.records += rs.rows.affectedRows?rs.rows.affectedRows:0;                                
+                }
+            }
+        }
+        return result;
+    }
+
+    public async updatePermitsProgram(context: KnContextInfo, db: KnDBConnector, map: Map<string,any>, groupname: string) : Promise<KnRecordSet> {
+        let result = this.createRecordSet();
+        let updsql = new KnSQL();
+        updsql.append("update tproggrp set parameters = ?parameters, seqno = ?seqno ");
+        updsql.append("where groupname = ?groupname and programid = ?programid ");
+        let knsql = new KnSQL();
+        knsql.append("insert into tproggrp(groupname,programid,parameters,seqno) ");
+        knsql.append("values(?groupname,?programid,?parameters,?seqno) ");
+        let seqno = 0;
+        for(let [progid,item] of map) {
+            seqno++;
+            let parameters = item?.parameters;
+            updsql.set("groupname", groupname);
+            updsql.set("programid", progid);
+            updsql.set("parameters", parameters);
+            updsql.set("seqno", seqno);
+            this.dump(updsql);
+            let reply = await updsql.executeUpdate(db,context);
+            let rss = this.createRecordSet(reply);
+            result.records += rss.records;
+            if(rss.records==0) {
+                knsql.set("groupname", groupname);
+                knsql.set("programid", progid);
+                knsql.set("parameters", parameters);
+                knsql.set("seqno", seqno);
+                this.dump(knsql);
+                reply = await knsql.executeUpdate(db,context);
+                rss = this.createRecordSet(reply);
+                result.records += rss.records;                            
+            }
+        }
+        return result;
+    }
+
+    public async deletePermitsProgram(context: KnContextInfo, db: KnDBConnector, map: Map<string,any>, groupname: string, prglist: Set<string>) : Promise<void> {
+        let delsql = new KnSQL();
+        delsql.append("delete from tpperm ");
+        delsql.append("where groupid = ?groupid ");
+        delsql.append("and progid = ?progid ");
+        let knsql = new KnSQL();
+        knsql.append("delete from tproggrp where groupname = ?groupname ");
+        knsql.append("and programid = ?programid ");
+        for(let progid of prglist) {
+            if(!map.get(progid)) {
+                delsql.set("groupid", groupname);
+                delsql.set("progid", progid);
+                this.dump(delsql);
+                await delsql.executeUpdate(db,context);                        
+                knsql.set("groupname", groupname);
+                knsql.set("programid", progid);
+                this.dump(knsql);
+                await knsql.executeUpdate(db,context);    
+            }
+        }
+    }
+
     public async updatePermits(context: KnContextInfo, model: KnModel, db: KnDBConnector) : Promise<KnRecordSet> {
         let groupname = context.params.groupname;
         let menutext = context.params.menutext;
@@ -167,98 +279,15 @@ export class Sfte008Handler extends TknOperateHandler {
             this.cleanMenu(menujson);
             context.params.menutext = JSON.stringify(menujson);
             let map = this.getMap(menujson);
-            if(map.size > 0) {                                
-                let delsql = new KnSQL();
-                delsql.append("delete from tpperm ");
-                delsql.append("where groupid = ?groupid ");
-                delsql.append("and progid = ?progid ");
-                let knsql = new KnSQL();
-                knsql.append("insert into tpperm (groupid,progid,permname,permvalue) ");
-                knsql.append("values(?groupid,?progid,?permname,?permvalue)");
-                for(let [progid,item] of map) {
-                    delsql.set("groupid",groupname);
-                    delsql.set("progid",progid);
-                    this.dump(delsql);
-                    await delsql.executeUpdate(db,context);
-                    let permits = item?.permits;
-                    if(permits) {
-                        for(let permname in permits) {
-                            let permvalue = permits[permname];
-                            knsql.set("groupid",groupname);
-                            knsql.set("progid",progid);
-                            knsql.set("permname",permname);
-                            knsql.set("permvalue",String(permvalue));
-                            this.dump(knsql);
-                            let rs = await knsql.executeUpdate(db,context);
-                            result.records += rs.rows.affectedRows?rs.rows.affectedRows:0;                                
-                        }
-                    }
-                }
+            if(map.size > 0) {
+                let rc = await this.updatePermitsGroup(context,db,map,groupname);
+                result.records += rc.records;
                 //find out old program id list in this group name
-                let prglist = new Set<string>();
-                knsql.clear();
-                knsql.append("select tproggrp.programid,tprog.progtype ");
-                knsql.append("from tproggrp ");
-                knsql.append("LEFT JOIN tprog ON tprog.programid = tproggrp.programid ");
-                knsql.append("where tproggrp.groupname = ?groupname ");
-                knsql.set("groupname",groupname);
-                this.dump(knsql);
-                let rs = await knsql.executeQuery(db,context);
-                if(rs.rows.length>0) {
-                    for(let i=0;i<rs.rows.length;i++) {
-                        let row = rs.rows[i];
-                        let progid = row.programid;
-                        let progtype = row.progtype;
-                        //ignore program plugin (I) or Internal (N)
-                        let ignoreProg = "I"==progtype || "N"==progtype;
-                        if(!ignoreProg) {
-                            prglist.add(progid);
-                        }
-                    }    
-                }
+                let prglist = await this.getProgramLists(context,db,groupname);
                 //update program group if not found then insert the new one
-                let updsql = new KnSQL();
-                updsql.append("update tproggrp set parameters = ?parameters, seqno = ?seqno ");
-                updsql.append("where groupname = ?groupname and programid = ?programid ");
-                knsql.clear();
-                knsql.append("insert into tproggrp(groupname,programid,parameters,seqno) ");
-                knsql.append("values(?groupname,?programid,?parameters,?seqno) ");
-                let seqno = 0;
-                for(let [progid,item] of map) {
-                    seqno++;
-                    let parameters = item?.parameters;
-                    updsql.set("groupname", groupname);
-                    updsql.set("programid", progid);
-                    updsql.set("parameters", parameters);
-                    updsql.set("seqno", seqno);
-                    this.dump(updsql);
-                    let reply = await updsql.executeUpdate(db,context);
-                    let rss = this.createRecordSet(reply);
-                    if(rss.records==0) {
-                        knsql.set("groupname", groupname);
-                        knsql.set("programid", progid);
-                        knsql.set("parameters", parameters);
-                        knsql.set("seqno", seqno);
-                        this.dump(knsql);
-                        await knsql.executeUpdate(db,context);                            
-                    }
-                }
+                await this.updatePermitsProgram(context,db,map,groupname);
 			    //try to delete program id out of this group name if not found in current menu tree
-			    knsql.clear();
-			    knsql.append("delete from tproggrp where groupname = ?groupname ");
-                knsql.append("and programid = ?programid ");
-                for(let progid of prglist) {
-                    if(!map.get(progid)) {
-                        delsql.set("groupid", groupname);
-                        delsql.set("progid", progid);
-                        this.dump(delsql);
-                        await delsql.executeUpdate(db,context);                        
-                        knsql.set("groupname", groupname);
-                        knsql.set("programid", progid);
-                        this.dump(knsql);
-                        await knsql.executeUpdate(db,context);    
-                    }
-                }
+                await this.deletePermitsProgram(context,db,map,groupname,prglist);
             }
         }
         return result;
@@ -298,7 +327,7 @@ export class Sfte008Handler extends TknOperateHandler {
 
     protected override async doClear(context: KnContextInfo, model: KnModel) : Promise<KnResultSet> {
         await this.validateRequireFields(context, model, KnOperation.CLEAR);
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             await db.beginWork();
             context.params.menutext = undefined;
@@ -310,9 +339,9 @@ export class Sfte008Handler extends TknOperateHandler {
         } catch(ex: any) {
             this.logger.error(ex);
             db.rollbackWork().catch(ex => this.logger.error(ex));
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
         } finally {
-            if(db) db.close();
+            this.closeConnector(db,context);
         }
     }
 

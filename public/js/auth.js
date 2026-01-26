@@ -1,4 +1,5 @@
-var fs_current_domainid;
+let fs_current_domainid;
+function getCurrentDomain() { return fs_current_domainid; }
 function startSSO(domainid) {
     fs_current_domainid = domainid;
     startWaiting();
@@ -94,11 +95,11 @@ function ssoSelectAccount () {
 }
 function ssoHandleResponse(response) {
     console.log("ssoHandleResponse:",response);
-    if (response !== null) {
+    if (response) {
         ssoSignedIn = true;
-        username = response.account.username;
+        username = response.account?.username;
         if(!username || username=="") {
-            username = response.account.idTokenClaims.given_name;
+            username = response.account.idTokenClaims?.given_name;
         }
         tryLogIn(username,response.tenantId,response.accessToken);
     } else {
@@ -116,7 +117,7 @@ function ssoSignIn() {
 function ssoSignOut() {
     if(!msalObject) throw new Error("Configuration not found");
     if(!ssoSignedIn) throw new Error("Account does not signed in");
-    let homeurl = window.location.protocol+"//"+window.location.hostname+(window.location.port ? ':'+window.location.port: '')+"/";
+    let homeurl = globalThis.location.protocol+"//"+globalThis.location.hostname+(globalThis.location.port ? ':'+globalThis.location.port: '')+"/";
     console.log("homeurl",homeurl);
     const logoutRequest = {
         account: msalObject.getAccountByUsername(username),

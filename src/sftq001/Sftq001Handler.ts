@@ -25,61 +25,64 @@ export class Sftq001Handler extends TknOperateHandler {
         prefixNaming: true
     };
 
-    protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            let counting = KnOperation.COUNT==actions.subaction;
-            knsql.append(actions.selector);
-            if(!counting) {
-                knsql.append(", tprog.progname ");
-                knsql.append(", tuser.username ");
-            }
-            knsql.append(" from ");
-            knsql.append(model.name);
-            if(!counting) {
-                knsql.append(" left join tprog on tprog.programid = ").append(model.name).append(".progid ");    
-            }
-            if(params.userid && params.userid!="") {
-                knsql.append(" join tuser on tuser.userid = ").append(model.name).append(".userid ");    
-                knsql.append("and tuser.username LIKE ?username ");
-                knsql.set("username","%"+params.userid+"%");
-            } else {
-                knsql.append(" left join tuser on tuser.userid = ").append(model.name).append(".userid ");    
-            }
-            let filter = " where ";
-            /*
-            if(params.userid && params.userid!="") {
-                knsql.append(filter).append("( ").append(model.name).append(".userid LIKE ?userid ");
-                knsql.append("or ").append(model.name).append(".useralias LIKE ?useralias ) ");
-                knsql.set("userid","%"+params.userid+"%");
-                knsql.set("useralias","%"+params.userid+"%");
-                filter = " and ";
-            }
-            */
-            if(params.progid && params.progid!="") {
-                knsql.append(filter).append(model.name).append(".progid LIKE ?progid");
-                knsql.set("progid","%"+params.progid+"%");
-                filter = " and ";
-            }
-            if(params.datefrom && params.datefrom!="") {
-                let fromdate = Utilities.parseDate(params.datefrom);
-                if(fromdate) {
-                    knsql.append(filter).append(model.name).append(".curtime >= ?datefrom ");                
-                    knsql.set("datefrom",fromdate);
-                    filter = " and ";
-                }
-            }
-            if(params.dateto && params.dateto!="") {
-                let todate = Utilities.parseDate(params.dateto+" 23:59:59");
-                if(todate) {
-                    knsql.append(filter).append(model.name).append(".curtime <= ?dateto ");
-                    knsql.set("dateto",todate);
-                    filter = " and ";
-                }
-            }
-            return knsql;    
+    private appendSelect(knsql: KnSQLInterface, counting: boolean) {
+        if (counting) return;
+        knsql.append(", tprog.progname ");
+        knsql.append(", tuser.username ");
+    }
+
+    private appendJoin(knsql: KnSQLInterface, counting: boolean, params: any, model: KnModel) {
+        if (!counting) {
+            knsql.append(" left join tprog on tprog.programid = ").append(model.name).append(".progid ");    
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        if(Utilities.hasValue(params.userid)) {
+            knsql.append(" join tuser on tuser.userid = ").append(model.name).append(".userid ");    
+            knsql.append("and tuser.username LIKE ?username ");
+            knsql.set("username","%"+params.userid+"%");
+        } else {
+            knsql.append(" left join tuser on tuser.userid = ").append(model.name).append(".userid ");    
+        }
+    }
+
+    private buildConditions(params: any, model: KnModel, knsql: KnSQLInterface): string[] {
+        const conditions: string[] = [];
+        if(Utilities.hasValue(params.progid)) {
+            conditions.push(model.name+".progid LIKE ?progid");
+            knsql.set("progid","%"+params.progid+"%");
+        }
+        if(Utilities.hasValue(params.datefrom)) {
+            let fromdate = Utilities.parseDate(params.datefrom);
+            if(fromdate) {
+                conditions.push(model.name+".curtime >= ?datefrom ");                
+                knsql.set("datefrom",fromdate);
+            }
+        }
+        if(Utilities.hasValue(params.dateto)) {
+            let todate = Utilities.parseDate(params.dateto+" 23:59:59");
+            if(todate) {
+                conditions.push(model.name+".curtime <= ?dateto ");
+                knsql.set("dateto",todate);
+            }
+        }
+        return conditions;
+    }
+
+    protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        }
+        let params = context.params;
+        let counting = KnOperation.COUNT==actions.subaction;
+        knsql.append(actions.selector);
+        this.appendSelect(knsql, counting);
+        knsql.append(" from ");
+        knsql.append(model.name);
+        this.appendJoin(knsql, counting, params, model);
+        const conditions = this.buildConditions(params, model, knsql);
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     public override async getDataSearch(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {

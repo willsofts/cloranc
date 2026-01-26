@@ -10,8 +10,6 @@ export class RocketSfte016Handler extends Sfte016Handler {
     protected override createUserId(username: string) : string {
         if(CREATE_USER_UUID) return uuid();
         //rocket chat user do not accept @ sign in user name
-        //let usernames = username.split("@");
-        //return usernames[0];
         return username.replaceAll("@",".");
     }
 

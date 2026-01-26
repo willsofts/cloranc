@@ -1,6 +1,6 @@
 import { ServiceSchema } from "moleculer";
-const os = require("os");
-const dns = require("dns");
+const os = require("node:os");
+const dns = require("node:dns");
 
 function getLocalIP() {
   const nets = os.networkInterfaces();

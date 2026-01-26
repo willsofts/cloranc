@@ -1,10 +1,8 @@
-var mouseX = 0;
-var mouseY = 0;
 //#(10000) programmer code begin;
 //#(10000) programmer code end;
 $(function(){
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("sfte019"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("sfte019"); }catch(ex) { console.warn("error",ex);  }
 	initialApplication();
 	//#(20000) programmer code begin;
 	//#(20000) programmer code end;
@@ -52,7 +50,7 @@ function resetFilters() {
 		fssearchform.page.value = "1";
 		fssearchform.orderBy.value = "";
 		fssearchform.orderDir.value = "";
-	} catch(ex) { }
+	} catch(ex) { console.warn("error",ex);  }
 	//#(62000) programmer code begin;
 	//#(62000) programmer code end;
 }
@@ -63,19 +61,19 @@ function refreshFilters() {
 		fssearchform.page.value = fslistform.page.value;
 		fssearchform.orderBy.value = fschapterform.orderBy.value;
 		fssearchform.orderDir.value = fschapterform.orderDir.value;
-	}catch(ex) { }
+	}catch(ex) { console.warn("error",ex); }
 	//#(64000) programmer code begin;
 	//#(64000) programmer code end;
 }
 function ensurePaging(tablebody) {
 	if(!tablebody) tablebody = "#datatablebody";
 	try {
-		let pageno = parseInt(fslistform.page.value);
+		let pageno = Number.parseInt(fslistform.page.value);
 		let size = $(tablebody).find("tr").length;
 		if(size<=1 && pageno>1) {
 			fslistform.page.value = ""+(pageno-1);
 		}
-	} catch(ex) { }
+	} catch(ex) { console.warn("error",ex); }
 }
 function search(aform) {
 	//#(70000) programmer code begin;
@@ -84,7 +82,7 @@ function search(aform) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte019/search",
+		url: getApiUrl()+"/api/sfte019/search",
 		data: formdata.jsondata,
 		headers : formdata.headers,
 		type: "POST",
@@ -113,13 +111,13 @@ function searchComplete(xhr,data) {
 function insert() {
 	//#(110000) programmer code begin;
 	//#(110000) programmer code end;
-	var aform = fslistform;
+	let aform = fslistform;
 	aform.site.value = "";
 	aform.branch.value = "";
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte019/add",
+		url: getApiUrl()+"/api/sfte019/add",
 		data: formdata.jsondata,
 		headers : formdata.headers,
 		type: "POST",
@@ -171,37 +169,40 @@ function save(aform) {
 		//#(195000) programmer code begin;
 		//#(195000) programmer code end;
 		confirmSave(function() {
-			let formdata = serializeDataForm(aform);
-			startWaiting();
-			jQuery.ajax({
-				url: API_URL+"/api/sfte019/insert",
-				data: formdata.jsondata,
-				headers : formdata.headers,
-				type: "POST",
-				dataType: "html",
-				contentType: defaultContentType,
-				error : function(transport,status,errorThrown) {
-					submitFailure(transport,status,errorThrown);
-				},
-				success: function(data,status,transport){
-					stopWaiting();
-					//#(195300) programmer code begin;					
-					//#(195300) programmer code end;
-					successbox(function() { 
-						aform.reset();
-						setTimeout(function() { $("#nameen").focus(); },200);
-					});
-					//#(195500) programmer code begin;
-					refreshFilters();
-					search();
-					//#(195500) programmer code end;
-				}
-			});
+			saveForm(aform);
 		});
 	});
-	return false;
+	return true;
 	//#(200000) programmer code begin;
 	//#(200000) programmer code end;
+}
+function saveForm(aform) {
+	let formdata = serializeDataForm(aform);
+	startWaiting();
+	jQuery.ajax({
+		url: getApiUrl()+"/api/sfte019/insert",
+		data: formdata.jsondata,
+		headers : formdata.headers,
+		type: "POST",
+		dataType: "html",
+		contentType: defaultContentType,
+		error : function(transport,status,errorThrown) {
+			submitFailure(transport,status,errorThrown);
+		},
+		success: function(data,status,transport){
+			stopWaiting();
+			//#(195300) programmer code begin;					
+			//#(195300) programmer code end;
+			successbox(function() { 
+				aform.reset();
+				setTimeout(function() { $("#nameen").focus(); },200);
+			});
+			//#(195500) programmer code begin;
+			refreshFilters();
+			search();
+			//#(195500) programmer code end;
+		}
+	});
 }
 function update(aform) {
 	//#(230000) programmer code begin;
@@ -212,47 +213,50 @@ function update(aform) {
 		//#(235000) programmer code begin;
 		//#(235000) programmer code end;
 		confirmUpdate(function() {
-			let formdata = serializeDataForm(aform);
-			startWaiting();
-			jQuery.ajax({
-				url: API_URL+"/api/sfte019/update",
-				data: formdata.jsondata,
-				headers : formdata.headers,
-				type: "POST",
-				dataType: "html",
-				contentType: defaultContentType,
-				error : function(transport,status,errorThrown) {
-					submitFailure(transport,status,errorThrown);
-				},
-				success: function(data,status,transport){ 
-					stopWaiting();
-					//#(235300) programmer code begin;
-					//#(235300) programmer code end;
-					successbox(function() { 
-						$("#fsmodaldialog_layer").modal("hide");
-					});
-					//#(235500) programmer code begin;
-					refreshFilters();
-					search();
-					//#(235500) programmer code end;
-				}
-			});
+			updateForm(aform);
 		});
 	});
-	return false;
+	return true;
 	//#(240000) programmer code begin;
 	//#(240000) programmer code end;
+}
+function updateForm(aform) {
+	let formdata = serializeDataForm(aform);
+	startWaiting();
+	jQuery.ajax({
+		url: getApiUrl()+"/api/sfte019/update",
+		data: formdata.jsondata,
+		headers : formdata.headers,
+		type: "POST",
+		dataType: "html",
+		contentType: defaultContentType,
+		error : function(transport,status,errorThrown) {
+			submitFailure(transport,status,errorThrown);
+		},
+		success: function(data,status,transport){ 
+			stopWaiting();
+			//#(235300) programmer code begin;
+			//#(235300) programmer code end;
+			successbox(function() { 
+				$("#fsmodaldialog_layer").modal("hide");
+			});
+			//#(235500) programmer code begin;
+			refreshFilters();
+			search();
+			//#(235500) programmer code end;
+		}
+	});
 }
 function submitRetrieve(src,site,branch) {
 	//#(250000) programmer code begin;
 	//#(250000) programmer code end;
-	var aform = fslistform;
+	let aform = fslistform;
 	aform.site.value = site;
 	aform.branch.value = branch;
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte019/retrieval",
+		url: getApiUrl()+"/api/sfte019/retrieval",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -273,13 +277,12 @@ function submitRetrieve(src,site,branch) {
 	//#(260000) programmer code end;
 }
 function submitChapter(aform,index) {
-	let fs_params = fetchParameters($("#listpanel").data("searchfilters"));
 	//#(270000) programmer code begin;
 	//#(270000) programmer code end;
 	let formdata = serializeDataForm(aform, $("#listpanel").data("searchfilters"));
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte019/search",
+		url: getApiUrl()+"/api/sfte019/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -300,13 +303,12 @@ function submitChapter(aform,index) {
 function submitOrder(src,sorter) {
 	let aform = fssortform;
 	aform.orderBy.value = sorter;
-	let fs_params = fetchParameters($("#listpanel").data("searchfilters"));
 	let formdata = serializeDataForm(aform, $("#listpanel").data("searchfilters"));
 	//#(290000) programmer code begin;
 	//#(290000) programmer code end;
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte019/search",
+		url: getApiUrl()+"/api/sfte019/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -345,7 +347,7 @@ function deleteRecord(fsParams) {
 	let formdata = serializeParameters(params);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte019/remove",
+		url: getApiUrl()+"/api/sfte019/remove",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -378,7 +380,7 @@ function deleted(aform) {
 		let formdata = serializeDataForm(aform);
 		startWaiting();
 		jQuery.ajax({
-			url: API_URL+"/api/sfte019/remove",
+			url: getApiUrl()+"/api/sfte019/remove",
 			data: formdata.jsondata,
 			headers: formdata.headers,
 			type: "POST",
@@ -425,7 +427,7 @@ function setupDialogComponents() {
 	//#(385000) programmer code begin;
 	//#(385000) programmer code end;
 }
-var fs_requiredfields = {
+let fs_requiredfields = {
 	"branch":{msg:""}, 
 	"nameen":{msg:""}, 
 	"nameth":{msg:""}, 

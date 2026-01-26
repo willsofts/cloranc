@@ -11,10 +11,10 @@
 	margin-top: 60px;
 }
 .sidebar-hide { display: none; }
-.sidebar-menu a { cursor: pointer; }
 
 .sidebar-menu  ol, ul { list-style: none; }
 .sidebar-menu a { 
+	cursor: pointer;
 	text-decoration: none; 
 	color: #F0FFFF;
 }

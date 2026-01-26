@@ -6,12 +6,12 @@ node_modules
 pdf
 npm-debug.log
 change_log.txt
-docker_build.bat
+docker_build.*
 docker_me.txt
-docker_push.bat
+docker_push.*
 docker-compose.yml
 Dockerfile
+Dockerfile2
 test_me.txt
 .npm_token
 .npmrc_secret
-run.bat

@@ -33,31 +33,31 @@ function resetFiltersNumber() {
 		fssearchformnum.page.value = "1";
 		fssearchformnum.orderBy.value = "";
 		fssearchformnum.orderDir.value = "";
-	}catch(ex) { }	
+	}catch(ex) { console.warn("error",ex); }	
 }
 function refreshFiltersNumber() {
 	try { 
 		fssearchformnum.page.value = fslistformnum.page.value;
 		fssearchformnum.orderBy.value = fslistformnum.orderBy.value;
 		fssearchformnum.orderDir.value = fslistformnum.orderDir.value;
-	}catch(ex) { }	
+	}catch(ex) { console.warn("error",ex); }	
 }
 function ensurePagingNumber(tablebody) {
 	if(!tablebody) tablebody = "#datatablebodynum";
 	try {
-		let pageno = parseInt(fslistform.page.value);
+		let pageno = Number.parseInt(fslistform.page.value);
 		let size = $(tablebody).find("tr").length;
 		if(size<=1 && pageno>1) {
 			fslistform.page.value = ""+(pageno-1);
 		}
-	} catch(ex) { }
+	} catch(ex) { console.warn("error",ex); }
 }
 function searchNumber(aform) {
 	if(!aform) aform = fssearchformnum;
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte010/searchnum",
+		url: getApiUrl()+"/api/sfte010/searchnum",
 		data: formdata.jsondata,
 		headers : formdata.headers,
 		type: "POST",
@@ -83,7 +83,7 @@ function insertNumber() {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte010/addnum",
+		url: getApiUrl()+"/api/sfte010/addnum",
 		data: formdata.jsondata,
 		headers : formdata.headers,
 		type: "POST",
@@ -110,67 +110,73 @@ function cancelNumber() {
 	});
 }
 function saveNumber(aform) {
-	fs_requiredfields = { "reservenum":{msg:""} };
+	setRequiredFields({ "reservenum":{msg:""} });
 	if(!aform) aform = fsentryformnum;
 	if(!validNumericFields(aform)) return false;
 	validSaveForm(function() {
 		confirmSave(function() {
-			let formdata = serializeDataForm(aform);
-			startWaiting();
-			jQuery.ajax({
-				url: API_URL+"/api/sfte010/insertnum",
-				data: formdata.jsondata,
-				headers : formdata.headers,
-				type: "POST",
-				dataType: "html",
-				contentType: defaultContentType,
-				error : function(transport,status,errorThrown) {
-					submitFailure(transport,status,errorThrown);
-				},
-				success: function(data,status,transport){
-					stopWaiting();
-					successbox(function() { 
-						aform.reset();
-						setTimeout(function() { $("#reservenum").focus(); },200);
-					});
-					refreshFiltersNumber();
-					searchNumber();
-				}
-			});
+			saveFormNumber(aform);
 		});
 	});
-	return false;
+	return true;
+}
+function saveFormNumber(aform) {
+	let formdata = serializeDataForm(aform);
+	startWaiting();
+	jQuery.ajax({
+		url: getApiUrl()+"/api/sfte010/insertnum",
+		data: formdata.jsondata,
+		headers : formdata.headers,
+		type: "POST",
+		dataType: "html",
+		contentType: defaultContentType,
+		error : function(transport,status,errorThrown) {
+			submitFailure(transport,status,errorThrown);
+		},
+		success: function(data,status,transport){
+			stopWaiting();
+			successbox(function() { 
+				aform.reset();
+				setTimeout(function() { $("#reservenum").focus(); },200);
+			});
+			refreshFiltersNumber();
+			searchNumber();
+		}
+	});
 }
 function updateNumber(aform) {
-	fs_requiredfields = { "reservenum":{msg:""} };
+	setRequiredFields({ "reservenum":{msg:""} });
 	if(!aform) aform = fsentryformnum;
 	if(!validNumericFields(aform)) return false;
 	validSaveForm(function() {
 		confirmUpdate(function() {
-			let formdata = serializeDataForm(aform);
-			startWaiting();
-			jQuery.ajax({
-				url: API_URL+"/api/sfte010/updatenum",
-				data: formdata.jsondata,
-				headers : formdata.headers,
-				type: "POST",
-				dataType: "html",
-				contentType: defaultContentType,
-				error : function(transport,status,errorThrown) {
-					submitFailure(transport,status,errorThrown);
-				},
-				success: function(data,status,transport){ 
-					stopWaiting();
-					successbox(function() { 
-						$("#fsmodaldialog_layer").modal("hide");
-					});
-					refreshFiltersNumber();
-					searchNumber();
-				}
-			});
+			updateFormNumber(aform);
 		});
 	});
-	return false;
+	return true;
+}
+function updateFormNumber(aform) {
+	let formdata = serializeDataForm(aform);
+	startWaiting();
+	jQuery.ajax({
+		url: getApiUrl()+"/api/sfte010/updatenum",
+		data: formdata.jsondata,
+		headers : formdata.headers,
+		type: "POST",
+		dataType: "html",
+		contentType: defaultContentType,
+		error : function(transport,status,errorThrown) {
+			submitFailure(transport,status,errorThrown);
+		},
+		success: function(data,status,transport){ 
+			stopWaiting();
+			successbox(function() { 
+				$("#fsmodaldialog_layer").modal("hide");
+			});
+			refreshFiltersNumber();
+			searchNumber();
+		}
+	});
 }
 function submitRetrieveNumber(src,reservenum) {
 	let aform = fslistformnum;
@@ -178,7 +184,7 @@ function submitRetrieveNumber(src,reservenum) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte010/retrievalnum",
+		url: getApiUrl()+"/api/sfte010/retrievalnum",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -197,11 +203,10 @@ function submitRetrieveNumber(src,reservenum) {
 	return false;
 }
 function submitChapterNumber(aform,index) {
-	let fs_params = fetchParameters($("#listpanelnum").data("searchfiltersnum"));
 	let formdata = serializeDataForm(aform, $("#listpanelnum").data("searchfiltersnum"));
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte010/searchnum",
+		url: getApiUrl()+"/api/sfte010/searchnum",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -220,11 +225,10 @@ function submitChapterNumber(aform,index) {
 function submitOrderNumber(src,sorter) {
 	let aform = fssortformnum;
 	aform.orderBy.value = sorter;
-	let fs_params = fetchParameters($("#listpanelnum").data("searchfiltersnum"));
 	let formdata = serializeDataForm(aform, $("#listpanelnum").data("searchfiltersnum"));
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte010/searchnum",
+		url: getApiUrl()+"/api/sfte010/searchnum",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -254,7 +258,7 @@ function deleteRecordNumber(fsParams) {
 	let formdata = serializeParameters(params);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte010/removenum",
+		url: getApiUrl()+"/api/sfte010/removenum",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -277,7 +281,7 @@ function deletedNumber(aform) {
 		let formdata = serializeDataForm(aform);
 		startWaiting();
 		jQuery.ajax({
-			url: API_URL+"/api/sfte010/removenum",
+			url: getApiUrl()+"/api/sfte010/removenum",
 			data: formdata.jsondata,
 			headers: formdata.headers,
 			type: "POST",

@@ -1,10 +1,8 @@
-var mouseX = 0;
-var mouseY = 0;
 //#(10000) programmer code begin;
 //#(10000) programmer code end;
 $(function(){
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("sftq003"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("sftq003"); }catch(ex) { console.warn("error",ex); }
 	initialApplication();
 	//#(20000) programmer code begin;
 	//#(20000) programmer code end;
@@ -35,14 +33,14 @@ function resetFilters() {
 		fssearchform.page.value = "1";
 		fssearchform.orderBy.value = "";
 		fssearchform.orderDir.value = "";
-	}catch(ex) { }	
+	}catch(ex) { console.warn("error",ex); }	
 }
 function refreshFilters() {
 	try { 
 		fssearchform.page.value = fslistform.page.value;
 		fssearchform.orderBy.value = fschapterform.orderBy.value;
 		fssearchform.orderDir.value = fschapterform.orderDir.value;
-	}catch(ex) { }	
+	}catch(ex) { console.warn("error",ex); }	
 }
 function search(aform) {
 	//#(70000) programmer code begin;
@@ -52,7 +50,7 @@ function search(aform) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sftq003/search",
+		url: getApiUrl()+"/api/sftq003/search",
 		data: formdata.jsondata,
 		headers : formdata.headers,
 		type: "POST",
@@ -104,12 +102,12 @@ function validSaveForm(callback) {
 function submitRetrieve(src,keyid) {
 	//#(250000) programmer code begin;
 	//#(250000) programmer code end;
-	var aform = fslistform;
+	let aform = fslistform;
 	aform.keyid.value = keyid;
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sftq003/retrieval",
+		url: getApiUrl()+"/api/sftq003/retrieval",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -130,13 +128,12 @@ function submitRetrieve(src,keyid) {
 	//#(260000) programmer code end;
 }
 function submitChapter(aform,index) {
-	let fs_params = fetchParameters($("#listpanel").data("searchfilters"));
 	//#(270000) programmer code begin;
 	//#(270000) programmer code end;
 	let formdata = serializeDataForm(aform, $("#listpanel").data("searchfilters"));
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sftq003/search",
+		url: getApiUrl()+"/api/sftq003/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -157,13 +154,12 @@ function submitChapter(aform,index) {
 function submitOrder(src,sorter) {
 	let aform = fssortform;
 	aform.orderBy.value = sorter;
-	let fs_params = fetchParameters($("#listpanel").data("searchfilters"));
 	let formdata = serializeDataForm(aform, $("#listpanel").data("searchfilters"));
 	//#(290000) programmer code begin;
 	//#(290000) programmer code end;
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sftq003/search",
+		url: getApiUrl()+"/api/sftq003/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -200,7 +196,7 @@ function setupDialogComponents() {
 }
 //#(390000) programmer code begin;
 function validSearch() {
-	var valid = true;
+	let valid = true;
 	if($.trim($("#datefroms").val())=="") {
 		$("#datefroms").parent().addClass("has-error");
 		$("#datefroms").trigger("blur");
@@ -219,7 +215,7 @@ function resend(aform) {
 		let formdata = serializeDataForm(aform);
 		startWaiting();
 		jQuery.ajax({
-			url: API_URL+"/api/sftq003/resend",
+			url: getApiUrl()+"/api/sftq003/resend",
 			data: formdata.jsondata,
 			headers : formdata.headers,
 			type: "POST",
@@ -245,7 +241,7 @@ function submitRetrieveRefer(src,keyid) {
 	let formdata = serializeParameters(params);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sftq003/view",
+		url: getApiUrl()+"/api/sftq003/view",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",

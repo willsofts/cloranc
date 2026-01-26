@@ -1,4 +1,4 @@
-var appVariables = {    
+if(!globalThis.appVariables) globalThis.appVariables = {    
     MULTI_LANGUAGES: ["EN","TH"],
     BASE_CSS: "",
     META_INFO: { LOAD_LABEL: true, LOAD_MESSAGE_CODE: true, DISPLAY_PAGE_HEADER: false }

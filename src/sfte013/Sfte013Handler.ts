@@ -41,36 +41,37 @@ export class Sfte013Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            knsql.append(actions.selector);
-            knsql.append(" from ");
-            knsql.append(model.name);
-            let filter = " where ";
-            if(params.template && params.template!="") {
-                knsql.append(filter).append("template LIKE ?template");
-                knsql.set("template","%"+params.template+"%");
-                filter = " and ";
-            }
-            if(params.templatetype && params.templatetype!="") {
-                knsql.append(filter).append("templatetype LIKE ?templatetype");
-                knsql.set("templatetype","%"+params.templatetype+"%");
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        knsql.append(actions.selector);
+        knsql.append(" from ");
+        knsql.append(model.name);
+        if(params.template && params.template!="") {
+            conditions.push("template LIKE ?template");
+            knsql.set("template","%"+params.template+"%");
+        }
+        if(params.templatetype && params.templatetype!="") {
+            conditions.push("templatetype LIKE ?templatetype");
+            knsql.set("templatetype","%"+params.templatetype+"%");
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -81,7 +82,7 @@ export class Sfte013Handler extends TknOperateHandler {
 
     /* override to handle launch router when invoked from menu */
     protected override async doExecute(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let settings = this.getCategorySetting(context, "ttemplatetag");
             let handler = new TknDataTableHandler();
@@ -97,14 +98,14 @@ export class Sfte013Handler extends TknOperateHandler {
             return this.createDataTable(KnOperation.EXECUTE, {}, dt, "sfte013/sfte013");
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -114,9 +115,9 @@ export class Sfte013Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -149,7 +150,7 @@ export class Sfte013Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -159,9 +160,9 @@ export class Sfte013Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 

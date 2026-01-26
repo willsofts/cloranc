@@ -2,9 +2,20 @@ import { v4 as uuid } from 'uuid';
 import { ServiceSchema } from "moleculer";
 import { JSONReply } from "@willsofts/will-api";
 import { Utilities, Configure } from "@willsofts/will-util";
-var os = require("os");
+const os = require("node:os");
 
 const packageconfig = require("../../package.json");
+
+function getLocalIP() {
+  const nets = os.networkInterfaces();
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === "IPv4" && !net.internal) {
+        return net.address;
+      }
+    }
+  }
+}
 
 const FetchService : ServiceSchema = {
     name: "fetch",
@@ -14,7 +25,7 @@ const FetchService : ServiceSchema = {
             let response: JSONReply = new JSONReply();
             response.head.modeling("ensure","greet");
             response.head.composeNoError();
-            response.body = { message : "Greet "+(pname==null?"world":pname) };
+            response.body = { message : "Greet "+(pname ?? "world") };
             return response;
         },
         hello(ctx: any) {
@@ -22,7 +33,7 @@ const FetchService : ServiceSchema = {
             let response: JSONReply = new JSONReply();
             response.head.modeling("ensure","hello");
             response.head.composeNoError();
-            response.body = { message : "Hello "+(pname==null?"world":pname) };
+            response.body = { message : "Hello "+(pname ?? "world") };
             return response;
         },
         hi(ctx: any) {
@@ -30,11 +41,11 @@ const FetchService : ServiceSchema = {
             let response: JSONReply = new JSONReply();
             response.head.modeling("ensure","hi");
             response.head.composeNoError();
-            response.body = { "message" : "hi "+(pname==null?"world":pname) };
+            response.body = { "message" : "hi "+(pname ?? "world") };
             return response;
         },
-        error(ctx: any) {
-            return Promise.reject("Test Error");
+        error(ctx: any) {            
+            throw new Error("Test Error");
         },
         time(ctx: any) {
             let pname = ctx.params.name;
@@ -88,8 +99,9 @@ const FetchService : ServiceSchema = {
             let sid = ctx.meta?.session?.id ?? uuid();
             const result = await ctx.call("fetch.version");
             ctx.meta.$responseRaw = true; 
-            ctx.meta.$responseType = "application/json";    
-            return { sid: sid, hostname: os.hostname(), ...result };
+            ctx.meta.$responseType = "application/json"; 
+            let ip = getLocalIP();   
+            return { sid: sid, hostname: os.hostname(), ip: ip, ...result };
         },
     },
 };

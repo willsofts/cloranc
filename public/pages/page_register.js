@@ -1,8 +1,6 @@
-var mouseX = 0;
-var mouseY = 0;
 $(function() {
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("page_register"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("page_register"); }catch(ex) { console.error("ex",ex); }
 	initialApplication();
 });
 function initialApplication() {
@@ -26,7 +24,7 @@ function clearingFields() {
 }
 function validForm() {
 	clearAlerts();
-	var validator = null;
+	let validator = null;
 	if($.trim($("#site").val())=="") {
 		$("#site").parent().addClass("has-error");
 		$("#site_alert").show();
@@ -53,7 +51,6 @@ function validForm() {
 	return true;
 }
 function send(aform) {
-	if(!aform) aform = register_form;
 	if(!validForm()) return false;
 	let email = $("#email").val();
 	let naming = $("#usernaming").val();
@@ -75,31 +72,24 @@ function send(aform) {
 		displayname: naming,
 	};
 	console.log("register data:",formdata);
-	//confirmSend(function() {
-		startWaiting();
-		jQuery.ajax({
-			url: API_URL+"/api/register/insert",
-			type: "POST",
-			data: formdata,
-			dataType: "html",
-			contentType: defaultContentType,
-			error : function(transport,status,errorThrown) { 
-				submitFailure(transport,status,errorThrown); 
-			},
-			success: function(data,status,transport){ 
-				stopWaiting();
-				$("#registmail_label").html(email);
-				$("#page_register").hide();
-				$("#page_register_success").show();
-				/*
-				sendsucces(function() {
-					$("#page_register").hide();
-					$("#page_register_success").show();
-				});	*/
-			}
-		});	
-	//});
-	return false;
+	startWaiting();
+	jQuery.ajax({
+		url: API_URL+"/api/register/insert",
+		type: "POST",
+		data: formdata,
+		dataType: "html",
+		contentType: defaultContentType,
+		error : function(transport,status,errorThrown) { 
+			submitFailure(transport,status,errorThrown); 
+		},
+		success: function(data,status,transport){ 
+			stopWaiting();
+			$("#registmail_label").html(email);
+			$("#page_register").hide();
+			$("#page_register_success").show();
+		}
+	});	
+	return true;
 }
 function sendsucces(callback,params) {
 	alertbox("QS0204",callback,null,params);	
@@ -107,8 +97,8 @@ function sendsucces(callback,params) {
 function loginLinkClick() {
 	try {
 		window.parent.logInClick();
-		return;
 	} catch(ex) {
+		console.error("ex",ex);
 		window.open(BASE_URL+"/index","_self");
 	}	
 }

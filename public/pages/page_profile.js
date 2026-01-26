@@ -1,8 +1,6 @@
-var mouseX = 0;
-var mouseY = 0;
 $(function(){
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("page_profile"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("page_profile"); }catch(ex) { console.error("ex",ex); }
 	initialApplication();
 });
 function initialApplication() {
@@ -17,39 +15,22 @@ function setupComponents() {
 	$("#usertname").focus();
 }
 function clearingFields() {
+	//do nothing
+}
+function validFormField(name,validator) {
+	if($.trim($("#"+name).val())=="") {
+		$("#"+name).parent().addClass("has-error");
+		$("#"+name+"_alert").show();
+		if(!validator) validator = name;
+	}
+	return validator;
 }
 function validForm() {
 	clearAlerts();
-	var validator = null;
-	if($.trim($("#usertname").val())=="") {
-		$("#usertname").parent().addClass("has-error");
-		$("#usertname_alert").show();
-		if(!validator) validator = "usertname";
-	}
-	if($.trim($("#usertsurname").val())=="") {
-		$("#usertsurname").parent().addClass("has-error");
-		$("#usertsurname_alert").show();
-		if(!validator) validator = "usertsurname";
-	}
-	if($.trim($("#userename").val())=="") {
-		$("#userename").parent().addClass("has-error");
-		$("#userename_alert").show();
-		if(!validator) validator = "userename";
-	}
-	if($.trim($("#useresurname").val())=="") {
-		$("#useresurname").parent().addClass("has-error");
-		$("#useresurname_alert").show();
-		if(!validator) validator = "useresurname";
-	}
-	if($.trim($("#displayname").val())=="") {
-		$("#displayname").parent().addClass("has-error");
-		$("#displayname").show();
-		if(!validator) validator = "displayname";
-	}
-	if($.trim($("#email").val())=="") {
-		$("#email").parent().addClass("has-error");
-		$("#email_alert").show();
-		if(!validator) validator = "email";
+	let validator = null;
+	let field_names = ["usertname","usertsurname","userename","useresurname","displayname","email"];
+	for(let name of field_names) {
+		validator = validFormField(name,validator);
 	}
 	if(validator) {
 		$("#"+validator).focus();
@@ -66,8 +47,8 @@ function save(aform) {
 	if(!validForm()) return false;
 	confirmSave(function() {
 		let formdata = serializeDataForm(aform);		
-		//formdata.headers["accept-type"] = "json/cipher"; //this return json and only body.data is encrypted
-		//formdata.headers["accept-type"] = "text/cipher"; //this return encrypted string
+		//this return json and only body.data is encrypted : formdata.headers["accept-type"] = "json/cipher"; 
+		//this return encrypted string : formdata.headers["accept-type"] = "text/cipher"; 
 		let accepttype = formdata.headers["accept-type"];
 		startWaiting();
 		jQuery.ajax({
@@ -83,7 +64,6 @@ function save(aform) {
 			success: function(data,status,transport){ 
 				stopWaiting();
 				successbox(function() { clearingFields(); });
-				//try { window.parent.takeSwitchLanguage($("#langcode").val()); } catch(ex) { }	
 				console.log("data",data);
 				let dh = getDH();
 				if(accepttype=="json/cipher") {
@@ -104,6 +84,6 @@ function save(aform) {
 			}
 		});
 	});
-	return false;
+	return true;
 }
 

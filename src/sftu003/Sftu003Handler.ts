@@ -1,13 +1,9 @@
 import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
-import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
-import { VerifyError } from '@willsofts/will-core';
-import { KnPageUtility } from '@willsofts/will-core';
+import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable, KnPageUtility } from '@willsofts/will-core';
 import { Utilities } from "@willsofts/will-util";
-import { TknOperateHandler } from '@willsofts/will-serv';
-import { OPERATE_HANDLERS } from "@willsofts/will-serv";
-import { KnDataResult } from "@willsofts/will-serv";
+import { TknOperateHandler, OPERATE_HANDLERS, KnDataResult } from '@willsofts/will-serv';
 
 export class Sftu003Handler extends TknOperateHandler {
 
@@ -53,13 +49,10 @@ export class Sftu003Handler extends TknOperateHandler {
 
     /* try to validate fields for insert, update, delete, retrieve */
     protected override validateRequireFields(context: KnContextInfo, model: KnModel, action: string) : Promise<KnValidateInfo> {
-        let vi : KnValidateInfo = {valid: true};
         let page = new KnPageUtility(this.progid, context);
-        if(page.isInsertMode(action)) {
-            vi = this.validateParameters(context.params,"apiname","apiquery");
-        } else {
-            vi = this.validateParameters(context.params,"apiname");
-        }
+        const vi = page.isInsertMode(action)
+            ? this.validateParameters(context.params,"apiname","apiquery")
+            : this.validateParameters(context.params,"apiname");        
         if(!vi.valid) {
             return Promise.reject(new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061));
         }
@@ -67,52 +60,51 @@ export class Sftu003Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            knsql.append(actions.selector);
-            knsql.append(" from ");
-            knsql.append(model.name);
-            let filter = " where ";
-            if(params.apiname && params.apiname!="") {
-                knsql.append(filter).append("apiname LIKE ?apiname");
-                knsql.set("apiname","%"+params.apiname+"%");
-                filter = " and ";
-            }
-            if(params.fromdate && params.fromdate!="") {
-                let fromdate = Utilities.parseDate(params.fromdate);
-                if(fromdate) {
-                    knsql.append(filter).append("createdate >= ?fromdate");
-                    knsql.set("fromdate",fromdate);
-                    filter = " and ";
-                }
-            }
-            if(params.todate && params.todate!="") {
-                let todate = Utilities.parseDate(params.todate);
-                if(todate) {
-                    knsql.append(filter).append("createdate <= ?todate");
-                    knsql.set("todate",todate);
-                    filter = " and ";
-                }
-            }
-            if(params.inactive && params.inactive!="") {
-                knsql.append(filter).append("inactive = ?inactive");
-                knsql.set("inactive",params.inactive);
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        knsql.append(actions.selector);
+        knsql.append(" from ");
+        knsql.append(model.name);
+        if(params.apiname && params.apiname!="") {
+            conditions.push("apiname LIKE ?apiname");
+            knsql.set("apiname","%"+params.apiname+"%");
+        }
+        if(params.fromdate && params.fromdate!="") {
+            let fromdate = Utilities.parseDate(params.fromdate);
+            if(fromdate) {
+                conditions.push("createdate >= ?fromdate");
+                knsql.set("fromdate",fromdate);
+            }
+        }
+        if(params.todate && params.todate!="") {
+            let todate = Utilities.parseDate(params.todate);
+            if(todate) {
+                conditions.push("createdate <= ?todate");
+                knsql.set("todate",todate);
+            }
+        }
+        if(params.inactive && params.inactive!="") {
+            conditions.push("inactive = ?inactive");
+            knsql.set("inactive",params.inactive);
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			try { if(db) db.close(); } catch(er) { this.logger.error(this.constructor.name,er); }
+			try { this.closeConnector(db,context); } catch(error) { console.error(error); }
         }
     }
 
@@ -122,7 +114,7 @@ export class Sftu003Handler extends TknOperateHandler {
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -132,9 +124,9 @@ export class Sftu003Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			try { if(db) db.close(); } catch(er) { this.logger.error(this.constructor.name,er); }
+			try { this.closeConnector(db,context); } catch(error) { console.error(error); }
         }
     }
 
@@ -165,7 +157,7 @@ export class Sftu003Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -176,9 +168,9 @@ export class Sftu003Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			try { if(db) db.close(); } catch(er) { this.logger.error(this.constructor.name,er); }
+			try { this.closeConnector(db,context); } catch(error) { console.error(error); }
         }
     }
 
@@ -205,7 +197,7 @@ export class Sftu003Handler extends TknOperateHandler {
                 db = this.getConnector(apisection);
                 delete context.params.apisection;
             } else {
-                db = this.getPrivateConnector(model);
+                db = this.getPrivateConnector(model,context);
             }
             try {    
                 delete context.params.apiname;
@@ -219,9 +211,9 @@ export class Sftu003Handler extends TknOperateHandler {
                 return {name: apiname, result: this.createRecordSet(rs) };
             } catch(ex: any) {
                 this.logger.error(this.constructor.name,ex);
-                return Promise.reject(this.getDBError(ex));
+                throw this.getDBError(ex);
             } finally {
-                try { if(db) db.close(); } catch(er) { this.logger.error(this.constructor.name,er); }
+                try { this.closeConnector(db,context); } catch(error) { console.error(error); }
             }
         }
         return {name: apiname, result: this.createRecordSet() };

@@ -1,10 +1,8 @@
-import os from "os";
-import path from 'path';
+import os from "node:os";
+import path from 'node:path';
 import { Request, Response } from 'express';
 import { JSONReply } from "@willsofts/will-api";
-import { TknUploadRouter } from "@willsofts/will-core";
-import { KnValidateInfo } from '@willsofts/will-core';
-import { KnResponser } from "@willsofts/will-core";
+import { KnResponser, KnValidateInfo, TknUploadRouter } from "@willsofts/will-core";
 import { ChatUserHandler } from "./ChatUserHandler";
 
 export class ChatUserUploader extends TknUploadRouter {
@@ -15,9 +13,9 @@ export class ChatUserUploader extends TknUploadRouter {
 
 	protected override verifyFile(file: any, fileTypes: RegExp) : KnValidateInfo {
 		this.logger.debug("fileFilter:",file);
-		const filetypes = new RegExp("text|txt|csv","i");
+		const filetypes = /text|txt|csv/i;
 		const extname =  filetypes.test(path.extname(file.originalname).toLowerCase());
-		const mimetype = true; //filetypes.test(file.mimetype);
+		const mimetype = true; 
 		this.logger.debug("verifyFile: extname",extname+", mimetype",mimetype);	  
 		return {valid: extname && mimetype, info: "Invalid file type" };
 	}

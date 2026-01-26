@@ -1,9 +1,8 @@
-import { CipherUtility } from "@willsofts/will-util";
-import { Arguments } from "@willsofts/will-util";
+import { Arguments, CipherUtility } from "@willsofts/will-util";
 
 let args = process.argv.slice(2);
 let texts = Arguments.getString(args,"Hello Cipher","-t","-txt") as string;
-let enc = Arguments.getBoolean(args,true,"-e","-enc");
+let enc = Arguments.getBoolean(args,true,"-e","-enc") as boolean;
 if(enc) {
     let res = CipherUtility.encrypt(texts);
     console.log("encrypt:",res);

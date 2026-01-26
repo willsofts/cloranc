@@ -1,40 +1,28 @@
-var fs_default_raw_parameters = false;
-var fs_default_language = "EN";
-var fs_mainPage = "index";
-var fs_currentpid = null;
-var fs_langsDocs = null;
-var fs_mainDocs = null;
-var fs_defaultDocs = null;
-var fs_labelAry = null;
-var fs_winary = new Array();
-var fs_fontSize = 14;
-var API_URL = "";
-var BASE_URL = "";
-var CDN_URL = "";
-var IMG_URL = "";
-var API_TOKEN = "";
-var BASE_STORAGE = "";
-var SECURE_STORAGE = true;
-var META_INFO = {};
-var CHAT_URL = "";
-var BASE_CSS = "";
-var MULTI_LANGUAGES = ["EN","TH"];
+let fs_mainPage = "index";
+let fs_langsDocs = null;
+let fs_mainDocs = null;
+let fs_defaultDocs = null;
+let fs_labelAry = null;
+let fs_fontSize = 14;
+let fs_currentpid = null;
+const fs_winary = new Array();
+function getCurrentPid() { return fs_currentpid; }
+function setCurrentPid(value) { fs_currentpid = value; }
+function getWindowArray() { return fs_winary; }
 function getWindowByName(winname) {
 	if(!winname) return null;
-	for(let i=0,isz=fs_winary.length;i<isz;i++) {
+	for(let win of fs_winary) {
 		try	{
-			if(fs_winary[i]) {
-				if(fs_winary[i].name == winname) return fs_winary[i];
-			}
-		}catch (ex)	{ 	}
+			if(win?.name == winname) return win;
+		}catch (ex)	{ console.debug("ex",ex); }
 	}
 	return null;
 }
 function closeChildWindows() {
-	for(let i=0,isz=fs_winary.length;i<isz;i++) {
+	for(let win of fs_winary) {
 		try	{
-			if(fs_winary[i]) fs_winary[i].close();
-		}catch(ex) { }
+			if(win) win.close();
+		}catch(ex) { console.error("ex",ex); }
 	}
 }
 function addWindow(awindow) {
@@ -60,25 +48,25 @@ function fs_getLanguageDocuments(fs_progid,mainpage) {
 }
 function fs_getLangsDocs(fs_progid,mainpage) {
 	console.log("getLangsDocs, langsDocs="+fs_langsDocs+", defaultDocs="+fs_defaultDocs+", mainDocs="+fs_mainDocs);
-	if(!fs_progid || fs_progid=="") return fs_langsDocs;
+	if(!fs_progid) return fs_langsDocs;
 	if(!fs_langsDocs) {
 		let json = fs_getLanguageDocuments(fs_progid,mainpage);
-		if(json && json.body) {
-			fs_langsDocs = Object.assign({},json.body);
+		if(json?.body) {
+			fs_langsDocs = {...json.body};
 		}
-		if(fs_mainPage==fs_progid && json && json.body) fs_mainDocs = Object.assign({},json.body);
+		if(fs_mainPage==fs_progid && json?.body) fs_mainDocs = {...json.body};
 	}
 	if(!fs_defaultDocs) {
 		let json = fs_getLanguageDocuments("default_label",mainpage);
-		if(json && json.body) {
-			fs_defaultDocs = Object.assign({},json.body);
+		if(json?.body) {
+			fs_defaultDocs = {...json.body};
 		}
 	}
 	if(fs_mainPage==fs_progid) {
 		if(!fs_mainDocs) {
 			let json = fs_getLanguageDocuments(fs_progid,mainpage);
-			if(json && json.body) {
-				fs_mainDocs = Object.assign({},json.body);
+			if(json?.body) {
+				fs_mainDocs = {...json.body};
 			}
 		}
 		return fs_mainDocs;
@@ -102,9 +90,9 @@ function fs_createLabelArrays(json) {
 	}
  	return result; 
 } 
-var fs_hashLang = {};
+let fs_hashLang = {};
 function fs_switchingLanguage(fs_Language,mainpage,progid) {
-	if(!progid || progid=="") progid = fs_currentpid;
+	if(!progid) progid = fs_currentpid;
 	if(!fs_labelAry) {
 		fs_labelAry = fs_createLabelArrays(fs_getLangsDocs(progid,mainpage));
 		if(fs_defaultDocs) {
@@ -129,30 +117,30 @@ function fs_switchingLanguage(fs_Language,mainpage,progid) {
 			fs_createHashElements(fs_Language,fs_hash,fs_mainDocs);
 		} else {
 			let json = fs_getLanguageDocuments(progid,mainpage);
-			if(json && json.body) {
-				fs_mainDocs = Object.assign({},json.body);
+			if(json?.body) {
+				fs_mainDocs = {...json.body};
 			}
 			fs_curArray = fs_createLabelArrays(fs_mainDocs);
 			fs_createHashElements(fs_Language,fs_hash,fs_mainDocs);
 		}
 	}
 	if(fs_hash) {
-		for(let i=0;i<fs_curArray.length;i++) {
-			try { $("#"+fs_curArray[i]).html(fs_hash[""+fs_curArray[i]]); } catch(ex) { }
-			try { $("#"+fs_curArray[i]).val(fs_hash[""+fs_curArray[i]]); } catch(ex) { }
+		for(let lid of fs_curArray) {
+			try { $("#"+lid).html(fs_hash[""+lid]); } catch(ex) { console.debug("ex",ex); }
+			try { $("#"+lid).val(fs_hash[""+lid]); } catch(ex) { console.debug("ex",ex); }
 		}
 	}
 }
 function fs_switchLanguage(fs_Language,mainpage) { 
 	if(!fs_Language) return;
 	fs_Language = fs_Language.toUpperCase();
-	try { fs_switchingLanguage(fs_Language,mainpage); } catch(ex) { }
-	try { fs_changingLanguage(fs_Language,mainpage); } catch(ex) { }
-	fs_default_language = fs_Language;
+	try { fs_switchingLanguage(fs_Language,mainpage); } catch(ex) { console.debug("ex",ex); }
+	try { fs_changingLanguage(fs_Language,mainpage); } catch(ex) { console.debug("ex",ex); }
+	setDefaultLanguage(fs_Language);
 }
 function fs_getLabelName(labelId,progid,lang) {
 	if(!progid || progid=="") progid = fs_currentpid;
-	let fs_Language = fs_default_language;
+	let fs_Language = getDefaultLanguage();
 	if(lang) fs_Language = lang;
 	let fs_hash= fs_hashLang[fs_Language];
 	if(!fs_hash) {
@@ -177,33 +165,25 @@ function fs_getLabelName(labelId,progid,lang) {
 function fs_stopAnchorTaborder() {
 		try {
 			let links = document.getElementsByTagName("A");
-			for( let i = 0, j =  links.length; i < j; i++ ) {
-				links[i].setAttribute('tabIndex','-1');
+			for( let link of links) {
+				link.setAttribute('tabIndex','-1');
 			}
-		}catch(ex) { }
+		}catch(ex) { console.debug("ex",ex); }
 }
-function fs_enterTab(myfield, e) { 
-	 let key; let keychar;  
-	 if (window.event) key = window.event.keyCode; else if (e) key = e.which; else return true; 
-	 keychar = String.fromCharCode(key); 
-	 if ((key==null) || (key==0) || (key==8) || (key==9) || (key==27)) return true; 
-	 else if (key !=13) return true; 
-} 
 function convert(str) { 
 	if(str==null) return "";
-	let i = 0; 
 	let result = ""; 
-	for(i=0;i<str.length;i++) { 
-		let a = str.charCodeAt(i); 
+	for(let i=0;i<str.length;i++) { 
+		let a = str.codePointAt(i); 
 		if(a>3424) { 
 			a = a - 3424; 
-			result = result + String.fromCharCode(a); 
+			result = result + String.fromCodePoint(a); 
 		} else { 
 			result = result + str.charAt(i); 
 		} 
 	} 
 	result = escape(result); 
-	while(result.indexOf('+')!=-1) result = result.replace('+','%2B'); 
+	while(result.includes('+')) result = result.replaceAll('+','%2B'); 
 	return result; 
 } 
 
@@ -212,13 +192,12 @@ function openWindow(url, winname, winWidth, winHeight, fullScreen) {
 	try {	 
 		let fswin = getWindowByName(winname); 
 		if(fswin) { fswin.focus(); return; }  
-	} catch(ex) { } 
+	} catch(ex) { console.debug("ex",ex); } 
 	if(!winWidth) winWidth = window.screen.availWidth; 
 	if(!winHeight) winHeight = window.screen.availHeight; 
 	if(!url) url = ""; 
 	let sw = window.screen.availWidth; 
 	let sh = window.screen.availHeight; 
-	try{if(fullScreen==null) fullScreen = fs_fullscreen; }catch(ex) { }
 	if(fullScreen) { 
 		winWidth = sw; 
 		winHeight = sh; 
@@ -227,16 +206,16 @@ function openWindow(url, winname, winWidth, winHeight, fullScreen) {
 	let wy = (sh - winHeight) / 2; 
 	let features = "top="+wy+",left="+wx+",width="+winWidth+",height="+winHeight+",toobar=no,menubar=1,location=no,directories=no,status=no,scrollbars=yes,resizable=yes"; 
 	let fs_window = window.open(url,winname,features); 
-	fs_window.opener = self; 
+	fs_window.opener = globalThis; 
 	try {	 
 		if("_self" != winname.toLowerCase()) {
 			addWindow(fs_window); 
 		}
-	} catch(ex) { } 
+	} catch(ex) { console.debug("ex",ex); } 
 	return fs_window; 
  } 
 		
-  function validNumeric(myfield){ 
+function validNumeric(myfield){ 
    let data=myfield.value; 
    if (data!="") { 
 	data = clearComma(data);  
@@ -244,7 +223,7 @@ function openWindow(url, winname, winWidth, winHeight, fullScreen) {
 		if (data.indexOf('.')==0)	data='0'+data; 
 		if (data.indexOf('.')==data.length-1) data += '0';  
 	} 
-	data =  formatFloat(data , myfield.getAttribute("DECIMAL") ); 
+	data = formatFloat(data , myfield.getAttribute("DECIMAL") ); 
 	if (  data == 0 || Number(data)  ) ;  
 	else return false; 
 	myfield.value = putComma(data); 
@@ -255,21 +234,20 @@ function openWindow(url, winname, winWidth, winHeight, fullScreen) {
 function formatFloat(myvalue , point){ 
    if ( point == null || point <= 0 ) return myvalue ; 
    let dec = "0"; 
-   dec += (myvalue.indexOf('.')>-1 )?myvalue.substring( myvalue.indexOf('.') ):".0"; 
+   dec += (myvalue.includes('.'))?myvalue.substring( myvalue.indexOf('.') ):".0"; 
 	let i = point - (dec.length-2) ; 
 	for ( ;i>0 ;i-- ){ dec +="0"; } 
-	let x =( myvalue.indexOf('.')>-1 )?myvalue.substring(0,myvalue.indexOf('.')):myvalue ; 
+	let x =( myvalue.includes('.'))?myvalue.substring(0,myvalue.indexOf('.')):myvalue ; 
 	return  x+dec.substring(dec.indexOf('.')); 
 } 
 
 function validDate(myfield){ 
   if ( myfield == null || myfield.value=="" ) return true; 
-  if ( formatDate(myfield.value) ) return true; 
-  else return false; 
+  return formatDate(myfield.value); 
 } 
 
 function formatDate(mydate) { 
-   let delimiter = "/"; 
+	let delimiter = "/"; 
 	let dmy = /\d{1,2}\/\d{1,2}\/\d{2,4}/ ;
 	if ( !mydate.match(dmy) ) return false; 
 	let intDay = new Date(); 
@@ -278,15 +256,14 @@ function formatDate(mydate) {
 	let y=ary_date[2]; 
 	if ( y.length==2 ) { 
 	if (y>=80) { y = intDay.getYear()-100-(intDay.getYear()%100)+Number(y) ;   
-	}else { y = intDay.getYear()-(intDay.getYear()%100)+ Number(y) ;}  
-	}else if ( y.length==3 )  return false; 
+	} else { y = intDay.getYear()-(intDay.getYear()%100)+ Number(y) ;}  
+	} else if ( y.length==3 ) return false; 
 	intDay.setYear(y);   
 	let m = Number(ary_date[1]) ; 
-  if ( (m>0) && (m<=12) ) { intDay.setMonth(m);   intDay.setDate(0); } 
-  else   return false ; 
-  let d = Number(ary_date[0]); 
-  if ( (d>0) && (d<=intDay.getDate()) ) return true;  
-  else return false; 
+  	if ( (m>0) && (m<=12) ) { intDay.setMonth(m); intDay.setDate(0); } 
+  	else return false ; 
+  	let d = Number(ary_date[0]); 
+  	return d > 0 && d <= intDay.getDate();  
 } 
 
 function validRangeDate(a,b){ 
@@ -296,7 +273,7 @@ function validRangeDate(a,b){
 			let valb = b.split("/").reverse().join(""); 
 			if ( Number(valb)<Number(vala) ) return false; 
 		} 
-	 }catch(ex){  } 
+	 } catch(ex) { console.debug("ex",ex); } 
 	 return true; 
 } 
 
@@ -322,29 +299,29 @@ function forValue(avalue,addonvalue,decimal,flag) {
 			result = result - addon; 
 		} 
 		result = result / mval;			 
+	} else if(flag=="+") { 
+		result = result + addonvalue; 
 	} else { 
-		if(flag=="+") { 
-			result = result + addonvalue; 
-		} else { 
-			result = result - addonvalue; 
-		} 
+		result = result - addonvalue; 		 
 	} 
 	return result; 
 } 
 		 		 
 function parseNumber(avalue) { 
+	if(!avalue) return 0; 
 	return Number(removeComma(avalue)); 
 } 
 		  
 function removeComma(avalue) { 
-	let result = avalue ; 
-	while ( result.indexOf(",") > -1 ) { 
+	if(!avalue) return avalue; 
+	let result = avalue+""; 
+	while ( result.includes(",") ) { 
 		result = removeDelimiter(result,",");	} 
 	return result; 
-} 
+} 		 				 
 		 				 
 function removeDelimiter(avalue,delimiter) { 
-	return avalue.replace(delimiter,""); 
+	return avalue.replaceAll(delimiter,""); 
 } 
 		 							 
 function formatFloating(avalue,decimal) { 
@@ -352,12 +329,10 @@ function formatFloating(avalue,decimal) {
 	avalue = removeComma(avalue); 
 	return formatDecimal(avalue,decimal,true); 
 } 
-		 							 
-function formatDecimal(avalue,decimal,verifydecimal) { 
+
+function resolveDecimalSign(avalue) {
 	let sign = ""; 
 	let result = avalue+"";			 
-	let bstr = ""; 
-	let cstr = ""; 
 	let i = result.indexOf("-"); 
 	if(i>=0) { 
 		sign = "-"; 
@@ -369,12 +344,18 @@ function formatDecimal(avalue,decimal,verifydecimal) {
 			result = result.substring(i+1);					 
 		} 
 	} 
-	let astr = result; 
-	i = result.indexOf("."); 
+	return [result,sign];
+}
+
+function resolveDecimalString(avalue) {
+	let cstr = ""; 
+	let bstr = ""; 
+	let astr = avalue; 
+	let i = avalue.indexOf("."); 
 	if(i>0) { 
-		astr = result.substring(0,i); 
-		bstr = result.substring(i+1); 
-		cstr = result.substring(i); 
+		astr = avalue.substring(0,i); 
+		bstr = avalue.substring(i+1); 
+		cstr = avalue.substring(i); 
 	}  
 	let la = astr.length; 
 	if(la>3) { 
@@ -393,25 +374,29 @@ function formatDecimal(avalue,decimal,verifydecimal) {
 			} 
 		} 
 	} 
-	if(verifydecimal) { 
-		if(decimal>0) { 
-			let l = bstr.length; 
-			if(decimal>l) { 
-				let j = 0; 
-				for(j=l;j<decimal;j++) { 
-					bstr += "0"; 
-				} 
-			} else { 
-				bstr = bstr.substring(0,decimal); 
-			}		 
-			if(astr=="") return ""; 
-			return sign+astr+"."+bstr; 
-		} else { 
-			return sign+astr; 
+	return [astr,bstr,cstr];
+}
+
+function formatDecimal(avalue,decimal,verifydecimal) { 
+	let [result,sign] = resolveDecimalSign(avalue);			 
+	let [astr,bstr,cstr] = resolveDecimalString(result); 
+	if(!verifydecimal) { 
+		return sign+astr+cstr; 
+	}
+	if(decimal <= 0) {
+		return sign+astr; 
+	}
+	if(astr=="") return ""; 
+	let l = bstr.length; 
+	if(decimal>l) { 
+		let j = 0; 
+		for(j=l;j<decimal;j++) { 
+			bstr += "0"; 
 		} 
 	} else { 
-		return sign+astr+cstr; 
-	} 
+		bstr = bstr.substring(0,decimal); 
+	}		 
+	return sign+astr+"."+bstr; 
 }						 
 		  
 function getTimeNow() { 
@@ -437,26 +422,27 @@ function getDateNow() {
 } 
 let regPicture = /[9XEATxea]/; 
 function fs_intNumsOnly(myfield,e,decimal,isPlus) { 
-	let key; let keychar;  
+	let key;
 	if (e) key = e.which; else return true; 
-	keychar = String.fromCharCode(key); 
-	 let element = myfield; 
-	 isPlus = ( isPlus != null )? true : false ; 
-	 let isPoint= ( decimal != null && decimal != 0 )? true : false ; 
-	 if ( key==45 && element.value.indexOf('-')==-1 && !isPlus  ) { 
-	 element.value="-"+element.value;} 
-	 if ( (key==46)&&(element.value.indexOf('.')==-1)&& isPoint ){ 
-	 if (element.value == "") element.value='0'; 
-	 return true; } 
+	let keychar = String.fromCodePoint(key); 
+	let element = myfield; 
+	isPlus = Boolean(isPlus);
+	let isPoint= decimal !== null && decimal !== undefined && Number(decimal) !== 0; 
+	if ( key==45 && !element.value.includes('-') && !isPlus ) { 
+		element.value = "-" + element.value;
+	} 
+	if ( (key==46) && !element.value.includes('.') && isPoint ) { 
+		if (element.value == "") element.value = '0'; 
+		return true; 
+	} 
 	if ((key==null) || (key==0) || (key==8) || (key==9) || (key==27)) return true; 
-	else if ((("0123456789").indexOf(keychar) > -1)) return true; 
+	else if ((("0123456789").includes(keychar))) return true; 
 	else return false; 
 } 
 function fs_intNumsOnly_chkKey(myfield,e,decimal,isPlus) { 
 	 let iskeyup = myfield.getAttribute('keyup'); 
-	 if ( iskeyup==null) ;  
-	 else if ( iskeyup==false){  event.returnValue = false;  return false; }  
-	 myfield.setAttribute('keyup',false);  
+	 if ( iskeyup === "false") { event.returnValue = false; return false; }  
+	 myfield.setAttribute('keyup',"false");  
 	 return fs_intNumsOnly(myfield,e,decimal,isPlus);  
 } 
 function fs_chkKey(myfield,event,decimal,maxvalue) { 
@@ -470,50 +456,59 @@ function fs_chkKey(myfield,event,decimal,maxvalue) {
 		setCaretPosition(myfield,n_len>o_len?c_pos+1:c_pos);
 	} 
 } 
+function cleansingValues(valueBfChange, fraction, point, data) {
+	data = clearComma(data); 
+	try { 
+		let dot = ''; 
+		let x = data.split('.'); 
+		if ( x.length == 2 && point > 0 ) { 
+			dot = ( x[1].length > point )?('.'+x[1].substring(0,point)):('.'+x[1]) ; 
+		} 
+		while ( x[0].length > 1 && x[0].charAt(0)=="0" ) { 
+			x[0] = x[0].substring(1);	
+		} 
+		if ( (fraction == 0 && Number(x[0]) > 0 ) || ( fraction > 0 && x[0].length > fraction ) ) { 
+			return [valueBfChange,true];	
+		} 
+		data = x[0] + dot; 
+	} catch (ex) { console.error(ex); } 
+	return [data,false];
+}
 function formatNumber(element,maxvalue,decimal) { 
-      let valueBfChange = element.value;
-	  let data = element.value; 
-	  let point = 0 ; 
-	  if ( decimal != null && decimal !=  ""  )  { 
-	   point = ( Number(decimal) >= 0 ) ? Number(decimal) : 99  ;} 
-	  let fraction = null ; 
-	  if ( maxvalue != null && maxvalue != "" ) { 
-	  if ( Number(maxvalue) >= 0 ) { 
-	   fraction = maxvalue ; 
-	   if ( data.indexOf("-")>-1 )  fraction++; 	} 
-	  else 
-	   fraction = null  ; 
-	  } 
-	  data = clearComma(data); 
-	  try { 
-	   let dot = '' ; 
-	   let x = data.split('.'); 
-	   if ( x.length == 2 && point > 0 ) { 
-	    dot = ( x[1].length > point )?('.'+x[1].substring(0,point)):('.'+x[1]) ; } 
-	   while ( x[0].length > 1 && x[0].charAt(0)=="0" ) { 
-	    x[0] = x[0].substring(1);	} 
-	   if ( (fraction == 0 && Number(x[0]) > 0 ) || 
-	    ( fraction > 0 && x[0].length > fraction ) ){ 
-	    element.value = valueBfChange ; return true;	} 
-	   data = x[0] + dot; 
-	  }catch (ex) { } 
-	  element.value=putComma(data); 
+	let valueBfChange = element.value;
+	let data = element.value; 
+	let point = 0 ; 
+	if ( decimal ) { 
+		let precisions = Number(decimal);
+		point = ( precisions >= 0 ) ? precisions : 2;
+	} 
+	let fraction = null ;
+	let mxvalue =  maxvalue ? Number(maxvalue) : -1;
+	if ( mxvalue >= 0 ) { 
+		fraction = mxvalue; 
+		if ( data.includes("-") )  fraction++; 			
+	} 
+	let unchanged = false;
+	[data,unchanged] = cleansingValues(valueBfChange,fraction,point,data);
+	element.value = unchanged ? data : putComma(data); 
 } 
+
 function putComma(data) { 
-	  if ( data.indexOf(',') > -1 ) { data = clearComma(data); } 
-	  let move = ( data.indexOf('.') > -1 ) ? data.indexOf('.') : data.length; 
-	  let minus = ( data.indexOf('-') > -1 ) ? 1 : 0 ; 
-	  while ( move > 3 ) { 
-	   if ( minus && move <= 4  )  { break ; } 
-	   data = data.substring(0,move-3)+","+data.substring(move-3) ; 
-	   move -= 3 ; 
-	  } 
-	  return data; 
+	if ( data.includes(',') ) { data = clearComma(data); } 
+	let move = ( data.includes('.') ) ? data.indexOf('.') : data.length; 
+	let minus = ( data.includes('-') ) ? 1 : 0 ; 
+	while ( move > 3 ) { 
+		if ( minus && move <= 4  )  { break ; } 
+		data = data.substring(0,move-3)+","+data.substring(move-3) ; 
+		move -= 3 ; 
+	} 
+	return data; 
 } 
 function clearComma(data){ 
-  while (data.indexOf(',')!=-1) { 
-   data =  data.replace(',',''); } 
-  return data; 
+	while (data.includes(',')) { 
+		data = data.replaceAll(',',''); 
+	} 
+	return data; 
 } 
 function getCaretPosition (ctrl) {
 	let iCaretPos = 0;
@@ -619,19 +614,20 @@ function showLayer(layer) {
 }
 function startWaiting() {
 	try{
+		let ms = getMouseCoordinate();
 		let dc = $(document.body);
 		let sh = dc.innerHeight();
 		let fslayer = $("#fswaitlayer");
 		let lh = fslayer.height();
-		let fstop = mouseY;
-		if(lh > (sh-fstop)) fstop = mouseY-lh;
+		let fstop = ms.mouseY;
+		if(lh > (sh-fstop)) fstop = ms.mouseY-lh;
 		fslayer.css("top",fstop);
-		fslayer.css("left",mouseX>0?mouseX:dc.innerWidth()-50);
+		fslayer.css("left",ms.mouseX>0?ms.mouseX:dc.innerWidth()-50);
 		fslayer.show();
-	} catch(ex) { }
+	} catch(ex) { console.debug("ex",ex); }
 }
 function stopWaiting() {
-	try { hideLayer("#fswaitlayer"); }catch(ex) { }
+	try { hideLayer("#fswaitlayer"); } catch(ex) { console.debug("ex",ex); }
 }
 function handleDataTable(containerList) {
 	if(!containerList) containerList = $("#listpanel");
@@ -646,7 +642,11 @@ function handleDecimalElements(doc) {
 	$(".idecimal",doc||this.document).each(function(index,element){ 
 		let df = $(this);
 		let decimals = df.attr("decimal");
-		df.blur(function() { let v = df.val(); if(v=="") v="0"; df.val(formatFloat(v,decimals)); });
+		df.blur(function() { 
+			let v = df.val(); 
+			if(v=="") v="0"; 
+			df.val(formatFloat(v,decimals)); 
+		});
 	});
 }
 function clearingFields(aform) {
@@ -674,19 +674,20 @@ function startApplication(pid,unbind,aform) {
 	try {
 		$.fn.modal.prototype.constructor.Constructor.DEFAULTS.backdrop = "static";
 		$.fn.modal.prototype.constructor.Constructor.DEFAULTS.keyboard =  false;
-	} catch(ex) { }
+	} catch(ex) { console.debug("ex",ex); }
 	try {
 		//bootstrap v4
 		$.fn.modal.Constructor.Default.backdrop = "static";
 		$.fn.modal.Constructor.Default.keyboard = false;
-	} catch(ex) { }
+	} catch(ex) { console.debug("ex",ex); }
 	try {
 		//bootstrap 5
 		Modal.Default.backdrop = "static";
 		Modal.Default.keyboard = false;
-	} catch(ex) { }
+	} catch(ex) { console.debug("ex",ex); }
 	initialComponents();
-	try { requestAccessorInfo(); }catch(ex) { }
+	try { requestAccessorInfo(); } catch(ex) { console.debug("ex",ex); }
+	console.log("startApplication: current pid=",fs_currentpid);
 }
 function initialAjax() {
 	$.ajaxPrefilter(function( options, originalOptions, xhr ) {
@@ -699,7 +700,7 @@ function initialAjax() {
 function initialApplicationControls(aform) { 
 	$("input[type=text]",aform||this.document).each(function(index,element) { 
 		let input = $(this);
-		try { 	if(input.attr("picture")) { input.mask(input.attr("picture")); } }catch(ex) { }
+		try { if(input.attr("picture")) { input.mask(input.attr("picture")); } } catch(ex) { console.debug("ex",ex); }
 	});			
 	$("input[type=text].itime",aform||this.document).each(function(index,element) { 
 		$(this).clockpicker({ align: "left", autoclose: true, donetext: "Done", cleartext: "Clear" });
@@ -722,25 +723,27 @@ function initialApplicationControls(aform) {
 function initialComponents() {
 	$("#viewversionlinker").click(function() { 
 		console.log("view version: "+$(this).attr("data-pid"));
-		try { viewVersion($("#viewversionlinker").attr("data-pid")); } catch(ex) { }
+		try { viewVersion($("#viewversionlinker").attr("data-pid")); } catch(ex) { console.debug("ex",ex); }
 	});
 	$("#increasefontlinker").click(function() { increaseFontSize(); });
 	$("#decreasefontlinker").click(function() { decreaseFontSize(); });
 }
 function viewVersion(pid) {
+	//do nothing
 }
 function bindHangOut() {
 	$(document).bind("click",function(e){ 
-		try { window.parent.hangOut(); }catch(ex) { }
+		try { window.parent.hangOut(); } catch(ex) { console.debug("ex",ex); }
 	});	
 }
 function setupApplication(aform) {
 	fs_stopAnchorTaborder();
 	try{ 
-		if(fs_default_language.toUpperCase()!="EN") fs_switchLanguage(fs_default_language,true);
-	}catch(ex) { }	
-	try { backHawkDown(); }catch(ex) { }
-	try { $(window).bind("unload",closeChildWindows); }catch(ex) { }
+		let curlang = getDefaultLanguage();
+		if(curlang.toUpperCase()!="EN") fs_switchLanguage(curlang,true);
+	} catch(ex) { console.debug("ex",ex); }	
+	try { backHawkDown(); } catch(ex) { console.debug("ex",ex); }
+	try { $(globalThis).bind("unload",closeChildWindows); } catch(ex) { console.debug("ex",ex); }
 }
 function setupScreenControls(aform) {
 	$("input[type=text].idate",aform||this.document).each(function(index,element) { 
@@ -778,18 +781,19 @@ function setupPagination(acontrol,afunction,aform,sform) {
 		$(element).click(function() {
 			if($(this).is(":disabled")) return;
 			let pageno = $(this).attr("data-paging");
-			if(sform) { try { sform.page.value = pageno; } catch(ex) { } }
+			if(sform) { try { sform.page.value = pageno; } catch(ex) { console.debug("ex",ex); } }
 			aform.page.value = pageno;
 			afunction(aform,pageno);
 		});
 	});
 }
 function startPeriodical(period) {
+	//do nothing
 }
 function prepareOptions(jsAry,elementname,listing,defaultValue,defaultCaption,doubleValue,notEmpty) {
 	if(!jsAry) return;
 	if(!defaultCaption) { 
-		try { defaultCaption = jsAry["undefinedlookup"]["value"]; } catch(ex) { }
+		try { defaultCaption = jsAry?.["undefinedlookup"]?.["value"]; } catch(ex) { console.debug("ex",ex); }
 	}
 	try {
 		if(!defaultCaption) defaultCaption = "   ";
@@ -805,30 +809,25 @@ function prepareOptions(jsAry,elementname,listing,defaultValue,defaultCaption,do
 					} else {
 						$("<option value='"+p+"'>"+(p+" - "+opts[p])+"</option>").appendTo(listing);
 					}
-				} else {
-					if(notEmpty) {
-						if(p!="") {
-							$("<option value='"+p+"'>"+opts[p]+"</option>").appendTo(listing);
-						}
-					} else {
+				} else if(notEmpty) {
+					if(p!="") {
 						$("<option value='"+p+"'>"+opts[p]+"</option>").appendTo(listing);
 					}
+				} else {
+					$("<option value='"+p+"'>"+opts[p]+"</option>").appendTo(listing);					
 				}				
 			}
 		}
-	}catch(ex) { }
+	} catch(ex) { console.debug("ex",ex); }
 }
 function backHawkDown() {
 	$(document).on("keydown", function (e) {
 		if (e.which == 8 && !$(e.target).is("input:not([readonly]), textarea")) {
-			e.preventDefault(); return;
+			e.preventDefault();
 		}
         if (e.which == 17) {
-            e.preventDefault(); return;
+            e.preventDefault();
         }		
-        //if(e.which==123) { //F12
-		//	e.preventDefault(); return;
-		//}
 	});	
 }
 function notAllowRightClick() {
@@ -837,6 +836,31 @@ function notAllowRightClick() {
         return false;
     });
 }
+function buildFormParams(frm, params) {
+	if(typeof(params)==="string") {
+		let prms = params.split("&");
+		for(let prm of prms) {
+			let kary = prm.split("=");
+			let inp = $('<input type="hidden" name="'+kary[0]+'"></input>');
+			inp.val(kary[1]);
+			frm.append(inp);
+		}
+	} else if(Array.isArray(params)) {
+		for(let prm of params) {
+			if(prm.name) {
+				let inp = $('<input type="hidden" name="'+prm.name+'"></input>');
+				inp.val(prm.value);
+				frm.append(inp);
+			} 
+		}
+	} else if(params) {
+		for(let prm in params) {
+			let inp = $('<input type="hidden" name="'+prm+'"></input>');
+			inp.val(params[prm]);
+			frm.append(inp);
+		}			
+	}
+}
 function submitWindow(settings) {
 	let p = settings;
 	if((p.url && p.url!="") && p.params) {
@@ -844,34 +868,7 @@ function submitWindow(settings) {
 		let frm = $("<form method='"+method+"'></form>");
 		frm.attr("action",p.url);
 		frm.attr("target",p.windowName);
-		if(typeof(p.params)==="string") {
-			let prms = p.params.split("&");
-			for(let i=0;i<prms.length;i++) {
-				let kary = prms[i].split("=");
-				let inp = $('<input type="hidden" name="'+kary[0]+'"></input>');
-				inp.val(kary[1]);
-				frm.append(inp);
-			}
-		} else {
-			if($.isArray(p.params)) {
-				for(let i=0;i<p.params.length;i++) {
-					let prm = p.params[i];
-					if(prm.name) {
-						let inp = $('<input type="hidden" name="'+prm.name+'"></input>');
-						inp.val(prm.value);
-						frm.append(inp);
-					} 
-				}
-			} else {
-				if(p.params) {
-					for(let prm in p.params) {
-						let inp = $('<input type="hidden" name="'+prm+'"></input>');
-						inp.val(p.params[prm]);
-						frm.append(inp);
-					}
-				}
-			}
-		}
+		buildFormParams(frm,p.params);
 		let layer = $("<div class='open-new-window-submit-layer'></div>");
 		layer.append(frm);
 		$("body").append(layer);
@@ -891,69 +888,59 @@ function openNewWindow(settings) {
 		fullScreen : null,
 		params : null
 	};
-	let p = $.extend({},defaultSettings, settings);		
+	let p = {...defaultSettings, ...settings};
 	try {	 
 		let fswin = window.parent.getWindowByName(p.winName); 
 		if(fswin) { fswin.focus(); return; }  
-	} catch(ex) { } 
-	let sw = window.screen.availWidth; 
-	let sh = window.screen.availHeight; 
-	try{if(p.fullScreen==null) p.fullScreen = fs_fullscreen; }catch(ex) { }
-	if(p.fullScreen) { 
-		winWidth = sw; 
-		winHeight = sh; 
-	} 
-	let wx = (sw - p.windowWidth) / 2; 
-	let wy = (sh - p.windowHeight) / 2; 
-	let fs_features = "top="+wy+",left="+wx+",width="+p.windowWidth+",height="+p.windowHeight+","+p.windowFeatures;
+	} catch(ex) { console.debug("ex",ex); } 
 	let fs_window = null;
 	if(p.newTab) {
 		if(p.params) fs_window = window.open("",p.windowName); 
 		else fs_window = window.open(p.url,p.windowName); 
 	} else {
+		let sw = window.screen.availWidth; 
+		let sh = window.screen.availHeight; 
+		let wx = (sw - p.windowWidth) / 2; 
+		let wy = (sh - p.windowHeight) / 2; 
+		let fs_features = "top="+wy+",left="+wx+",width="+p.windowWidth+",height="+p.windowHeight+","+p.windowFeatures;
 		if(p.params) fs_window = window.open("",p.windowName,fs_features); 
 		else fs_window = window.open(p.url,p.windowName,fs_features); 
 	}
-	fs_window.opener = self; 
+	fs_window.opener = globalThis; 
 	try {	 
 		window.parent.addWindow(fs_window); 
-	} catch(ex) { } 
+	} catch(ex) { console.debug("ex",ex); } 
 	submitWindow(p);
 	return fs_window; 
 } 
 function parseErrorThrown(xhr,status,errorThrown) {
-	if (!errorThrown) {
+	if (!errorThrown || errorThrown == xhr.status) {
 		errorThrown = xhr.responseText;
-	} else {
-		if(errorThrown==xhr.status) {
-			errorThrown = xhr.responseText;
-		}
 	}
 	try{
 		if(xhr.status==400 || xhr.status==401) errorThrown = xhr.responseText; //400=Bad Request,401=Unauthen
 		let json = $.parseJSON(xhr.responseText);
-		if(json.message) errorThrown = json.message;
-		if(json.text) errorThrown = json.text;
-        if(json.head.errordesc) errorThrown = json.head.errordesc;
-	}catch(ex) { }
+		if(json.message) { errorThrown = json.message; }
+		else if(json.text) { errorThrown = json.text; }
+        else if(json.head?.errordesc) { errorThrown = json.head.errordesc; }
+	} catch(ex) { console.debug("ex",ex); }
 	if($.trim(errorThrown)=="") errorThrown = "Unknown error or network error";
 	return errorThrown;
 }
 function replaceString(str, arrStr){                           
 	if(arrStr) {
-		let regex = /%s/;
-		for(let i=0;i<arrStr.length;i++){
-			let t_str = arrStr[i];
-			str = str.replace(regex, t_str);
+		let regex = /%s/g;
+		for(let t_str of arrStr){
+			str = str.replaceAll(regex, t_str);
 		}
 	} 
 	if(str) {
 		let regex = /%s/g;
-		str = str.replace(regex,"");
+		str = str.replaceAll(regex,"");
 	}
 	return str;
 }
-var msgjsondoc = null;
+let msgjsondoc = null;
 function loadJSONMessage(aSync) {
 	let authtoken = getAccessorToken();
 	jQuery.ajax({
@@ -965,7 +952,7 @@ function loadJSONMessage(aSync) {
 		error : function(transport,status,errorThrown) { 
 			console.error("loadJSONMessage: error",errorThrown,", respose",transport.responseText);
 		},
-		success: function(data) { msgjsondoc = data; }
+		success: function(data,status,transport){ msgjsondoc = data; }
 	});	
 }
 function getMessageCode(errcode, params, defaultMsg) {
@@ -975,15 +962,15 @@ function getMessageCode(errcode, params, defaultMsg) {
 		if(messages) {
 			let msgnode = messages.find(item => item.code == errcode);
 			if(msgnode) {
-				let fs_curlang = fs_default_language;
+				let fs_curlang = getDefaultLanguage();
 				if(!fs_curlang) fs_curlang = "EN";
 				let msg = msgnode[fs_curlang];
 				if(!msg) return errcode;
 				if(msg && msg.trim().length>0) return replaceString(msg,params);
 			}
 		}
-	}catch(ex) { }
-	return defaultMsg ? defaultMsg : errcode;
+	} catch(ex) { console.debug("ex",ex); }
+	return defaultMsg ?? errcode;
 }
 function getMessageTitle(titleCode, defaultTitle) {
 	let fs_msgtitle = getMessageCode(titleCode, null, defaultTitle); 
@@ -991,6 +978,7 @@ function getMessageTitle(titleCode, defaultTitle) {
 	return fs_msgtitle;
 }
 function createDialog(dialoglayer) {
+	//do nothing
 }
 function confirmDialogBox(errcode, params, defaultmsg, okFn, cancelFn, addedMsg){
 	let txt = getMessageCode(errcode,params);
@@ -998,86 +986,66 @@ function confirmDialogBox(errcode, params, defaultmsg, okFn, cancelFn, addedMsg)
 		if(addedMsg) txt += " "+addedMsg;
 		confirmDialog(txt, okFn, cancelFn); 
 		return false;
+	} else if (defaultmsg) {
+		if(addedMsg) defaultmsg += " "+addedMsg;
+		return confirmDialog(defaultmsg, okFn, cancelFn);
 	} else {
-		if (defaultmsg) {
-			if(addedMsg) defaultmsg += " "+addedMsg;
-			return confirmDialog(defaultmsg, okFn, cancelFn);
-		} else {
-			return confirmDialog(errcode, okFn, cancelFn);
-		}
+		return confirmDialog(errcode, okFn, cancelFn);		
 	}
 }
 function confirmDelete(params, okFn, cancelFn) {
-	if(!confirmDialogBox("QS0001",params,"Do you want to delete this transaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0001",params,"Do you want to delete this transaction?",okFn,cancelFn);
 }
 function confirmSave(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0002",null,"Do you want to save this transaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0002",null,"Do you want to save this transaction?",okFn,cancelFn);
 }
 function confirmCancel(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0003",null,"Do you want to cancel this transaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0003",null,"Do you want to cancel this transaction?",okFn,cancelFn);
 }
 function confirmRemove(params, okFn, cancelFn) {
-	if(!confirmDialogBox("QS0005",params,"Do you want to delete this record?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0005",params,"Do you want to delete this record?",okFn,cancelFn);
 }
 function confirmSend(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0006",null,"Do you want to send this transaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0006",null,"Do you want to send this transaction?",okFn,cancelFn);
 }
 function confirmUpdate(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0014",null,"Do you want to update this transaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0014",null,"Do you want to update this transaction?",okFn,cancelFn);
 }
 function confirmClear(params, okFn, cancelFn) {
-	if(!confirmDialogBox("QS0015",params,"Do you want to clear this?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0015",params,"Do you want to clear this?",okFn,cancelFn);
 }
 function confirmProcess(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0018",null,"Do you want to process this transaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0018",null,"Do you want to process this transaction?",okFn,cancelFn);
 }
 function confirmReceive(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0020",null,"Do you want to receive this transaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0020",null,"Do you want to receive this transaction?",okFn,cancelFn);
 }
 function confirmReset(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0021",null,"Do you want to reset this trasaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0021",null,"Do you want to reset this trasaction?",okFn,cancelFn);
 }
 function confirmErase(params, okFn, cancelFn) {
-	if(!confirmDialogBox("QS0022",params,"Do you want to delete %s row(s)?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0022",params,"Do you want to delete %s row(s)?",okFn,cancelFn);
 }
 function confirmApprove(params, okFn, cancelFn) {
-	if(!confirmDialogBox("QS0024",params,"Do you want to confirm approve the %s request?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0024",params,"Do you want to confirm approve the %s request?",okFn,cancelFn);
 }
 function confirmReject(params, okFn, cancelFn) {
-	if(!confirmDialogBox("QS0025",params,"Do you want to reject %s?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0025",params,"Do you want to reject %s?",okFn,cancelFn);
 }
 function confirmRequest(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0027",null,"Do you want to create this request?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0027",null,"Do you want to create this request?",okFn,cancelFn);
 }
 function confirmImport(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0028",null,"Do you want to import this transaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0028",null,"Do you want to import this transaction?",okFn,cancelFn);
 }
 function confirmExport(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0029",null,"Do you want to export this transaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0029",null,"Do you want to export this transaction?",okFn,cancelFn);
 }
 function confirmResend(okFn, cancelFn) {
-	if(!confirmDialogBox("QS0032",null,"Do you want to resend this transaction?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0032",null,"Do you want to resend this transaction?",okFn,cancelFn);
 }
 function confirmRevise(params, okFn, cancelFn) {
-	if(!confirmDialogBox("QS0033",params,"Do you want to revise the %s request?",okFn,cancelFn)) return false;
-	return true;
+	return confirmDialogBox("QS0033",params,"Do you want to revise the %s request?",okFn,cancelFn);
 }
 function successbox(callback,params) {
 	alertbox("QS0004",callback,null,params);
@@ -1088,32 +1056,28 @@ function alertbox(errcode, callback, defaultmsg, params, addonmsg, title, icon) 
 	if(txt!=null && txt!="") {
 		if(addonmsg) txt += " "+addonmsg;
 		alertDialog(txt, callback, title, icon);
+	} else if (defaultmsg) {
+		if(addonmsg) defaultmsg += " "+addonmsg;
+		alertDialog(defaultmsg, callback, title, icon);
 	} else {
-		if (defaultmsg) {
-			if(addonmsg) defaultmsg += " "+addonmsg;
-			alertDialog(defaultmsg, callback, title, icon);
-		} else {
-			alertDialog(errcode, callback, title, icon);
-		}
+		alertDialog(errcode, callback, title, icon);		
 	}
 }
-function confirmbox(errcode, okFn, cancelFn, defaultmsg, params, addonmsg, title, icon){
+function confirmbox(errcode, okFn, cancelFn, defaultmsg, params, addonmsg, title, icon) { //NOSONAR 
 	if(!title || title.trim().length==0) title = getMessageCode("fsconfirm",null,"Confirmation");
 	let txt = getMessageCode(errcode,params);
 	if(txt!=null && txt!="") {
 		if(addonmsg) txt += " "+addonmsg;
 		return confirmDialog(txt, okFn, cancelFn, title, icon);
+	} else if (defaultmsg) {
+		if(addonmsg) defaultmsg += " "+addonmsg;
+		return confirmDialog(defaultmsg, okFn, cancelFn, title, icon);
 	} else {
-		if (defaultmsg) {
-			if(addonmsg) defaultmsg += " "+addonmsg;
-			return confirmDialog(defaultmsg, okFn, cancelFn, title, icon);
-		} else {
-			return confirmDialog(errcode, okFn, cancelFn, title, icon);
-		}
+		return confirmDialog(errcode, okFn, cancelFn, title, icon);
 	}
 }
 /* uncomment to use boot dialog */
-function alertDialog(msg, callbackfn, title="Alert", icon="fa fa-bell-o fas fa-bell") {
+function alertDialog(msg, callbackfn, title="Alert", icon="fa fa-bell-o") {
 	try {
 		let fs_okbtn = getMessageCode("fsokbtn",null,"OK"); 
     	bootbox.alert({
@@ -1125,14 +1089,13 @@ function alertDialog(msg, callbackfn, title="Alert", icon="fa fa-bell-o fas fa-b
 			backdrop: false,
 			buttons: {
 				ok:  { label: fs_okbtn }
-			},
+			}    		
     	}); 
         $(".bootbox > .modal-dialog").draggable();
-		return;
-    } catch (ex) { console.log(ex.description); }
+    } catch (ex) { console.debug("ex",ex); }
     if (callbackfn) callbackfn();
 }
-function confirmDialog(msg, okCallback, cancelCallback, title="Confirmation", icon="fas fa fa-question-circle") {
+function confirmDialog(msg, okCallback, cancelCallback, title="Confirmation", icon="fa fa-question-circle") {
 	try {
 		let fs_confirmbtn = getMessageCode("fsconfirmbtn",null,"OK"); 
 		let fs_cancelbtn = getMessageCode("fscancelbtn",null,"Cancel"); 
@@ -1142,8 +1105,8 @@ function confirmDialog(msg, okCallback, cancelCallback, title="Confirmation", ic
 			callback: function(result) {
 				if(result) {
 					if (okCallback) okCallback();
-				} else {
-					if (cancelCallback) cancelCallback();
+				} else if (cancelCallback) {
+					cancelCallback();
 				}
 			},
 			backdrop: false,
@@ -1151,11 +1114,11 @@ function confirmDialog(msg, okCallback, cancelCallback, title="Confirmation", ic
 			buttons: {
 				confirm : { label: fs_confirmbtn },
 				cancel: { label: fs_cancelbtn }
-			},
+			}
     	}); 
         $(".bootbox > .modal-dialog").draggable();
-		return;
-    } catch (ex) { console.log(ex.description); }
+    } catch (ex) { console.debug("ex",ex); }
+	return true;
 }
 function submitFailure(xhr, status, errorThrown, checking=true) {
 	stopWaiting();
@@ -1164,10 +1127,9 @@ function submitFailure(xhr, status, errorThrown, checking=true) {
 	errorThrown = parseErrorThrown(xhr, status, errorThrown);
 	alertbox(errorThrown, function() { 
 		if(checking && xhr.status==401) { 
-			//window.open("index.jsp","_self"); 
 			try {
 				window.parent.reLogin();
-			}catch(ex) { }
+			} catch(ex) { console.debug("ex",ex); }
 		}
 	});
 }
@@ -1205,8 +1167,8 @@ function bootConfirmDialog(msg, okCallback, cancelCallback, title="Confirmation"
 			callback: function(result) {
 				if(result) {
 					if (okCallback) okCallback();
-				} else {
-					if (cancelCallback) cancelCallback();
+				} else if (cancelCallback) {
+					cancelCallback();
 				}
 			},
 			swapButtonOrder: true,
@@ -1217,36 +1179,40 @@ function bootConfirmDialog(msg, okCallback, cancelCallback, title="Confirmation"
     	});
     	$(".bootbox > .modal-dialog").draggable();
 		return;
-    } catch (ex) { console.log(ex.description); }
+    } catch (ex) { console.debug("ex",ex); }
 }
 function alertboot(errcode, callback, defaultmsg, params) {
 	let txt = getMessageCode(errcode, params);
 	if(txt!=null && txt!="") {
 		bootAlertDialog(txt, callback);
+	} else if (defaultmsg) {
+		bootAlertDialog(defaultmsg, callback);
 	} else {
-		if (defaultmsg) {
-			bootAlertDialog(defaultmsg, callback);
-		} else {
-			bootAlertDialog(errcode, callback);
-		}
+		bootAlertDialog(errcode, callback);		
 	}
 }
 function confirmboot(errcode, okFn, cancelFn, defaultmsg, params){
 	let txt = getMessageCode(errcode,params);
 	if(txt!=null && txt!="") {
 		return bootConfirmDialog(txt, okFn, cancelFn);
+	} else if (defaultmsg) {
+		return bootConfirmDialog(defaultmsg, okFn, cancelFn);
 	} else {
-		if (defaultmsg) {
-			return bootConfirmDialog(defaultmsg, okFn, cancelFn);
-		} else {
-			return bootConfirmDialog(errcode, okFn, cancelFn);
-		}
+		return bootConfirmDialog(errcode, okFn, cancelFn);
 	}
 }
-function fs_beforedeactivate(src,rival) {  }
-function fs_deactivate(src,rival) { }
-function fs_rival_deactivate(src,rival) { }
-function fs_rival_beforedeactivate(src,rival) { }
+function fs_beforedeactivate(src,rival) {  
+	//do nothing
+}
+function fs_deactivate(src,rival) { 
+	//do nothing
+}
+function fs_rival_deactivate(src,rival) { 
+	//do nothing
+}
+function fs_rival_beforedeactivate(src,rival) { 
+	//do nothing
+}
 function toggleCollapseExpand(src) {
 	let $src = $(src);
 	if($src.is(".down")) {
@@ -1279,19 +1245,17 @@ function handleControls(fs_radiocontrols,fs_checkboxcontrols,fs_selectcontrols) 
 								$("input:checked",$("#"+element.control)).trigger("change");
 								$("select:selected",$("#"+element.control)).trigger("change");
 							}
+						} else if(element.hidden) {
+							$("#"+element.control).hide();
 						} else {
-							if(element.hidden) {
-								$("#"+element.control).hide();
-							} else {
-								$("#"+element.control).attr("disabled",true); 
-								$("input",$("#"+element.control)).attr("disabled",true); 
-								$("select",$("#"+element.control)).attr("disabled",true); 
-								$("input:checked",$("#"+element.control)).trigger("change");
-								$("select:selected",$("#"+element.control)).trigger("change");
-								if(!$("#"+element.control).is(":checkbox") && !$("#"+element.control).is(":radio")) {
-									$("#"+element.control).val("");
-								}
-							}
+							$("#"+element.control).attr("disabled",true); 
+							$("input",$("#"+element.control)).attr("disabled",true); 
+							$("select",$("#"+element.control)).attr("disabled",true); 
+							$("input:checked",$("#"+element.control)).trigger("change");
+							$("select:selected",$("#"+element.control)).trigger("change");
+							if(!$("#"+element.control).is(":checkbox") && !$("#"+element.control).is(":radio")) {
+								$("#"+element.control).val("");
+							}							
 						}
 					});
 				}
@@ -1316,19 +1280,17 @@ function handleControls(fs_radiocontrols,fs_checkboxcontrols,fs_selectcontrols) 
 								$("input:checked",$("#"+element.control)).trigger("change");
 								$("select:selected",$("#"+element.control)).trigger("change");
 							}
+						} else if(element.hidden) {
+							$("#"+element.control).hide();
 						} else {
-							if(element.hidden) {
-								$("#"+element.control).hide();
-							} else {
-								$("#"+element.control).attr("disabled",true);
-								$("input",$("#"+element.control)).attr("disabled",true);
-								$("select",$("#"+element.control)).attr("disabled",true);
-								$("input:checked",$("#"+element.control)).trigger("change");
-								$("select:selected",$("#"+element.control)).trigger("change");
-								if(!$("#"+element.control).is(":checkbox") && !$("#"+element.control).is(":radio")) {
-									$("#"+element.control).val("");
-								}
-							}
+							$("#"+element.control).attr("disabled",true);
+							$("input",$("#"+element.control)).attr("disabled",true);
+							$("select",$("#"+element.control)).attr("disabled",true);
+							$("input:checked",$("#"+element.control)).trigger("change");
+							$("select:selected",$("#"+element.control)).trigger("change");
+							if(!$("#"+element.control).is(":checkbox") && !$("#"+element.control).is(":radio")) {
+								$("#"+element.control).val("");
+							}							
 						}
 					});
 				}
@@ -1352,19 +1314,17 @@ function handleControls(fs_radiocontrols,fs_checkboxcontrols,fs_selectcontrols) 
 								$("input:checked",$("#"+element.control)).trigger("change");
 								$("select:selected",$("#"+element.control)).trigger("change");
 							}
+						} else if(element.hidden) {
+							$("#"+element.control).hide();
 						} else {
-							if(element.hidden) {
-								$("#"+element.control).hide();
-							} else {
-								$("#"+element.control).attr("disabled",true);
-								$("input",$("#"+element.control)).attr("disabled",true);
-								$("select",$("#"+element.control)).attr("disabled",true);
-								$("input:checked",$("#"+element.control)).trigger("change");
-								$("select:selected",$("#"+element.control)).trigger("change");
-								if(!$("#"+element.control).is(":checkbox") && !$("#"+element.control).is(":radio")) {
-									$("#"+element.control).val("");
-								}
-							}
+							$("#"+element.control).attr("disabled",true);
+							$("input",$("#"+element.control)).attr("disabled",true);
+							$("select",$("#"+element.control)).attr("disabled",true);
+							$("input:checked",$("#"+element.control)).trigger("change");
+							$("select:selected",$("#"+element.control)).trigger("change");
+							if(!$("#"+element.control).is(":checkbox") && !$("#"+element.control).is(":radio")) {
+								$("#"+element.control).val("");
+							}							
 						}
 					});
 				}
@@ -1397,6 +1357,7 @@ function initialControls(fs_radiocontrols,fs_checkboxcontrols,fs_selectcontrols)
 	}
 }
 function startEntryPage() {
+	//do nothing
 }
 function hasInset(textSet,textValue,textDelimiter) {
 	if(!textDelimiter) textDelimiter = ",";
@@ -1417,8 +1378,7 @@ function validNumericFields(aform) {
 	$("input.iint, input.imoney",aform).each(function(index,element) { 
 		let ths = $(this);
 		let text = removeComma(ths.val());
-		//console.log("valid number field : "+text);
-		if(isNaN(text)) {
+		if(Number.isNaN(text)) {
 			valid = false;
 			alertbox("Invalid Numeric Field: Not a Number",function() { 
 				setTimeout(function() { ths.focus(); },500);	
@@ -1427,13 +1387,11 @@ function validNumericFields(aform) {
 		}
 		let precision = ths.attr("precision");
 		let decimal = ths.attr("decimal");
-		//console.log("precision = "+precision+" : decimal = "+decimal);
 		if(precision) {
 			let txts = text;
 			let precise = parseNumber(precision+"");
 			let idx = txts.indexOf(".");
 			if(idx>=0) txts = txts.substring(0,idx);
-			//console.log("valid number field : precise="+precise+" : "+txts.length);
 			if(precise<txts.length) {
 				valid = false;
 				alertbox("Invalid Numeric Field: Precision ("+precision+") or decimal"+(decimal?" ("+decimal+")":"")+" is over",function() { 
@@ -1448,7 +1406,6 @@ function validNumericFields(aform) {
 			let idx = txts.indexOf(".");
 			if(idx>=0) {
 				txts = txts.substring(idx+1);
-				//console.log("valid decimal field : scale="+scale+" : "+txts.length);
 				if(scale<txts.length) {
 					valid = false;
 					alertbox("Invalid Numeric Field: Precision"+(precision?" ("+precision+")":"")+" or decimal ("+decimal+") is over",function() { 
@@ -1572,13 +1529,13 @@ function validRequiredFields(callback,fs_requiredfields,hassomefields) {
 		} else {
 			valid = $.trim(input.val())!="";
 		}
-		if(!valid) {
+		if(valid) {
+			validationflag = true;
+		} else {
 			input.addClass("is-invalid");
 			input.parent().addClass("has-error");
 			$("#"+p+"_alert").show();
 			if(!validator) validator = p;
-		} else {
-			validationflag = true;
 		}
 	}
 	if(hassomefields && validationflag) {
@@ -1647,7 +1604,7 @@ function createMandatoryParameters(aform) {
 	});
 	return result;
 }
-var secureEngine;
+let secureEngine;
 function getSecureEngine() {
     if(!secureEngine) {
         secureEngine = SECURE_STORAGE ? new SecureLS.default({storage: "local"==BASE_STORAGE ? localStorage : sessionStorage}) : null;
@@ -1696,11 +1653,10 @@ function getAccessorInfo() {
 }
 function getAccessorToken() {
     let json = getAccessorInfo();
-    if(json && json.authtoken) {
+    if(json?.authtoken) {
         return json.authtoken;
     }
-	if(API_TOKEN && API_TOKEN!="") return API_TOKEN;
-    return "";
+    return API_TOKEN || "";
 }
 function saveAccessorInfo(json) {
 	setStorage("accessorinfo",JSON.stringify(json));
@@ -1716,17 +1672,17 @@ function getRequestID() {
 	return fs_requestid;
 }
 function randomize() {
-	const crypto = window.crypto || window.msCrypto;
+	const crypto = globalThis.crypto || globalThis.msCrypto;
 	let array = new Uint32Array(1);
 	crypto.getRandomValues(array);	
-	return array[0];
+	return array[0] / (0xFFFFFFFF + 1);
 }	
 function generateUUID() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID();
   } else {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      const r = (randomize() * 16) | 0;
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replaceAll(/[xy]/g, function (c) {
+      const r = Math.trunc(randomize() * 16);
       const v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
@@ -1734,14 +1690,14 @@ function generateUUID() {
 }
 function setupDiffie(json) {
 	console.log("setupDiffie",this.getAccessorToken());
-    let info = json.body.info;
+    let info = json?.body?.info;
     if(info) {
         const dh = new DH();
         dh.prime = info.prime;
         dh.generator = info.generator;
         dh.otherPublicKey = info.publickey;
         dh.compute();
-		if(!(String(META_INFO.DISABLE_DIFFIE)=="true")) {
+		if(String(META_INFO.DISABLE_DIFFIE)!=="true") {
 			dh.updatePublicKey((success) => {
 				if(success) {
 					info.handshake = "C"; //confirm
@@ -1760,10 +1716,11 @@ function setupDiffie(json) {
 function getDH() {
     let json = getAccessorInfo();
 	console.log("getDH: json",json);
-    if(json && json.info) {
+    if(json?.info) {
         let info = json.info;
 		if(!info.handshake || info.handshake=="" || info.handshake=="F") return null; //not confirm or fail
-        if(info.prime && info.generator && info.publickey && info.privatekey && info.sharedkey && info.otherpublickey) {
+		let hasAllKeys = info.prime && info.generator && info.publickey && info.privatekey && info.sharedkey && info.otherpublickey;
+        if(hasAllKeys) {
             const dh = new DH();
             dh.prime = info.prime;
             dh.generator = info.generator;
@@ -1772,20 +1729,22 @@ function getDH() {
             dh.publicKey = info.publickey;
             dh.sharedKey = info.sharedkey;
             dh.otherPublicKey = info.otherpublickey;
+			console.log("getDH: dh",dh);
             return dh;
         }
     }
     return null;
 }
-function sendMessageInterface(type,win) {
+function sendMessageInterface() {
 	let info = getAccessorInfo();
-	let msg = {type: type || "storage", archetype: "willsofts", API_URL: API_URL, BASE_URL: BASE_URL, CDN_URL: CDN_URL, IMG_URL: IMG_URL, DEFAULT_LANGUAGE: fs_default_language, API_TOKEN: API_TOKEN, BASE_STORAGE: BASE_STORAGE, SECURE_STORAGE: SECURE_STORAGE, BASE_CSS: BASE_CSS, MULTI_LANGUAGES: MULTI_LANGUAGES, META_INFO: META_INFO, accessorinfo: info};
-	sendMessageToFrame(msg,win);
+	let appinfo = getAppInfos();
+	let msg = { type: "storage", archetype: "willsofts", ...appinfo, accessorinfo: info };
+	sendMessageToFrame(msg);
 }
 function sendMessageToFrame(data,win) {
     if(!data) return false;
     try {
-		console.log("sendMessageToFrame:",data,", win",win);
+		console.log("sendMessageToFrame:",data);
         data.archetype = "willsofts";
         if(win) {
             win.postMessage(JSON.stringify(data), "*");	
@@ -1799,7 +1758,7 @@ function sendMessageToFrame(data,win) {
             }
         }
         return true;
-    } catch(ex) { console.log(ex); }
+    } catch(ex) { console.debug("ex",ex); }
     return false;
 }
 function serializeToJSON(aform) {
@@ -1831,7 +1790,7 @@ function serializeParameters(parameters, addonParameters, raw) {
 	}
 	let jsondata = { };
 	let cipherdata = false;
-	if(raw || fs_default_raw_parameters) {
+	if(raw || isDefaultRawParameters()) {
 		jsondata = parameters;
 	} else {
 		let dh = getDH();
@@ -1844,7 +1803,7 @@ function serializeParameters(parameters, addonParameters, raw) {
 	}
 	console.log("serialize: parameters",parameters);
 	console.log("serialize: jsondata",jsondata);
-	let headers = { "data-type": cipherdata?"json/cipher":"", language: fs_default_language };	
+	let headers = { "data-type": cipherdata?"json/cipher":"", language: getDefaultLanguage() };	
 	return { cipherdata: cipherdata, jsondata: jsondata, headers : headers };
 }
 function decryptCipherData(headers, data) {

@@ -2,8 +2,7 @@ import { KnModel, KnOperation } from "@willsofts/will-db";
 import { KnDBConnector, KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { KnContextInfo, KnDataTable, KnDataSet } from '@willsofts/will-core';
 import { Utilities } from "@willsofts/will-util";
-import { TknOperateHandler } from '@willsofts/will-serv';
-import { KnConfigMapperSetting } from '@willsofts/will-serv';
+import { TknOperateHandler, KnConfigMapperSetting } from '@willsofts/will-serv';
 
 export class Sfte012Handler extends TknOperateHandler {
 
@@ -52,7 +51,7 @@ export class Sfte012Handler extends TknOperateHandler {
 
     /* override to handle launch router when invoked from menu */
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -62,9 +61,9 @@ export class Sfte012Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -99,7 +98,7 @@ export class Sfte012Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let row = this.transformData({});
             let rs =  await this.performRetrieving(context, model, db);
@@ -109,9 +108,9 @@ export class Sfte012Handler extends TknOperateHandler {
             return this.createDataTable(KnOperation.RETRIEVAL, row, {}, "sfte012/sfte012");
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -123,16 +122,83 @@ export class Sfte012Handler extends TknOperateHandler {
      * Override in order to update records
      */
     protected override async doUpdating(context: any, model: KnModel): Promise<KnRecordSet> {
-        let result = this.createRecordSet();
-		let db = this.getPrivateConnector(model);
+		let db = this.getPrivateConnector(model,context);
 		try {
-            result = await this.updateConfigTable(context, db);
+            return await this.updateConfigTable(context, db);
 		} catch(ex: any) {
 			this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
 		}
+    }
+
+    private async updateColumnOnly(context: KnContextInfo, db: KnDBConnector, cfg: KnConfigMapperSetting, colsql: KnSQL, insql: KnSQL, colvalue: any) : Promise<KnRecordSet> {
+        let result = this.createRecordSet();
+        colsql.clearParameter();
+        colsql.set("colvalue",colvalue);
+        colsql.set("colname",cfg.colname);
+        let rs = await colsql.executeUpdate(db,context);
+        let rc = this.createRecordSet(rs);
+        result.records += rc.records;
+        if(rc.records<1) {
+            insql.clearParameter();
+            insql.set("colvalue",colvalue);
+            insql.set("category",cfg.category);
+            insql.set("colname",cfg.colname);
+            rs = await insql.executeUpdate(db,context);
+            rc = this.createRecordSet(rs);
+            result.records += rc.records;
+        }
+        if(cfg.altercolnames && cfg.altercolnames.length>0) {
+            for(let acolname of cfg.altercolnames) {
+                colsql.clearParameter();
+                colsql.set("colvalue",colvalue);
+                colsql.set("colname",acolname);
+                rs = await colsql.executeUpdate(db,context);
+                let rc = this.createRecordSet(rs);
+                result.records += rc.records;
+            }
+        }
+        return result;
+    }
+
+    private async updateColumnAlter(context: KnContextInfo, db: KnDBConnector, cfg: KnConfigMapperSetting, catsql: KnSQL, insql: KnSQL, colvalue: any) : Promise<KnRecordSet> {
+        let result = this.createRecordSet();
+        catsql.clearParameter();
+        catsql.set("colvalue",colvalue);
+        catsql.set("category",cfg.category);
+        catsql.set("colname",cfg.colname);
+        let rs = await catsql.executeUpdate(db,context);
+        let rc = this.createRecordSet(rs);
+        if(rc.records<1) {
+            insql.clearParameter();
+            insql.set("colvalue",colvalue);
+            insql.set("category",cfg.category);
+            insql.set("colname",cfg.colname);
+            rs = await insql.executeUpdate(db,context);
+            rc = this.createRecordSet(rs);
+        }
+        result.records += rc.records;
+        if(cfg.altercolnames && cfg.altercolnames.length>0) {
+            for(let acolname of cfg.altercolnames) {
+                catsql.clearParameter();
+                catsql.set("colvalue",colvalue);
+                catsql.set("category",cfg.category);
+                catsql.set("colname",acolname);
+                rs = await catsql.executeUpdate(db,context);					
+                rc = this.createRecordSet(rs);
+                if(rc.records<1) {
+                    insql.clearParameter();
+                    insql.set("colvalue",colvalue);
+                    insql.set("category",cfg.category);
+                    insql.set("colname",acolname);
+                    rs = await insql.executeUpdate(db,context);
+                    rc = this.createRecordSet(rs);
+                }
+                result.records += rc.records;
+            }
+        }
         return result;
     }
 
@@ -155,74 +221,19 @@ export class Sfte012Handler extends TknOperateHandler {
                     colvalue = "false";
                 }
                 if(cfg.columnOnly) {
-                    colsql.clearParameter();
-                    colsql.set("colvalue",colvalue);
-                    colsql.set("colname",cfg.colname);
-                    let rs = await colsql.executeUpdate(db,context);
-                    let rc = this.createRecordSet(rs);
+                    let rc = await this.updateColumnOnly(context,db,cfg,colsql,insql,colvalue);
                     result.records += rc.records;
-                    if(rc.records<1) {
-                        insql.clearParameter();
-                        insql.set("colvalue",colvalue);
-                        insql.set("category",cfg.category);
-                        insql.set("colname",cfg.colname);
-                        rs = await insql.executeUpdate(db,context);
-                        rc = this.createRecordSet(rs);
-                        result.records += rc.records;
-                    }
-                    if(cfg.altercolnames && cfg.altercolnames.length>0) {
-                        for(let acolname of cfg.altercolnames) {
-                            colsql.clearParameter();
-                            colsql.set("colvalue",colvalue);
-                            colsql.set("colname",acolname);
-                            rs = await colsql.executeUpdate(db,context);
-                            let rc = this.createRecordSet(rs);
-                            result.records += rc.records;
-                        }
-                    }
                 } else {
-                    catsql.clearParameter();
-                    catsql.set("colvalue",colvalue);
-                    catsql.set("category",cfg.category);
-                    catsql.set("colname",cfg.colname);
-                    let rs = await catsql.executeUpdate(db,context);
-                    let rc = this.createRecordSet(rs);
-                    if(rc.records<1) {
-                        insql.clearParameter();
-                        insql.set("colvalue",colvalue);
-                        insql.set("category",cfg.category);
-                        insql.set("colname",cfg.colname);
-                        rs = await insql.executeUpdate(db,context);
-                        rc = this.createRecordSet(rs);
-                    }
+                    let rc = await this.updateColumnAlter(context,db,cfg,catsql,insql,colvalue);
                     result.records += rc.records;
-                    if(cfg.altercolnames && cfg.altercolnames.length>0) {
-                        for(let acolname of cfg.altercolnames) {
-                            catsql.clearParameter();
-                            catsql.set("colvalue",colvalue);
-                            catsql.set("category",cfg.category);
-                            catsql.set("colname",acolname);
-                            rs = await catsql.executeUpdate(db,context);					
-                            rc = this.createRecordSet(rs);
-                            if(rc.records<1) {
-                                insql.clearParameter();
-                                insql.set("colvalue",colvalue);
-                                insql.set("category",cfg.category);
-                                insql.set("colname",acolname);
-                                rs = await insql.executeUpdate(db,context);
-                                rc = this.createRecordSet(rs);
-                            }
-                            result.records += rc.records;
-                        }
-                    }
                 }
             }        
             await db.commitWork(); 
             return result;                   
         } catch(ex: any) {
-            try { await db.rollbackWork(); } catch(er) { this.logger.error(er); }
+            try { await db.rollbackWork(); } catch(error) { this.logger.error(error); }
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(ex);
+            throw ex;
         }
     }
 

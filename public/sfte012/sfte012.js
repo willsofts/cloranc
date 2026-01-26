@@ -1,10 +1,8 @@
-var mouseX = 0;
-var mouseY = 0;
 //#(10000) programmer code begin;
 //#(10000) programmer code end;
 $(function(){
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("sfte012"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("sfte012"); }catch(ex) { console.warn("error",ex);  }
 	initialApplication();
 	//#(20000) programmer code begin;
 	//#(20000) programmer code end;
@@ -67,35 +65,38 @@ function update(aform) {
 		//#(235000) programmer code begin;
 		//#(235000) programmer code end;
 		confirmUpdate(function() {
-			let formdata = serializeDataForm(aform);
-			startWaiting();
-			jQuery.ajax({
-				url: API_URL+"/api/sfte012/update",
-				data: formdata.jsondata,
-				headers : formdata.headers,
-				type: "POST",
-				dataType: "html",
-				contentType: defaultContentType,
-				error : function(transport,status,errorThrown) {
-					submitFailure(transport,status,errorThrown);
-				},
-				success: function(data,status,transport){ 
-					stopWaiting();
-					//#(235300) programmer code begin;
-					//#(235300) programmer code end;
-					successbox(function() { 
-					});
-					//#(235500) programmer code begin;
-					//#(235500) programmer code end;
-				}
-			});
+			updateForm(aform);
 		});
 	});
-	return false;
+	return true;
 	//#(240000) programmer code begin;
 	//#(240000) programmer code end;
 }
-var fs_requiredfields = {
+function updateForm(aform) {
+	let formdata = serializeDataForm(aform);
+	startWaiting();
+	jQuery.ajax({
+		url: getApiUrl()+"/api/sfte012/update",
+		data: formdata.jsondata,
+		headers : formdata.headers,
+		type: "POST",
+		dataType: "html",
+		contentType: defaultContentType,
+		error : function(transport,status,errorThrown) {
+			submitFailure(transport,status,errorThrown);
+		},
+		success: function(data,status,transport){ 
+			stopWaiting();
+			//#(235300) programmer code begin;
+			//#(235300) programmer code end;
+			successbox(function() { 
+			});
+			//#(235500) programmer code begin;
+			//#(235500) programmer code end;
+		}
+	});
+}
+let fs_requiredfields = {
 	"mailserver":{msg:""}, 
 	"mailport":{msg:""}, 
 	"mailuser":{msg:""}, 

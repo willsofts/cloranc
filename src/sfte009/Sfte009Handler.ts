@@ -2,10 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
-import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
-import { VerifyError } from '@willsofts/will-core';
-import { KnPageUtility } from '@willsofts/will-core';
-import { KnUtility } from '@willsofts/will-core';
+import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable, KnPageUtility, KnUtility } from '@willsofts/will-core';
 import { Utilities } from "@willsofts/will-util";
 import { TknOperateHandler } from '@willsofts/will-serv';
 
@@ -47,13 +44,10 @@ export class Sfte009Handler extends TknOperateHandler {
 
     /* try to validate fields for insert, update, delete, retrieve */
     protected override validateRequireFields(context: KnContextInfo, model: KnModel, action: string) : Promise<KnValidateInfo> {
-        let vi : KnValidateInfo = {valid: true};
         let page = new KnPageUtility(this.progid, context);
-        if(page.isInsertMode(action)) {
-            vi = this.validateParameters(context.params,"domainname");
-        } else {
-            vi = this.validateParameters(context.params,"domainid");
-        }
+        const vi = page.isInsertMode(action)
+            ? this.validateParameters(context.params,"domainname")
+            : this.validateParameters(context.params,"domainid");        
         if(!vi.valid) {
             return Promise.reject(new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061));
         }
@@ -61,48 +55,49 @@ export class Sfte009Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            let counting = KnOperation.COUNT==actions.subaction;
-            let eng = KnUtility.isEnglish(context);
-            knsql.append(actions.selector);
-            if(!counting) {
-                if(eng) {
-                    knsql.append(", tconstant.nameen as systemname ");
-                } else {
-                    knsql.append(", tconstant.nameth as systemname ");
-                }
-            }
-            knsql.append(" from ");
-            knsql.append(model.name);
-            if(!counting) {
-                knsql.append(" left join tconstant on tconstant.typename = 'tsystemtype' and tconstant.typeid = tdirectory.systemtype ");
-            }
-            let filter = " where ";
-            if(params.domainname && params.domainname!="") {
-                knsql.append(filter).append("domainname LIKE ?domainname");
-                knsql.set("domainname","%"+params.domainname+"%");
-                filter = " and ";
-            }
-            if(params.description && params.description!="") {
-                knsql.append(filter).append("description LIKE ?description");
-                knsql.set("description","%"+params.description+"%");
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        let counting = KnOperation.COUNT==actions.subaction;
+        let eng = KnUtility.isEnglish(context);
+        knsql.append(actions.selector);
+        if(!counting) {
+            if(eng) {
+                knsql.append(", tconstant.nameen as systemname ");
+            } else {
+                knsql.append(", tconstant.nameth as systemname ");
+            }
+        }
+        knsql.append(" from ");
+        knsql.append(model.name);
+        if(!counting) {
+            knsql.append(" left join tconstant on tconstant.typename = 'tsystemtype' and tconstant.typeid = tdirectory.systemtype ");
+        }
+        if(params.domainname && params.domainname!="") {
+            conditions.push("domainname LIKE ?domainname");
+            knsql.set("domainname","%"+params.domainname+"%");
+        }
+        if(params.description && params.description!="") {
+            conditions.push("description LIKE ?description");
+            knsql.set("description","%"+params.description+"%");
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -112,7 +107,7 @@ export class Sfte009Handler extends TknOperateHandler {
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -122,9 +117,9 @@ export class Sfte009Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -163,7 +158,7 @@ export class Sfte009Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -174,9 +169,9 @@ export class Sfte009Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 

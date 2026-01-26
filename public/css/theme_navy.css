@@ -51,7 +51,6 @@ div.link-button-cover a:hover {
 .btn-spot:active,
 .btn-spot.active,
 .open > .dropdown-toggle.btn-spot {
- /*background-color: #034686;*/
  background-color: #315989;
 }
 .btn-dark:hover,

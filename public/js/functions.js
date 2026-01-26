@@ -3,7 +3,7 @@ function isEmpty(value) {
 }
 
 function computeAge(dob,today) {
-	let today = today || new Date();
+	today = today || new Date();
 	let result = { 
           years: 0, 
           months: 0, 
@@ -31,14 +31,14 @@ function computeAge(dob,today) {
 }
 function checkIDCard(id) {
 	if(id.length != 13) return false;
-	for(i=0, sum=0; i < 12; i++)
-		sum += parseFloat(id.charAt(i))*(13-i); 
-	if((11-sum%11)%10!=parseFloat(id.charAt(12)))
+	for(let i=0, sum=0; i < 12; i++)
+		sum += Number.parseFloat(id.charAt(i))*(13-i); 
+	if((11-sum%11)%10!=Number.parseFloat(id.charAt(12)))
 		return false; 
 	return true;
 }
 function randomize() {
-	const crypto = window.crypto || window.msCrypto;
+	const crypto = globalThis.crypto || globalThis.msCrypto;
 	let array = new Uint32Array(1);
 	crypto.getRandomValues(array);	
 	return array[0];
@@ -60,10 +60,10 @@ function numericEntry(event) {
 	if (window.event) key = window.event.keyCode; 
 	else if (event) key = event.which; 
 	else return true; 
-	let keychar = String.fromCharCode(key);
+	let keychar = String.fromCodePoint(key);
 	if ((key==null) || (key==0) || (key==8) || (key==9) || (key==27)) {
 		return true; 
-	} else if ((("-0123456789").indexOf(keychar) > -1)) {
+	} else if ((("-0123456789").includes(keychar))) {
 		return true; 
 	} else {
 		event.stopPropagation();

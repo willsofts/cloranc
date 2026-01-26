@@ -1,8 +1,6 @@
-var mouseX = 0;
-var mouseY = 0;
 $(function(){
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("sfte002"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("sfte002"); }catch(ex) { console.warn("error",ex);  }
 	initialApplication();
 });
 function initialApplication() {
@@ -67,24 +65,24 @@ function resetFilters() {
 		fssearchform.page.value = "1";
 		fssearchform.orderBy.value = "";
 		fssearchform.orderDir.value = "";
-	} catch(ex) { }
+	} catch(ex) { console.warn("error",ex);  }
 }
 function refreshFilters() {
 	try {
 		fssearchform.page.value = fslistform.page.value;
 		fssearchform.orderBy.value = fschapterform.orderBy.value;
 		fssearchform.orderDir.value = fschapterform.orderDir.value;
-	}catch(ex) { }
+	}catch(ex) { console.warn("error",ex);  }
 }
 function ensurePaging(tablebody) {
 	if(!tablebody) tablebody = "#datatablebody";
 	try {
-		let pageno = parseInt(fslistform.page.value);
+		let pageno = Number.parseInt(fslistform.page.value);
 		let size = $(tablebody).find("tr").length;
 		if(size<=1 && pageno>1) {
 			fslistform.page.value = ""+(pageno-1);
 		}
-	} catch(ex) { }
+	} catch(ex) { console.warn("error",ex);  }
 }
 function clearingFields() {
 	fsentryform.reset();
@@ -100,7 +98,7 @@ function search(aform) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/search",
+		url: getApiUrl()+"/api/sfte002/search",
 		data: formdata.jsondata,
 		headers : formdata.headers,
 		type: "POST",
@@ -148,7 +146,7 @@ function submitRetrieve(src,groupname) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/retrieve",
+		url: getApiUrl()+"/api/sfte002/retrieve",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -184,7 +182,7 @@ function prepareScreenToUpdate(aform,data) {
 		$("#sequenceno").val(jsRecord["seqno"]);
 		$("#mobilegroup").val(jsRecord["mobilegroup"]);
 		readProgramInfo(jsRecord["groupname"]);
-	} catch(ex) { }
+	} catch(ex) { console.warn("error",ex);  }
 	$("input.ikeyclass",aform).attr("readonly",true);	
 	showPageEntry();
 }
@@ -194,7 +192,7 @@ function submitEdit(src,groupname) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/retrieve",
+		url: getApiUrl()+"/api/sfte002/retrieve",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -213,7 +211,6 @@ function submitEdit(src,groupname) {
 	return false;
 }
 function prepareScreenToEdit(aform,data) {
-	if(!aform) aform = fsinsertform;
 	clearAlerts();		
 	try {
 		let json = $.parseJSON(data);		
@@ -228,7 +225,7 @@ function prepareScreenToEdit(aform,data) {
 		$("#iconstyleswitcher").styleupdate(icons);
 		$("#sequencenodialog").val(jsRecord["seqno"]);
 		$("#mobilegroupdialog").val(jsRecord["mobilegroup"]);
-	} catch(ex) { }
+	} catch(ex) { console.warn("error",ex);  }
 	$("#modalheader").hide();	
 	$("#modalheaderedit").show();
 	$("#savebuttondialoginsert").hide();
@@ -280,7 +277,7 @@ function save(aform,dialog) {
 		let formdata = serializeDataForm(aform);
 		startWaiting();
 		jQuery.ajax({
-			url: API_URL+"/api/sfte002/insert",
+			url: getApiUrl()+"/api/sfte002/insert",
 			data: formdata.jsondata,
 			headers: formdata.headers,
 			type: "POST",
@@ -299,7 +296,7 @@ function save(aform,dialog) {
 			}
 		});
 	});
-	return false;
+	return true;
 }
 function update(aform) {
 	if(!aform) aform = fsentryform;
@@ -308,7 +305,7 @@ function update(aform) {
 		let formdata = serializeDataForm(aform);
 		startWaiting();
 		jQuery.ajax({
-			url: API_URL+"/api/sfte002/update",
+			url: getApiUrl()+"/api/sfte002/update",
 			data: formdata.jsondata,
 			headers: formdata.headers,
 			type: "POST",
@@ -328,14 +325,13 @@ function update(aform) {
 			}
 		});
 	});
-	return false;
+	return true;
 }
 function submitChapter(aform,index) {
-	let fs_params = fetchParameters($("#listpanel").data("searchfilters"));
 	let formdata = serializeDataForm(aform, $("#listpanel").data("searchfilters"));
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/search",
+		url: getApiUrl()+"/api/sfte002/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -354,11 +350,10 @@ function submitChapter(aform,index) {
 function submitOrder(src,sorter) {
 	let aform = fssortform;
 	aform.orderBy.value = sorter;
-	let fs_params = fetchParameters($("#listpanel").data("searchfilters"));
 	let formdata = serializeDataForm(aform, $("#listpanel").data("searchfilters"));
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/search",
+		url: getApiUrl()+"/api/sfte002/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -389,7 +384,7 @@ function deleteRecord(fsParams) {
 	let formdata = serializeParameters(params);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/remove",
+		url: getApiUrl()+"/api/sfte002/remove",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -432,7 +427,7 @@ function readProgramInfo(grpname) {
 	let formdata = serializeParameters(params);
 	$("#proglayerheader").startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/proglist",
+		url: getApiUrl()+"/api/sfte002/proglist",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -493,7 +488,7 @@ function addNewProgramInfo(aform) {
 	$("#permitprogseqno").val(""+(idx+1));
 	let formdata = serializeDataForm(aform);
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/proginsert",
+		url: getApiUrl()+"/api/sfte002/proginsert",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -517,7 +512,7 @@ function removeProgramInGroup(pid,gid,callback) {
 	};
 	let formdata = serializeParameters(params);
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/progremove",
+		url: getApiUrl()+"/api/sfte002/progremove",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -579,7 +574,7 @@ function editProgramInGroup(pid,gid,pname,para,seqno,callback) {
 	};
 	let formdata = serializeParameters(params);
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/permit",
+		url: getApiUrl()+"/api/sfte002/permit",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -608,7 +603,7 @@ function updateProgramInfo(aform,callback) {
 	let para = $("#parameters").val();
 	let formdata = serializeDataForm(aform);
 	jQuery.ajax({
-		url: API_URL+"/api/sfte002/progupdate",
+		url: getApiUrl()+"/api/sfte002/progupdate",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",

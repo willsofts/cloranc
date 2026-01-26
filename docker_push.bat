@@ -11,7 +11,7 @@ if "%REGISTRY_PASSWORD%"=="" (
 set REGISTRY_USER=willsofts
 set IMAGE_NAME=willsofts/cloranc
 set APP_NAME=willsofts/cloranc
-set APP_VERSION=1.0.10
+set APP_VERSION=1.0.11
 
 echo Logging in to docker registry...
 docker login --username %REGISTRY_USER% --password %REGISTRY_PASSWORD%

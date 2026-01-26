@@ -1,9 +1,8 @@
 import { KnModel, KnOperation } from "@willsofts/will-db";
 import { HTTP } from "@willsofts/will-api";
-import { KnContextInfo, KnValidateInfo } from '@willsofts/will-core';
+import { VerifyError, KnContextInfo, KnValidateInfo } from '@willsofts/will-core';
 import { TknOperateHandler } from '@willsofts/will-serv';
 import { CHAT_ADMIN_USER, CHAT_ADMIN_TOKEN, META_INFO, ROCKET_CHAT_URL } from "../utils/EnvironmentVariable";
-import { VerifyError } from "@willsofts/will-core";
 import { PasswordLibrary } from "@willsofts/will-lib";
 import { KnDBConnector, KnSQL, KnResultSet, KnRecordSet } from "@willsofts/will-sql";
 import LineByLine from "n-readlines";
@@ -119,7 +118,7 @@ export class ChatUserHandler extends TknOperateHandler {
     public async performInserting(context: KnContextInfo, users: ChatUserInfo[], model: KnModel = this.model): Promise<ChatInfo | ChatInfo[]> {
         let vi = await this.validateConfigure();
         if(!vi.valid) {
-            return Promise.reject(new VerifyError(""+vi.info,HTTP.NOT_ACCEPTABLE,-16086));
+            throw new VerifyError(""+vi.info,HTTP.NOT_ACCEPTABLE,-16086);
         }
         let result = { success: false };
         if(users && users.length > 0) {
@@ -127,17 +126,8 @@ export class ChatUserHandler extends TknOperateHandler {
             let db = this.getPrivateConnector(model);
             try {
                 for(let user of users) {
-                    let reply : ChatInfo;
-                    try {                
-                        let response = await this.createChatUser(user);
-                        response.username = user.username;
-                        results.push(response);
-                        reply = response;
-                    } catch(ex: any) {
-                        this.logger.error(this.constructor.name+".performInserting",ex);
-                        reply = ex.response ? { ...ex.response.data, username: user.username } : { success: false, username: user.username, error: ex.message };
-                        results.push(reply);
-                    }
+                    let reply = await this.doCreateChatUser(user);
+                    results.push(reply);
                     try {
                         if(reply.success) {
                             await this.insertChatUser(context,db,user);
@@ -156,6 +146,19 @@ export class ChatUserHandler extends TknOperateHandler {
         return result;
     }
 
+    protected async doCreateChatUser(user: ChatUserInfo) : Promise<ChatInfo> {
+        let reply : ChatInfo;
+        try {                
+            let response = await this.createChatUser(user);
+            response.username = user.username;
+            reply = response;
+        } catch(ex: any) {
+            this.logger.error(this.constructor.name+".doCreateChatUser",ex);
+            reply = ex.response ? { ...ex.response.data, username: user.username } : { success: false, username: user.username, error: ex.message };
+        }
+        return reply;        
+    }
+
     public override async doRemoving(context: KnContextInfo, model: KnModel = this.model): Promise<ChatInfo | ChatInfo[]> {
         let users = await this.composeUserListFromFile(context);
         if(!users || users.length == 0) users = this.composeUserListFromParameter(context);
@@ -165,7 +168,7 @@ export class ChatUserHandler extends TknOperateHandler {
     public async performRemoving(context: KnContextInfo, users: ChatUserNameInfo[], model: KnModel = this.model): Promise<ChatInfo | ChatInfo[]> {
         let vi = await this.validateConfigure();
         if(!vi.valid) {
-            return Promise.reject(new VerifyError(""+vi.info,HTTP.NOT_ACCEPTABLE,-16086));
+            throw new VerifyError(""+vi.info,HTTP.NOT_ACCEPTABLE,-16086);
         }
         let result = { success: false };
         if(users && users.length > 0) {
@@ -173,17 +176,8 @@ export class ChatUserHandler extends TknOperateHandler {
             let db = this.getPrivateConnector(model);
             try {
                 for(let user of users) {
-                    let reply : ChatInfo;
-                    try {                
-                        let response = await this.deleteChatUser(user);
-                        response.username = user.username;
-                        results.push(response);
-                        reply = response;
-                    } catch(ex: any) {
-                        this.logger.error(this.constructor.name+".performRemoving",ex);
-                        reply = ex.response ? { ...ex.response.data, username: user.username } : { success: false, username: user.username, error: ex.message };
-                        results.push(reply);
-                    }
+                    let reply = await this.doDeleteChatUser(user);
+                    results.push(reply);
                     try {
                         if(reply.success) {
                             await this.removeChatUser(context,db,user);
@@ -200,6 +194,19 @@ export class ChatUserHandler extends TknOperateHandler {
             return results;
         }
         return result;
+    }
+
+    protected async doDeleteChatUser(user: ChatUserNameInfo) : Promise<ChatInfo> {
+        let reply : ChatInfo;
+        try {                
+            let response = await this.deleteChatUser(user);
+            response.username = user.username;
+            reply = response;
+        } catch(ex: any) {
+            this.logger.error(this.constructor.name+".doDeleteChatUser",ex);
+            reply = ex.response ? { ...ex.response.data, username: user.username } : { success: false, username: user.username, error: ex.message };
+        }
+        return reply;
     }
 
     public async createChatUser(user: ChatUserInfo) : Promise<ChatInfo> {
@@ -254,7 +261,7 @@ export class ChatUserHandler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name+".doRetrieving",ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
 			if(db) db.close();
         }

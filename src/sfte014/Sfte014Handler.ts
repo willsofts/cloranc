@@ -1,14 +1,11 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
-import { TknOperateHandler } from '@willsofts/will-serv';
-import { KnValidateInfo, KnContextInfo, KnDataTable, KnDataEntity, KnDataSet } from '@willsofts/will-core';
-import { VerifyError } from "@willsofts/will-core";
-import { OPERATE_HANDLERS } from "@willsofts/will-serv";
+import { TknOperateHandler, OPERATE_HANDLERS } from '@willsofts/will-serv';
+import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable, KnDataEntity, KnDataSet, TknLabelHandler } from '@willsofts/will-core';
 import { Request, Response } from 'express';
-import { TknLabelHandler } from '@willsofts/will-core';
 import ExcelJS from "exceljs";
 
 export class Sfte014Handler extends TknOperateHandler {
@@ -31,14 +28,14 @@ export class Sfte014Handler extends TknOperateHandler {
         return this.callFunctional(context, {operate: KnOperation.GET, raw: false}, this.doCategoryList);
     }
 
-    private default_proglists = [
+    private readonly default_proglists = [
         {programid: "index", progname: "Main Page", prognameth: "Main Page"},
         {programid: "default_label", progname: "Default Label", prognameth: "Default Label"},
     ];
 
     protected async doCategoryList(context: KnContextInfo, model: KnModel) : Promise<any> {
         let settings = this.getCategorySetting(context, "tklanguage", "tprog");
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let result = await this.getDataLists(context, db, settings);
             let entity = result.entity as Array<any>;
@@ -55,9 +52,9 @@ export class Sfte014Handler extends TknOperateHandler {
             return result;
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -71,33 +68,35 @@ export class Sfte014Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            let counting = KnOperation.COUNT==actions.subaction;
-            knsql.append(actions.selector);
-            if(!counting) {
-                knsql.append(", tconstant.nameen as langname ");
-            }
-            knsql.append(" from ");
-            knsql.append(model.name);
-            if(!counting) {
-                knsql.append(" left join tconstant on tconstant.typename = 'tlanguage' and tconstant.typeid = tlabel.langcode "); 
-            }
-            let filter = " where ";
-            let labelid = params.labelid;
-            if(labelid && labelid!="") {
-                knsql.append(filter).append(model.name).append(".labelid = ?labelid");
-                knsql.set("labelid",labelid);
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        let counting = KnOperation.COUNT==actions.subaction;
+        knsql.append(actions.selector);
+        if(!counting) {
+            knsql.append(", tconstant.nameen as langname ");
+        }
+        knsql.append(" from ");
+        knsql.append(model.name);
+        if(!counting) {
+            knsql.append(" left join tconstant on tconstant.typename = 'tlanguage' and tconstant.typeid = tlabel.langcode "); 
+        }
+        let labelid = params.labelid;
+        if(labelid && labelid!="") {
+            conditions.push(model.name+".labelid = ?labelid");
+            knsql.set("labelid",labelid);
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     /* override to handle launch router when invoked from menu */
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -108,9 +107,9 @@ export class Sfte014Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -146,7 +145,7 @@ export class Sfte014Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -157,9 +156,9 @@ export class Sfte014Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -177,14 +176,14 @@ export class Sfte014Handler extends TknOperateHandler {
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -205,16 +204,16 @@ export class Sfte014Handler extends TknOperateHandler {
 
     /* override to handle launch router when invoked from menu */
     protected override async doExecute(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let dt = await this.performCategories(context, model, db);
             dt.renderer = "sfte014/sfte014";
             return dt;
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -225,14 +224,14 @@ export class Sfte014Handler extends TknOperateHandler {
     protected async doImport(context: KnContextInfo, model: KnModel): Promise<KnRecordSet> {
         let file = context.params.file;
         let filename = path.extname(file.originalname).toLowerCase();
-        const jsonfiletype = new RegExp("json","i");
-        const excelfiletype = new RegExp("xls|xlsx","i");
+        const jsonfiletype = /json/i;
+        const excelfiletype = /xls|xlsx/i;
         const isJson = jsonfiletype.test(filename);
         const isExcel = excelfiletype.test(filename);
         let existing = fs.existsSync(file.path);
         this.logger.debug(this.constructor.name+".doImport: existing="+existing,"json",isJson,"excel",isExcel);
         if(existing && (isJson || isExcel)) {
-            let db = this.getPrivateConnector(model);
+            let db = this.getPrivateConnector(model,context);
             try {
                 let result = this.createRecordSet();
                 await db.beginWork();
@@ -245,10 +244,10 @@ export class Sfte014Handler extends TknOperateHandler {
                 return result;
             } catch(ex: any) {
                 this.logger.error(this.constructor.name,ex);
-                try { await db.rollbackWork(); } catch(er) { this.logger.error(er); }
-                return Promise.reject(this.getDBError(ex));
+                try { await db.rollbackWork(); } catch(error) { this.logger.error(error); }
+                throw this.getDBError(ex);
             } finally {
-                if(db) db.close();
+                this.closeConnector(db,context);
             }
         }        
         return this.createRecordSet();
@@ -377,9 +376,9 @@ export class Sfte014Handler extends TknOperateHandler {
                 row.getCell("B").alignment = { horizontal: "center" };
             });
             return workbook.xlsx.writeBuffer(); 
-            //workbook.xlsx.writeFile("./excel/label_data.xlsx");                      
+            //this can save into file ex. workbook.xlsx.writeFile("./excel/label_data.xlsx");                      
         }
-        return Promise.resolve(undefined);
+        return undefined;
     }
 
 }

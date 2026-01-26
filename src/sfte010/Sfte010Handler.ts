@@ -1,11 +1,8 @@
 import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnResultSet, KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
-import { TknOperateHandler } from '@willsofts/will-serv';
-import { TknPasswordStrategyHandler } from "@willsofts/will-serv";
-import { OPERATE_HANDLERS } from "@willsofts/will-serv";
-import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
-import { VerifyError } from "@willsofts/will-core";
+import { TknOperateHandler, OPERATE_HANDLERS, TknPasswordStrategyHandler } from "@willsofts/will-serv";
+import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
 import { Sfte011Handler } from "../sfte011/Sfte011Handler";
 
 export class Sfte010Handler extends TknOperateHandler {
@@ -34,24 +31,26 @@ export class Sfte010Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            knsql.append(actions.selector);
-            knsql.append(" from ");
-            knsql.append(model.name);
-            let filter = " where ";
-            if(params.reservepwd && params.reservepwd!="") {
-                knsql.append(filter).append("reservepwd LIKE ?reservepwd");
-                knsql.set("reservepwd","%"+params.reservepwd+"%");
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        knsql.append(actions.selector);
+        knsql.append(" from ");
+        knsql.append(model.name);
+        if(params.reservepwd && params.reservepwd!="") {
+            conditions.push("reservepwd LIKE ?reservepwd");
+            knsql.set("reservepwd","%"+params.reservepwd+"%");
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -62,9 +61,9 @@ export class Sfte010Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -95,7 +94,7 @@ export class Sfte010Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -106,9 +105,9 @@ export class Sfte010Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -124,7 +123,7 @@ export class Sfte010Handler extends TknOperateHandler {
     
     protected override async performUpdating(context: any, model: KnModel, db: KnDBConnector): Promise<KnResultSet> {
         let sql = new KnSQL();
-        sql.append("update trpwd set reservepwd=?reservepwd ");
+        sql.append("update trpwd set reservepwd = ?reservepwd ");
         sql.append("where reservepwd = ?reservepwdold ");
         sql.set("reservepwd",context.params.reservepwd);
         sql.set("reservepwdold",context.params.reservepwdold);
@@ -132,7 +131,7 @@ export class Sfte010Handler extends TknOperateHandler {
     }
 
     protected override async doExecute(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let handler = new TknPasswordStrategyHandler();
             handler.obtain(this.broker,this.logger);
@@ -144,9 +143,9 @@ export class Sfte010Handler extends TknOperateHandler {
             return this.createDataTable(KnOperation.ADD, {userid: "DEFAULT"}, {}, "sfte010/sfte010");
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -163,7 +162,7 @@ export class Sfte010Handler extends TknOperateHandler {
     }
 
     protected async doRetrievePolicy(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let handler = new TknPasswordStrategyHandler();
             handler.obtain(this.broker,this.logger);
@@ -175,9 +174,9 @@ export class Sfte010Handler extends TknOperateHandler {
             return this.createDataTable(KnOperation.ADD, {userid: "DEFAULT"});
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 

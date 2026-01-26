@@ -1,22 +1,22 @@
 
-var socket;
-var authToken;
-var userId;
-var roomId;
-var soundChime = true;
-var subscriptions_list;
-var DISABLE_HIDE = true;
+let socket;
+let authToken;
+let userId;
+let roomId;
+let soundChime = true;
+let subscriptions_list;
+let DISABLE_HIDE = true;
 
 $(function() {
-    $('#chatform').submit(function() {
+    $('#chatform').submit(function(e) {
+        e.preventDefault();
         if($('#messageinput').val().trim()=="") {
             resetMessageInputs();
             $('#messageinput').focus();
-            return false;
+            return;
         }
         sendMessage($('#messageinput').val());
         $('#messageinput').val('');
-        return false;
     });
     $('#messageinput').bind("keypress",function(e){
         if ((e.keyCode || e.which) == 13) {
@@ -72,7 +72,6 @@ function startChat() {
             subscribeToAllMessages();
             subscribeToAllUsers();
             getRoomId();
-            //getRooms(function() { getOnlineUsers(); displayFirstRoom(); });
             getSubscriptions(function() { 
                 getRooms(function() { getOnlineUsers(); displayFirstRoom(); });
             });
@@ -86,7 +85,7 @@ function startChat() {
         if (message.msg === "changed" && message.collection === "stream-room-messages") {
             const chatMessage = message.fields.args[0];
             if (soundChime && chatMessage.u._id !== userId) {
-                try { document.getElementById("sound-chime").play(); } catch(ex) { }
+                try { document.getElementById("sound-chime").play(); } catch(ex) { console.debug("ex",ex); }
             }
             showMessage(chatMessage.u.username, chatMessage.msg, chatMessage);
         }
@@ -244,7 +243,6 @@ function getDate(now) {
     return `${day} ${month} ${year}`;    
 }
 function showMessage(sender, message, noti) {
-    //console.log("noti:",noti);
     if(noti && noti.rid !== roomId) {
         let found = false;
         $("a.direct-link",$("#categorylist")).each(function(index,element) {
@@ -264,10 +262,10 @@ function showMessage(sender, message, noti) {
                 }
             });        
         }
-        if(!found) {
-            getRooms(() => { displayNumOfMsg(noti); });
-        } else {
+        if(found) {
             displayNumOfMsg(noti);
+        } else {
+            getRooms(() => { displayNumOfMsg(noti); });
         }
         return;
     }
@@ -282,7 +280,6 @@ function showMessage(sender, message, noti) {
     let timer = time;
     let lastdiv = listmsgs.children(".row-msg").last();
     let lastmsg = lastdiv.data("data-msg");
-    //console.log("date:",date,", time:",time,", lastmsg:",lastmsg);
     if(lastmsg) {
         let difdate = lastmsg.date != date;
         if(difdate) {
@@ -362,10 +359,8 @@ async function getRooms(callback) {
         }
     });
     const data = await response.json();
-    //console.log("getRooms: data",data);
     clearingRooms();
     data?.update.forEach((item,index) => {
-        //console.log("item",item);
         //t=c - channel, d - direct message, t=p - private group
         if(item.t=="d") {
             renderRoomDirect(item);
@@ -392,7 +387,7 @@ async function getChannelRoomHistory(alink) {
     console.log("get channel room history:", roomid);
     const params = new URLSearchParams({
         roomId: roomid,
-        //count: 50
+        //if defined limit: count: 50
     });
     try {
         const response = await fetch(`${HOST}/api/v1/channels.history?${params.toString()}`, {
@@ -408,7 +403,6 @@ async function getChannelRoomHistory(alink) {
             clearingMessages();
             console.log('Chat history fetched for', roomid);
             data.messages.reverse().forEach((msg) => {
-                //console.log(`[${msg.ts}] ${msg.u.username}: ${msg.msg}`);
                 showMessage(msg.u.username,msg.msg,msg);
             });
         } else {
@@ -424,7 +418,7 @@ async function getChannelGroupHistory(alink) {
     console.log("get channel group history:", roomid);
     const params = new URLSearchParams({
         roomId: roomid,
-        //count: 50
+        //if defined limit: count: 50
     });
     try {
         const response = await fetch(`${HOST}/api/v1/groups.history?${params.toString()}`, {
@@ -440,7 +434,6 @@ async function getChannelGroupHistory(alink) {
             clearingMessages();
             console.log('Chat history fetched for', roomid);
             data.messages.reverse().forEach((msg) => {
-                //console.log(`[${msg.ts}] ${msg.u.username}: ${msg.msg}`);
                 showMessage(msg.u.username,msg.msg,msg);
             });
         } else {
@@ -455,7 +448,7 @@ async function getIMHistory(roomid) {
     console.log("get im history: ",roomid);
     const params = new URLSearchParams({
         roomId: roomid,
-        //count: 50
+        //if defined limit: count: 50
     });
     try {
         const response = await fetch(`${HOST}/api/v1/im.history?${params.toString()}`, {
@@ -485,7 +478,7 @@ async function getIMHistory(roomid) {
 function isRoomHiding(rid) {
     if(rid && subscriptions_list) {
         let sub = subscriptions_list.find(item => item.rid == rid);
-        if(sub && sub.open == false) return true;
+        if(sub && String(sub.open) == 'false') return true;
     }
     return false;
 }
@@ -648,7 +641,7 @@ function displayNumOfMsg(noti) {
         let span = $("span.numof-msg",alink.parent()).eq(0);
         let txt = span.html();
         let num = 0;
-        if(txt && txt.trim().length>0 && !isNaN(txt)) num = parseInt(txt);
+        if(txt && txt.trim().length>0 && !Number.isNaN(txt)) num = Number.parseInt(txt);
         num++;
         span.html(""+num);
     }
@@ -740,7 +733,8 @@ function hasProtocol(url) {
     try {
         const parsedUrl = new URL(url);
         return !!parsedUrl.protocol;
-    } catch (error) {
+    } catch (ex) {
+        console.debug("ex",ex);
         return false;
     }
 }
@@ -777,12 +771,15 @@ function downloadVideo(src,url) {
         .catch(error => console.error('Error loading:', error));    
 }
 
-function downloadImage(src,url) { }
-function downloadVideo(src,url) { }
+function downloadImage(src,url) { 
+    //do nothing
+}
+function downloadVideo(src,url) { 
+    //do nothing
+}
 
 function makeMessage(msg) {
     if(!msg) return msg;
-    //console.log("makeMessage: msg",msg);
     let blank = msg.match(/^\s*/)[0];
     msg = msg.trim();
     let len = msg.length;
@@ -790,36 +787,36 @@ function makeMessage(msg) {
     let last = msg.charAt(len-1);
     if(first == '*' && last == "*") {
         //bold
-        msg = msg.replace(/\*/g,'');
+        msg = msg.replaceAll('*','');
         return blank + "<strong>"+makeMessage(msg)+"</strong>";
     }
     if(first == '_' && last == "_") {
         //italic
-        msg = msg.replace(/_/g,'');
+        msg = msg.replaceAll('_','');
         return blank + "<em>"+makeMessage(msg)+"</em>";
     }
     if(first == '~' && last == "~") {
         //strikethrough
-        msg = msg.replace(/~/g,'');
-        msg = msg.replace(/\n/g, '<br/>');
+        msg = msg.replaceAll('~','');
+        msg = msg.replaceAll('\n', '<br/>');
         return blank + "<del>"+makeMessage(msg)+"</del>";
     }
     if(first == '`' && last == "`") {
         //multiple inline code
         if(msg.indexOf('```')>=0) {
-            msg = msg.replace(/`/g,'');
-            msg = msg.trim().replace(/\n/g, '<br/>');
+            msg = msg.replaceAll('`','');
+            msg = msg.trim().replaceAll('\n', '<br/>');
             return blank + "<pre>"+makeMessage(msg)+"</pre>";
         } else {
             //inline code
-            msg = msg.replace(/`/g,'');
-            msg = msg.trim().replace(/\n/g, '<br/>');
+            msg = msg.replaceAll('`','');
+            msg = msg.trim().replaceAll('\n', '<br/>');
             return blank + "<code>"+makeMessage(msg)+"</code>";
         }
     }
     //link
     if(first == '[' && last == ')') {
-        let result = msg.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" title="$2" target="_blank">$1</a>');
+        let result = msg.replaceAll(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" title="$2" target="_blank">$1</a>'); //NOSONAR 
         return blank + result;
     }
     //emoji
@@ -832,14 +829,13 @@ function makeMessage(msg) {
             return blank + makeEmoji(icon) + makeMessage(msg);
         }
     }
-    msg = msg.trim().replace(/\n/g, '<br/>');
+    msg = msg.trim().replaceAll('\n', '<br/>');
     return blank + msg;
 }
 function makeEmoji(icon) {
     if(!icon) return "";
     icon = ":"+icon+":";
     let emoji = emoji_icons.find(item => item.title == icon);
-    //console.log("makeEmoji:",emoji);
     if(emoji) {
         let name = emoji.category || emoji.group;
         return '<span class="emoji joypixels-40-'+name+' '+emoji.icon+'"></span>';
@@ -955,7 +951,6 @@ function setupComponents() {
         } else {
             $("#usercategorylist").show();
             $("#categorylist").hide();
-            //getUsersList();
             showUsersListForDirectMessage();
         }
     });
@@ -1004,12 +999,8 @@ function setupComponents() {
 }
 
 function parseErrorThrown(xhr,status,errorThrown) {
-	if (!errorThrown) {
+	if (!errorThrown || errorThrown == xhr.status) {
 		errorThrown = xhr.responseText;
-	} else {
-		if(errorThrown==xhr.status) {
-			errorThrown = xhr.responseText;
-		}
 	}
 	if($.trim(errorThrown)=="") errorThrown = "Unknown error or network error";
 	return errorThrown;
@@ -1050,6 +1041,7 @@ function isValidUrl(url) {
     try {
         return new URL(url);
     } catch (ex) {
+        console.debug("ex",ex);
         return null;
     }
 }
@@ -1106,7 +1098,6 @@ function showOnline(noti) {
         let noti_id = noti[0];
         let noti_name = noti[1];
         let noti_status = noti[2];
-        //console.log("id:",noti_id,", status:",noti_status);
         $("a.direct-link",$("#directlistitems")).each(function(index,element) {
             let alink = $(element);
             let id = alink.attr("data-id");
@@ -1125,7 +1116,6 @@ function showOnline(noti) {
 }
 
 async function getOnlineUsers() {
-    //const response = await fetch(`${HOST}/api/v1/users.list?query={"status":"online"}`, {
     const response = await fetch(`${HOST}/api/v1/users.listByStatus?status=active`, {
         method: 'GET',
         headers: {
@@ -1153,7 +1143,6 @@ function buildEmoji(header,layer) {
         btn.html('<em class="'+grp.class+'"></em>');
         btn.data("data-group",grp);
         btn.on("click",function() {
-            //console.log("click:",btn.data("data-group"));
             const container = document.getElementById("fsemojientry_layer");
             const target = document.getElementById("emoji_"+grp.group);
             container.scrollTo({ top: target.offsetTop - container.offsetTop + 55, behavior: 'smooth' });
@@ -1232,7 +1221,6 @@ function showUsersListSearch(item) {
     let spanname = $('<span class="account-label"></span>');
     spanname.html(name);
     alink.append(img).append(spanname);
-    //alink.html(name);
     alink.attr("data-id",item._id);
     alink.attr("data-type","d");
     alink.attr("data-name",name);
@@ -1425,8 +1413,8 @@ function getCurrentMemberList() {
     $("#addmemberslistlinker").hide();
     getMemberList($("#groupsettingslinker"));
 }
-var memberrolelisting = [];
-var membergrouplisting = [];
+let memberrolelisting = [];
+let membergrouplisting = [];
 function getMemberList(alink) {
     if(alink) {
         let rid = alink.attr("data-id");
@@ -1563,7 +1551,6 @@ function displayMembersInGroup(type,layer,data) {
     }
 }
 function showListMembersInGroup(isowner,type,item,layer) {
-    //if(item._id == userId) return;
     if(!layer) layer = $("#memberslistitems");
     let div = $('<div class="list-item direct-layer"></div>');    
     let alink = $('<a href="javascript:void(0)" class="link-item direct-link"></a>');
@@ -1581,13 +1568,11 @@ function showListMembersInGroup(isowner,type,item,layer) {
     let span = $('<span class="numof-msg"></span>');
     if(item._id == userId) {
         div.append(alink).append(span);
+    } else if(isowner) {
+        let userdiv = createRemoveUserMenuLayer(item);        
+        div.append(alink).append(userdiv).append(span);
     } else {
-        if(isowner) {
-            let userdiv = createRemoveUserMenuLayer(item);        
-            div.append(alink).append(userdiv).append(span);
-        } else {
-            div.append(alink).append(span);
-        }
+        div.append(alink).append(span);        
     }
     layer.append(div);
 }

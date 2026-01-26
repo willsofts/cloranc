@@ -1,16 +1,14 @@
-var mouseX = 0;
-var mouseY = 0;
 //#(10000) programmer code begin;
-var grpmenudoc = null;
-var menuCounter = 0;
-var currentParentNode = null;
-var currentNode = null;
-var currentMenu = null;
-var currentItem = null;
+let grpmenudoc = null;
+let menuCounter = 0;
+let currentParentNode = null;
+let currentNode = null;
+let currentMenu = null;
+let currentItem = null;
 //#(10000) programmer code end;
 $(function(){
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("sfte008"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("sfte008"); }catch(ex) { console.warn("error",ex);  }
 	initialApplication();
 	//#(20000) programmer code begin;
 	//#(20000) programmer code end;
@@ -50,7 +48,6 @@ function setupComponents() {
 		delay: 500, 
 		source: sourceAry,
 		select : function(event, ui) {
-			//console.log(JSON.stringify(ui.item));
 			$("#progtitle").val(ui.item.text);
 		}
 	});
@@ -58,7 +55,6 @@ function setupComponents() {
 		delay: 500, 
 		source: sourceAry,
 		select : function(event, ui) {
-			//console.log(JSON.stringify(ui.item));
 			$("#progtitledialog").val(ui.item.text);
 		},
 		open: function(){
@@ -78,7 +74,7 @@ function search(aform) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte008/retrieve",
+		url: getApiUrl()+"/api/sfte008/retrieve",
 		data: formdata.jsondata,
 		headers : formdata.headers,
 		type: "POST",
@@ -174,34 +170,37 @@ function save(aform) {
 		//#(195000) programmer code begin;
 		//#(195000) programmer code end;
 		confirmSave(function() {
-			let formdata = serializeDataForm(aform);
-			startWaiting();
-			jQuery.ajax({
-				url: API_URL+"/api/sfte008/update",
-				data: formdata.jsondata,
-				headers : formdata.headers,
-				type: "POST",
-				dataType: "html",
-				contentType: defaultContentType,
-				error : function(transport,status,errorThrown) {
-					submitFailure(transport,status,errorThrown);
-				},
-				success: function(data,status,transport){
-					stopWaiting();
-					//#(195300) programmer code begin;					
-					//#(195300) programmer code end;
-					successbox(function() { 
-						clearingFields();
-					});
-					//#(195500) programmer code begin;
-					//#(195500) programmer code end;
-				}
-			});
+			saveForm(aform);
 		});
 	});
-	return false;
+	return true;
 	//#(200000) programmer code begin;
 	//#(200000) programmer code end;
+}
+function saveForm(aform) {
+	let formdata = serializeDataForm(aform);
+	startWaiting();
+	jQuery.ajax({
+		url: getApiUrl()+"/api/sfte008/update",
+		data: formdata.jsondata,
+		headers : formdata.headers,
+		type: "POST",
+		dataType: "html",
+		contentType: defaultContentType,
+		error : function(transport,status,errorThrown) {
+			submitFailure(transport,status,errorThrown);
+		},
+		success: function(data,status,transport){
+			stopWaiting();
+			//#(195300) programmer code begin;					
+			//#(195300) programmer code end;
+			successbox(function() { 
+				clearingFields();
+			});
+			//#(195500) programmer code begin;
+			//#(195500) programmer code end;
+		}
+	});
 }
 function submitClear(src,fsParams) {
 	//#(310000) programmer code begin;
@@ -222,7 +221,7 @@ function clearRecord(fsParams) {
 	let formdata = serializeParameters(params);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte008/clear",
+		url: getApiUrl()+"/api/sfte008/clear",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -246,13 +245,13 @@ function clearRecord(fsParams) {
 	//#(340000) programmer code end;
 }
 //#(390000) programmer code begin;
-var fs_requiredfields = {
+let fs_requiredfields = {
 };
 function selectLinker($a) {
 	try{
 		$("a",$("#menubarlayer")).removeClass("selected-linker");
 		$a.addClass("selected-linker");
-	}catch(ex) { }
+	}catch(ex) { console.warn("error",ex);  }
 }
 function displayMenuTree(curnode,parentnode) {
 	clearingFields();
@@ -260,6 +259,7 @@ function displayMenuTree(curnode,parentnode) {
 	updateItemToMenu(curnode,parentnode,$menu);
 	$("#menubarlayer").empty().append($menu);
 }
+const SCRIPT_VOID = "#";
 function updateItemToMenu(curnode,parentnode,menu) {
 	let isz = curnode?.items ? curnode.items.length : 0;
 	let $li = $("<li></li>");
@@ -274,14 +274,14 @@ function updateItemToMenu(curnode,parentnode,menu) {
 		let itemname = curnode.itemname;
 		if(!itemname) itemname = "";
 		let $a = $("<a></a>");
-		$a.attr("href","javascript:void(0);");
+		$a.attr("href",SCRIPT_VOID);
 		$a.addClass("fa fa-desktop");
 		let $span = $("<span></span>");
 		$span.html(" "+txt);
 		let rootTag = parentnode;
 		if(!rootTag || $.trim(itemname)=="") {
 			$li.addClass("dropdown");
-			$a.attr("href","javascript:void(0);");
+			$a.attr("href",SCRIPT_VOID);
 			$a.attr("counter",menuCounter);
 			$a.removeClass("fa fa-desktop").addClass("fa fa-tasks dropdown-toggle fa-folder-link");
 			let $aul = $("<ul></ul>");
@@ -315,7 +315,7 @@ function updateItemToMenu(curnode,parentnode,menu) {
 	} else {
 		$li.addClass("dropdown");
 		let $a = $("<a></a>");
-		$a.attr("href","javascript:void(0);");
+		$a.attr("href",SCRIPT_VOID);
 		$a.attr("counter",menuCounter);
 		$a.addClass("fa fa-tasks");
 		let $span = $("<span></span>");
@@ -343,7 +343,6 @@ function updateItemToMenu(curnode,parentnode,menu) {
 	}
 }
 function bindingTask(curnode,parentnode,$span,menu,linker) {
-	//console.log("bindingTask: curnode",curnode,"parentnode",parentnode);
 	selectLinker(linker);
 	$("input").removeClass("is-invalid");
 	$(".alert-input").parent().removeClass("has-error");
@@ -359,15 +358,16 @@ function bindingTask(curnode,parentnode,$span,menu,linker) {
 	$("input.input-entry").prop("disabled",true);
 	let rootTag = parentnode;
 	$("#deletelinker").unbind("click").bind("click",function() { 
-		if(!rootTag) { alertmsg("QS0124","Can not remove root node"); } else {
+		if(rootTag) {
 			confirmRemoveNode([txt],function() {
 				let items = parentnode.items.filter((element) => element != curnode);
 				parentnode.items = items;
 				menu.remove();
 				linker.parent().remove();
 				clearingItems();
-				//console.log("Task-Remove: grpmenudoc",grpmenudoc);
 			});
+		} else {
+			alertmsg("QS0124","Can not remove root node");
 		}
 		return false;
 	});
@@ -389,12 +389,10 @@ function bindingTask(curnode,parentnode,$span,menu,linker) {
 		txt = $("#progtitle").val();
 		$span.html(" "+txt);
 		curnode.text = txt;
-		//console.log("Task-Update: grpmenudoc",grpmenudoc);
 		updateSuccess();
 	});			
 }
 function bindingItem(curnode,parentnode,$span,menu,linker) {
-	//console.log("bindingItem: curnode",curnode,"parentnode",parentnode);
 	selectLinker(linker);
 	$("input").removeClass("is-invalid");
 	$(".alert-input").parent().removeClass("has-error");
@@ -420,14 +418,15 @@ function bindingItem(curnode,parentnode,$span,menu,linker) {
 	$("#parameters").val(para);
 	let rootTag = parentnode;
 	$("#deletelinker").unbind("click").bind("click",function() { 
-		if(!rootTag) { alertmsg("QS0124","Can not remove root node"); } else {
+		if(rootTag) { 
 			confirmRemoveNode([txt],function() {
 				let items = parentnode.items.filter((element) => element != curnode);
 				parentnode.items = items;
 				linker.parent().remove();
 				clearingItems();
-				//console.log("Item-Remove: grpmenudoc",grpmenudoc);
 			});	
+		} else {
+			alertmsg("QS0124","Can not remove root node"); 
 		}
 		return false;
 	});
@@ -461,7 +460,6 @@ function bindingItem(curnode,parentnode,$span,menu,linker) {
 		}
 		curnode.permits = curperm;
 		curnode.parameters = $("#parameters").val();
-		//console.log("Item-Update: grpmenudoc",grpmenudoc);
 		updateSuccess();
 	});
 }
@@ -480,16 +478,7 @@ function newTaskInfo(inserted) {
 		let parentnode = currentParentNode;
 		let rootTag = currentParentNode;
 		if(inserted) {
-			if(!rootTag) {
-				let curitems = currentNode?.items;
-				if(!curitems) {
-					curitems = [];
-					currentNode.items = curitems;
-				}
-				curitems.push(curnode);	
-				parentnode = currentNode;
-				//console.log("Task-1: cur items",curitems);
-			} else {
+			if(rootTag) {
 				let parentitems = parentnode?.items;
 				if(!parentitems) {
 					parentitems = [];
@@ -503,7 +492,14 @@ function newTaskInfo(inserted) {
 						parentitems.splice(index+1,0,curnode);
 					}
 				}
-				//console.log("Task-2: parent items",parentitems);
+			} else {
+				let curitems = currentNode?.items;
+				if(!curitems) {
+					curitems = [];
+					currentNode.items = curitems;
+				}
+				curitems.push(curnode);	
+				parentnode = currentNode;
 			}
 		} else {
 			let curitems = currentNode?.items;
@@ -513,14 +509,13 @@ function newTaskInfo(inserted) {
 			}
 			curitems.push(curnode);
 			parentnode = currentNode;
-			//console.log("Task-3: cur items",curitems);
 		}		
 		menuCounter++;
 		curnode.text = txt;
 		let $li = $("<li></li>");
 		$li.addClass("dropdown");
 		let $a = $("<a></a>");
-		$a.attr("href","javascript:void(0);");
+		$a.attr("href",SCRIPT_VOID);
 		$a.addClass("fa fa-tasks");
 		let $span = $("<span></span>");
 		$span.html(" "+txt);
@@ -533,10 +528,10 @@ function newTaskInfo(inserted) {
 		$ul.attr("counter",menuCounter);
 		$li.append($ul);
 		if(inserted) {
-			if(!rootTag) {
-				currentMenu.append($li);
-			} else {
+			if(rootTag) {
 				currentItem.after($li);
+			} else {
+				currentMenu.append($li);
 			}
 		} else {
 			currentMenu.append($li);
@@ -549,12 +544,11 @@ function newTaskInfo(inserted) {
 			bindingTask(curnode,parentnode,$span,$ul,$a);
 		});
 		$("#task_dialog_layer").modal("hide");
-		//console.log("Task-New: grpmenudoc",grpmenudoc);
 	});	
 	$("#task_dialog_layer").modal("show");
 	$("#task_dialog_layer").find(".modal-dialog").draggable();
 	$("#task_dialog_layer").on("shown.bs.modal",function() { $("#progtitletask").focus(); });
-	return false;
+	return true;
 }
 function newItemInfo() {
 	if(!currentNode || !currentMenu) return false;
@@ -598,7 +592,6 @@ function newItemInfo() {
 						parentitems.splice(index+1,0,curnode);
 					}
 				}
-				//console.log("Item-1: parent items",parentitems);
 			} else {
 				let curitems = currentNode?.items;
 				if(!curitems) {
@@ -607,7 +600,6 @@ function newItemInfo() {
 				}
 				curitems.push(curnode);
 				parentnode = currentNode;
-				//console.log("Item-2: parent items",curitems);
 			}
 			curnode.itemname = pid;
 			curnode.text = txt;
@@ -619,7 +611,7 @@ function newItemInfo() {
 			curnode.parameters = $("#parametersdialog").val();
 			let $li = $("<li></li>");
 			let $a = $("<a></a>");
-			$a.attr("href","javascript:void(0);");
+			$a.attr("href",SCRIPT_VOID);
 			$a.addClass("fa fa-desktop");
 			let $span = $("<span></span>");
 			$span.html(" "+txt);
@@ -639,17 +631,15 @@ function newItemInfo() {
 				bindingItem(curnode,parentnode,$span,acurrentMenu,$a);
 			});
 			$("#item_dialog_layer").modal("hide");
-			//console.log("Item-New: grpmenudoc",grpmenudoc);
 		});
 	});
 	$("#item_dialog_layer").modal("show");
 	$("#item_dialog_layer").find(".modal-dialog").draggable();
 	$("#item_dialog_layer").on("shown.bs.modal",function() { $("#progiddialog").focus(); });
-	return false;
+	return true;
 }
 function confirmRemoveNode(params, okFn, cancelFn,  width, height) {
-	if(!confirmDialogBox("QS0034",params,"Do you want to remove this node?",okFn,cancelFn,width,height)) return false;
-	return true;
+	return confirmDialogBox("QS0034",params,"Do you want to remove this node?",okFn,cancelFn,width,height);
 }
 function toggleValueClick(src,ctrl) {
 	$("#"+ctrl).val($(src).is(":checked"));

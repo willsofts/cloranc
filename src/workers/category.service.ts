@@ -2,11 +2,9 @@ import KnService from "@willsofts/will-db";
 import { ServiceSchema } from "moleculer";
 import { Utilities } from "@willsofts/will-util";
 import { HTTP } from "@willsofts/will-api";
-import { TknDataTableHandler, VerifyError } from '@willsofts/will-core';
+import { TknDataTableHandler, VerifyError, TknExposeHandler } from '@willsofts/will-core';
 import { DB_SECTION } from "../utils/EnvironmentVariable";
-import { KnCategory } from "@willsofts/will-serv";
-import { TheCategories } from "@willsofts/will-serv";
-import { TknExposeHandler } from "@willsofts/will-core";
+import { KnCategory, TheCategories } from "@willsofts/will-serv";
 
 const CategoryService : ServiceSchema = {
     name: "category",
@@ -31,7 +29,7 @@ const CategoryService : ServiceSchema = {
             }
             this.logger.debug("names",names);
             if(!names || names.length==0) {
-                return Promise.reject(new VerifyError("Parameter not found (names)",HTTP.NOT_ACCEPTABLE,-16061));
+                throw new VerifyError("Parameter not found (names)",HTTP.NOT_ACCEPTABLE,-16061);
             }
             let handler = new TknDataTableHandler();
             let userToken = await handler.getUserTokenInfo(context, true);
@@ -41,7 +39,7 @@ const CategoryService : ServiceSchema = {
                 return await handler.getDataCategory(db, settings, true, context); 
             } catch(ex: any) {
                 this.logger.error(this.constructor.name,ex);
-                return Promise.reject(handler.getDBError(ex));
+                throw handler.getDBError(ex);
             } finally {
                 if(db) db.close();
             }
@@ -57,7 +55,7 @@ const CategoryService : ServiceSchema = {
             }
             this.logger.debug("names",names);
             if(!names || names.length==0) {
-                return Promise.reject(new VerifyError("Parameter not found (names)",HTTP.NOT_ACCEPTABLE,-16061));
+                throw new VerifyError("Parameter not found (names)",HTTP.NOT_ACCEPTABLE,-16061);
             }
             let handler = new TknDataTableHandler();
             let userToken = await handler.getUserTokenInfo(context, true);
@@ -67,7 +65,7 @@ const CategoryService : ServiceSchema = {
                 return await handler.getDataTable(db, settings, true, context); 
             } catch(ex: any) {
                 this.logger.error(this.constructor.name,ex);
-                return Promise.reject(handler.getDBError(ex));
+                throw handler.getDBError(ex);
             } finally {
                 if(db) db.close();
             }

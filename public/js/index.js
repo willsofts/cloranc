@@ -1,12 +1,7 @@
-		var mouseX = 0;
-		var mouseY = 0;
-		var $currPage = "";
-		var $ACCESS_TOKEN;
-		var ALERT_BEFORE_TIMEOUT = META_INFO.ALERT_BEFORE_TIMEOUT;
-		var ALERT_BEFORE_TIMEOUT = META_INFO.ALERT_BEFORE_TIMEOUT;
-        var sessionTimeout = META_INFO.SESSION_TIMEOUT || (30 * 60 * 1000); // 30 minutes
-        var alertBeforeTimeout = META_INFO.ALERT_BEFORE_SESSION_TIMEOUT || (5 * 60 * 1000); // 5 minutes before
-        var timeoutAlert;
+		const ALERT_BEFORE_TIMEOUT = META_INFO.ALERT_BEFORE_TIMEOUT;
+        const sessionTimeout = META_INFO.SESSION_TIMEOUT || (30 * 60 * 1000); // 30 minutes
+        const alertBeforeTimeout = META_INFO.ALERT_BEFORE_SESSION_TIMEOUT || (5 * 60 * 1000); // 5 minutes before
+        let timeoutAlert;
 		console.log("index.js: ALERT_BEFORE_TIMEOUT",ALERT_BEFORE_TIMEOUT,", sessionTimeout",sessionTimeout,", alertBeforeTimeout",alertBeforeTimeout);
 		function validInputUser() {
 			if($.trim($("#main_username").val())=="") { alertbox("User is undefined"); return false; }
@@ -132,7 +127,6 @@
 		}
 		function showAvatar(avatar) {
 			if(!avatar || avatar.trim().length==0) return;
-			//$("#avatarimage").attr("src",avatar);
 			$("#fs_image_profile_select").attr("src",avatar);
 			$("#fs_image_profile").attr("src",avatar);
 		}
@@ -171,7 +165,7 @@
 			$("#languagemenuitem").removeClass("language-menu-item");
 		}
 		function startupPage(firstpage){
-			load_sidebar_menu(firstpage,fs_default_language,function() {
+			load_sidebar_menu(firstpage,getDefaultLanguage(),function() {
 				load_first_page(firstpage);
 			});
 			load_favor_menu();
@@ -207,11 +201,11 @@
 			}
 			if(pages && pages.length>0) {
 				pages.eq(0).trigger("click");
-				if(!(String(META_INFO.DISPLAY_WORKLIST_SUBHEADER)=="true")) {
+				if(String(META_INFO.DISPLAY_WORKLIST_SUBHEADER)!="true") {
 					$("#kt_subheader").addClass("dp-none");
 					$("#kt_content").addClass("no-subheader");
 				}
-				$(window).trigger("resize");
+				$(globalThis).trigger("resize");
 			} else {
 				load_page_first();
 			}
@@ -285,7 +279,7 @@
 		}
 		function resetBackground() {
 			$("#fsworkinglayer").removeClass("working-control-class");
-			$(window.document.body).removeClass("body-login");
+			$(document.body).removeClass("body-login");
 		}
 		function gotoLogin() {
 			hideWorkSpace();
@@ -304,12 +298,12 @@
 		function logOut() {
 			forceLogout();
 			doLogout();
-			try { doSSOLogout(); return; } catch(ex) { console.error("logOut",ex); }
+			try { doSSOLogout(); return; } catch(ex) { console.debug("logOut",ex); }
 			window.open("/index","_self");
 		}
 		function doLogout() {
-			try { removeAccessorInfo(); } catch(ex) { }
-			try { closeMenuBar(); }catch(ex) { }
+			try { removeAccessorInfo(); } catch(ex) { console.debug("ex",ex); }
+			try { closeMenuBar(); }catch(ex) { console.debug("ex",ex); }
 			doLogin();
 			clearBackground();
 			clearAvatar();
@@ -329,22 +323,24 @@
 			}
 		}		
 		function logInClick() {
-			$(window.document.body).addClass("body-login");
+			$(document.body).addClass("body-login");
 			hideWorkingFrame();
 			$("#page_login").show();
 			try {
 				main_form.reset();
-			}catch(ex) { }
+			}catch(ex) { console.debug("ex",ex); }
 			$("#main_useruuid").val("");
 			displayLogin();
 		}
 		function doLogin() {
 			$("#pagecontainer").empty();
 			$("#mainmenu").hide();
+			let $currPage = getCurrentPage();
 			if($currPage=="") $currPage = $("#page_first");
 			if($currPage) {
 				$currPage.removeClass('pt-page-current pt-page-moveFromRight pt-page-moveFromLeft');	
 			}
+			setCurrentPage($currPage);
 			logInClick();
 			hideWorkSpace();
 			$("#aside_header").hide();
@@ -364,7 +360,7 @@
 		}		
 		function load_sidebar_menu(firstpage,language,callback) {
 			let fs_user = $("#main_user").val();
-			if(!language) language = fs_default_language;
+			if(!language) language = getDefaultLanguage();
 			let authtoken = getAccessorToken();
 			let requestid = getRequestID();
 			jQuery.ajax({
@@ -383,7 +379,7 @@
 		}
 		function load_favor_menu(language) {
 			let fs_user = $("#main_user").val();
-			if(!language) language = fs_default_language;
+			if(!language) language = getDefaultLanguage();
 			let authtoken = getAccessorToken();
 			let requestid = getRequestID();
 			jQuery.ajax({
@@ -406,7 +402,7 @@
 				if(fs_currentpid && fs_currentpid!="index") {
 					fs_switchingLanguage(fs_Language,"index");
 				}
-			}catch(ex) { }
+			}catch(ex) { console.debug("ex",ex); }
 			let fs_name = $("#accessor_label").data(fs_Language);
 			if(fs_name) $("#accessor_label").html(fs_name);
 			changeSiderMenuLanguage(fs_Language);			
@@ -425,7 +421,7 @@
 			});
 		}
 		function refreshScreen() {
-			$(window).trigger("resize");
+			$(globalThis).trigger("resize");
 		}
 		function getTargetFrameName() { return "workingframe"; }
 		function hideLoginForm() {
@@ -456,7 +452,7 @@
 					canopen = false;
 				}
 			} 
-			if(!canopen && !(String(META_INFO.NOTIFY_CHECK_OPEN)=="false")) {
+			if(!canopen && String(META_INFO.NOTIFY_CHECK_OPEN)!="false") {
 				confirmDialogBox("QS0035",null,"Do you want to open this transaction? <br/>Becareful all current work will be lose",() => {
 					openWorkingFrame(url);
 				});
@@ -560,15 +556,15 @@
 				});
 			});
 			$("#workingframe").on("load",function() { 
-				try{stopWaiting();}catch(ex){}
-				if(!(String(META_INFO.AUTO_INJECT_INFO)=="false")) {
+				try{ stopWaiting(); }catch(ex){ console.debug("ex",ex); }
+				if(String(META_INFO.AUTO_INJECT_INFO)!="false") {
 					sendMessageInterface("appinfo",document.getElementById('workingframe').contentWindow); 
 				}
-				if(ALERT_BEFORE_TIMEOUT) try{initWorkingTimer();}catch(ex){} 
+				if(ALERT_BEFORE_TIMEOUT) try{ initWorkingTimer(); }catch(ex){ console.debug("ex",ex); } 
 			});
 			$("#workingframe2").on("load",function() { 
-				try{stopWaiting();}catch(ex){}
-				if(!(String(META_INFO.AUTO_INJECT_INFO)=="false")) {
+				try{ stopWaiting(); }catch(ex){ console.debug("ex",ex); }
+				if(String(META_INFO.AUTO_INJECT_INFO)!="false") {
 					sendMessageInterface("appinfo",document.getElementById('workingframe2').contentWindow);
 				}
 			});
@@ -576,21 +572,20 @@
             	$("#kt_subheader").toggleClass("dp-flex-togger");
           	});
 		}
-		var fs_workingframe_offset = 2;
+		const fs_workingframe_offset = 2;
 		$(function(){
-			$(this).on("mousedown",function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-			try { startApplication("index",true); }catch(ex) { }
+			$(this).on("mousedown",function(e) { setMouseCoordinate(e); });
+			try { startApplication("index",true); }catch(ex) {console.debug("ex",ex); }
 			setupComponents();
 			//ignore force logout coz it was invalidate when refresh
-			//try { $(window).bind("unload",forceLogout); }catch(ex) { }
 			$("#main_pass").on("keydown", function (e) {
 				if(e.which==13) { connectServer(); }
 			});
 			$("#main_code").on("keydown", function (e) {
 				if(e.which==13) { connectServer(); }
 			});
-			$(window).resize(function() { 
-					let wh = $(window).height();
+			$(globalThis).resize(function() { 
+					let wh = $(globalThis).height();
 					let kh = 0;
 					if($("#kt_header").is(":visible")) {
 						kh = $("#kt_header").height();
@@ -603,16 +598,16 @@
 					$("#workingframe").height(wfh);
 			}).trigger("resize");
 			let pos = $("#loginframe").position();
-			if(pos) { mouseX = pos.left; mouseY = pos.top; }
+			if(pos) { setMouseCoordinate({pageX : pos.left, pageY : pos.top }); }
 			validAccessToken(function(valid,json) {
 				console.log("validAccessToken: callback valid = "+valid+", json : "+json);
-				if(!valid) {
-					displayLogin();
-				} else {
+				if(valid) {
 					verifyAfterLogin(json.body);
+				} else {
+					displayLogin();
 				}
 			});
-			$(window).on("beforeunload",function(e) { 
+			$(globalThis).on("beforeunload",function(e) { 
 				if(fs_winary.length > 0) {
 					e.preventDefault();
 					e.returnValue = "";
@@ -634,7 +629,7 @@
 					//in bc.js
 					handleIncommingMessage(payload);				
 				}
-			} catch(ex) { }
+			} catch(ex) { console.debug("ex",ex); }
 		}
         function startSessionTimer() {
             clearTimeout(timeoutAlert);
@@ -664,14 +659,14 @@
 			});
 		}
 		function openChating() {
-			let seed = new Date().getTime();
+			let seed = Date.now();
 			let authtoken = getAccessorToken();
 			let appurl = "/gui/chat";
 			submitWindow({
 				method: "POST",
 				url : appurl,
 				windowName: "chatingframe",
-				params: "seed="+seed+"&authtoken="+authtoken+"&language="+fs_default_language
+				params: "seed="+seed+"&authtoken="+authtoken+"&language="+getDefaultLanguage()
 			});	
 		}
 		function startChating() {
@@ -686,14 +681,14 @@
 			}
 		}
 		function openNotify() {
-			let seed = new Date().getTime();
+			let seed = Date.now();
 			let authtoken = getAccessorToken();
 			let appurl = "/gui/notify";
 			submitWindow({
 				method: "POST",
 				url : appurl,
 				windowName: "notifyframe",
-				params: "seed="+seed+"&authtoken="+authtoken+"&language="+fs_default_language
+				params: "seed="+seed+"&authtoken="+authtoken+"&language="+getDefaultLanguage()
 			});	
 		}
 		function startNotify() {

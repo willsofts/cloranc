@@ -1,10 +1,8 @@
-import os from "os";
-import path from 'path';
+import os from "node:os";
+import path from 'node:path';
 import { Request, Response } from 'express';
 import { JSONReply } from "@willsofts/will-api";
-import { TknUploadRouter } from "@willsofts/will-core";
-import { KnValidateInfo } from '@willsofts/will-core';
-import { KnResponser } from "@willsofts/will-core";
+import { TknUploadRouter, KnValidateInfo, KnResponser } from "@willsofts/will-core";
 import { Sfte014Handler } from "./Sfte014Handler";
 
 export class Sfte014Uploader extends TknUploadRouter {
@@ -15,14 +13,14 @@ export class Sfte014Uploader extends TknUploadRouter {
 
 	protected override verifyFile(file: any, fileTypes: RegExp) : KnValidateInfo {
 		this.logger.debug("fileFilter:",file);
-		const filetypes = new RegExp("json|xls|xlsx|sheet|msexcel","i");
+		const filetypes = /json|xls|xlsx|sheet|msexcel/i;
 		const extname =  filetypes.test(path.extname(file.originalname).toLowerCase());
 		const mimetype = filetypes.test(file.mimetype);
 		this.logger.debug("verifyFile: extname",extname+", mimetype",mimetype);	  
 		return {valid: extname && mimetype, info: "Invalid file type" };
 	}
 
-	protected override async doUploadFile(req: Request, res: Response) : Promise<void> {
+	protected override async doUploadFile(req: Request, res: Response) : Promise<any> {
 		res.contentType('application/json');
 		if(req.file) {
 			req.file.originalname = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
@@ -39,15 +37,15 @@ export class Sfte014Uploader extends TknUploadRouter {
 			handler.obtain(this.broker,this.logger);
 			let rs = await handler.importData(ctx);
 			response.body = rs;
-			res.end(JSON.stringify(response));
+			return res.end(JSON.stringify(response));
 		} catch(ex) {
-			KnResponser.responseError(res,ex,"sfte014","upload");
+			return KnResponser.responseError(res,ex,"sfte014","upload");
 		}
 	}
 
 }
 
 /*
-curl -X POST http://localhost:8080/upload/sfte014 -F filename=@D:\label\index.json -F labelid=index.json -F type=json
-curl -X POST http://localhost:8080/upload/sfte014/uploader -F filename=@D:\label\index.json -F labelid=index.json -F type=json
+curl -X POST http://localhost:8080/upload/sfte014 -F "filename=@D:\label\index.json;type=application/json" -F labelid=index.json -F type=json
+curl -X POST http://localhost:8080/upload/sfte014/uploader -F "filename=@D:\label\index.json;type=application/json" -F labelid=index.json -F type=json
 */

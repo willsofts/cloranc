@@ -8,8 +8,8 @@
 		<link rel="stylesheet" type="text/css" href="authen.css" />
 		<script>
 		function copyCode(srcid) {
-			var copyText = document.getElementById(srcid).textContent;
-			var copyArea = document.getElementById("copyarea");
+			let copyText = document.getElementById(srcid).textContent;
+			let copyArea = document.getElementById("copyarea");
 			copyArea.value = copyText;
 			copyArea.select();
 			copyArea.setSelectionRange(0, 999999);
@@ -83,7 +83,7 @@
 	<table class="code-table" aria-label="Encrypt With Public Key">
 		<tr>
 			<th scope="row"><span>Java</span></th>
-			<th scope="row"><a href="javascript:void(0)" tabindex="-1" class="copy-button" style="float:right;" onclick="copyCode('javacode')">Copy</a></th>
+			<th scope="row"><button class="copy-button" style="float:right;" onclick="copyCode('javacode')">Copy</button></th>
 		</tr>
 	</table>
 	<pre tabindex="-1" id="javacode">
@@ -171,7 +171,7 @@ public class EncryptText {
 	<table class="code-table" aria-label="Node">
 		<tr>
 			<th scope="row"><span>Node</span></th>
-			<th scope="row"><a href="javascript:void(0)" tabindex="-1" class="copy-button" style="float:right;" onclick="copyCode('nodejs')">Copy</a></th>
+			<th scope="row"><button class="copy-button" style="float:right;" onclick="copyCode('nodejs')">Copy</button></th>
 		</tr>
 	</table>
 	<pre tabindex="-1" id="nodejs">
@@ -206,7 +206,7 @@ console.log("encrypt",encryptedData.toString("base64"));
 	<table class="code-table" aria-label="C#">
 		<tr>
 			<th scope="row"><span>C#</span></th>
-			<th scope="row"><a href="javascript:void(0)" tabindex="-1" class="copy-button" style="float:right;" onclick="copyCode('csharp')">Copy</a></th>
+			<th scope="row"><button class="copy-button" style="float:right;" onclick="copyCode('csharp')">Copy</button></th>
 		</tr>
 	</table>
 	<pre tabindex="-1" id="csharp">

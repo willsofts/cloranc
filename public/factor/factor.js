@@ -1,8 +1,6 @@
-var mouseX = 0;
-var mouseY = 0;
 $(function(){
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("factor"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("factor"); }catch(ex) { console.error("ex",ex); }
 	initialApplication();
 });
 function initialApplication() {
@@ -11,7 +9,7 @@ function initialApplication() {
 }
 function setupComponents() {
 	$("#savebutton").click(function() { 
-		return save();
+		save(); return false;
 	});
 	$("#factorcode").on("keydown", function (e) {
 		e.stopPropagation();
@@ -22,10 +20,11 @@ function setupComponents() {
 	});
 }
 function clearingFields() {
+	//do nothing
 }
 function validForm() {
 	clearAlerts();
-	var validator = null;
+	let validator = null;
 	if($.trim($("#factorcode").val())=="") {
 		$("#factorcode").parent().addClass("has-error");
 		$("#factorcode_alert").show();
@@ -60,19 +59,12 @@ function save(aform) {
 			stopWaiting();
 			try { 
 				window.parent.gotoAfterLogin(); 
-			} catch(ex) { }
+			} catch(ex) { console.error("ex",ex); }
 		}
 	});	
-	return false;
+	return true;
 }
 function openFactorInfo() {
-	/*
-	let fs_params = [
-		{ name: "factorid", value: $("#factorid").val() },
-		{ name: "authtoken", value: getAccessorToken() }
-	];
-	openNewWindow({ url: BASE_URL+"/gui/factor/factorimage", windowName: "factor_window", params:  fs_params });
-	*/
 	$("#dialogpanel").find(".modal-dialog").draggable();
 	$("#fsmodaldialog_layer").modal("show");
 }

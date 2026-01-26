@@ -17,10 +17,10 @@ export class Sfte003Handler extends TknOperateHandler {
             nameen: { type: "STRING" },
             nameth: { type: "STRING" },
             seqno: { type: "INTEGER" },
-            url: { type: "STRING", updated: true, defaultValue: null },
+            url: { type: "STRING" },
             verified: { type: "STRING", created: true, updated: true },
             centerflag: { type: "STRING", created: true, updated: true },
-            iconfile: { type: "STRING", updated: true, defaultValue: null },
+            iconfile: { type: "STRING" },
             editdate: { type: "DATE", selected: false, created: true, updated: true, defaultValue: null },
             edittime: { type: "TIME", selected: false, created: true, updated: true, defaultValue: null },
             edituser: { type: "STRING", selected: false, created: true, updated: true, defaultValue: null }
@@ -29,7 +29,7 @@ export class Sfte003Handler extends TknOperateHandler {
 
     /* try to assign individual parameters under this context */
     protected override async assignParameters(context: KnContextInfo, sql: KnSQLInterface, action?: string, mode?: string) {
-        this.logger.debug(this.constructor.name+".assignParameters: action="+action+",mode="+mode);
+        console.log("action="+action+",mode="+mode);
         if(KnOperation.COLLECT!=action) {
             let verified = context.params.verified;
             if(!verified || verified=="") verified = "0";
@@ -53,35 +53,34 @@ export class Sfte003Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            knsql.append(actions.selector);
-            knsql.append(" from ");
-            knsql.append(model.name);
-            let filter = " where ";
-            if(params.product && params.product!="") {
-                knsql.append(filter).append(model.name).append(".product LIKE ?product");
-                knsql.set("product","%"+params.product+"%");
-                filter = " and ";
-            }
-            if(params.nameen && params.nameen!="") {
-                knsql.append(filter).append(model.name).append(".nameen LIKE ?nameen");
-                knsql.set("nameen","%"+params.nameen+"%");
-                filter = " and ";
-            }
-            if(params.nameth && params.nameth!="") {
-                knsql.append(filter).append(model.name).append(".nameth LIKE ?nameth");
-                knsql.set("nameth","%"+params.nameth+"%");
-                filter = " and ";
-            }
-            if(params.verified && params.verified!="") {
-                knsql.append(filter).append(model.name).append(".verified = ?verified");
-                knsql.set("verified",params.verified);
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        knsql.append(actions.selector);
+        knsql.append(" from ");
+        knsql.append(model.name);
+        if(params.product && params.product!="") {
+            conditions.push(model.name+".product LIKE ?product");
+            knsql.set("product","%"+params.product+"%");
+        }
+        if(params.nameen && params.nameen!="") {
+            conditions.push(model.name+".nameen LIKE ?nameen");
+            knsql.set("nameen","%"+params.nameen+"%");
+        }
+        if(params.nameth && params.nameth!="") {
+            conditions.push(model.name+".nameth LIKE ?nameth");
+            knsql.set("nameth","%"+params.nameth+"%");
+        }
+        if(params.verified && params.verified!="") {
+            conditions.push(model.name+".verified = ?verified");
+            knsql.set("verified",params.verified);
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected getIconImage(iconfile?: string): string {
@@ -106,9 +105,9 @@ export class Sfte003Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -149,9 +148,9 @@ export class Sfte003Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 

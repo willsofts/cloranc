@@ -1,8 +1,6 @@
-var mouseX = 0;
-var mouseY = 0;
 $(function() {
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("page_forgot"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("page_forgot"); }catch(ex) { console.error("ex",ex); }
 	initialApplication();
 });
 function initialApplication() {
@@ -49,7 +47,7 @@ function clearingFields() {
 }
 function validForm() {
 	clearAlerts();
-	var validator = null;
+	let validator = null;
 	if($.trim($("#email").val())=="") {
 		$("#email").parent().addClass("has-error");
 		$("#email_alert").show();
@@ -94,7 +92,7 @@ function send(aform) {
 			}
 		});	
 	});
-	return false;
+	return true;
 }
 function sendsucces(callback,params) {
 	alertbox("QS0201",callback,null,params);	
@@ -102,8 +100,8 @@ function sendsucces(callback,params) {
 function loginLinkClick() {
 	try {
 		window.parent.logInClick();
-		return;
 	} catch(ex) {
+		console.error(ex);
 		window.open(BASE_URL+"/index","_self");
 	}	
 }

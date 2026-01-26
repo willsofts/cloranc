@@ -22,6 +22,7 @@
 }
 body {
 	font-family: 'Kanit-Light', serif, sans-serif !important;
+    background: #EEF0F8;
 }
 td {
 	font-family: 'Kanit-Light', serif, sans-serif !important;
@@ -41,9 +42,6 @@ td {
 }
 .panel-body {
 	padding: 0.5rem 2.25rem;
-}
-body {
-    background: #EEF0F8;
 }
 .kt-container{
 	margin-top: 15px !important;
@@ -126,11 +124,8 @@ select.form-control:focus::-ms-value {
   line-height: 1.5;
   border-radius: 0.42rem;
   transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  }
-
-.btn {
-    padding-top: 6px;
-    padding-bottom: 6px;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 #searchbutton ,#searchbuttonnum {
@@ -428,7 +423,6 @@ div.fa-list-panel { margin-top: 8px; }
 }
 
 body.portalbody {
-	/*max-width: 1366px;*/
   	margin: auto;
   	height: fit-content;
 }

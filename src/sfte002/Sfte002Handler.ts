@@ -2,10 +2,8 @@ import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/w
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
 import { Utilities } from "@willsofts/will-util";
-import { KnValidateInfo, KnContextInfo, KnDataEntity, KnDataTable } from '@willsofts/will-core';
-import { VerifyError } from '@willsofts/will-core';
-import { TknOperateHandler } from '@willsofts/will-serv';
-import { OPERATE_HANDLERS } from "@willsofts/will-serv";
+import { VerifyError, KnValidateInfo, KnContextInfo, KnDataEntity, KnDataTable } from '@willsofts/will-core';
+import { TknOperateHandler, OPERATE_HANDLERS } from '@willsofts/will-serv';
 
 export class Sfte002Handler extends TknOperateHandler {
 
@@ -78,31 +76,33 @@ export class Sfte002Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            knsql.append(actions.selector);
-            knsql.append(" from ");
-            knsql.append(model.name);
-            let filter = " where ";
-            if(params.groupname && params.groupname!="") {
-                knsql.append(filter).append("groupname LIKE ?groupname");
-                knsql.set("groupname","%"+params.groupname+"%");
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        knsql.append(actions.selector);
+        knsql.append(" from ");
+        knsql.append(model.name);
+        if(params.groupname && params.groupname!="") {
+            conditions.push(model.name+".groupname LIKE ?groupname");
+            knsql.set("groupname","%"+params.groupname+"%");
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -119,12 +119,12 @@ export class Sfte002Handler extends TknOperateHandler {
             return dt;
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
         }
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, db, context.params.groupname);
             if(rs.rows.length>0) {
@@ -134,9 +134,9 @@ export class Sfte002Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -167,7 +167,7 @@ export class Sfte002Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, db, context.params.groupname);
             if(rs.rows.length>0) {
@@ -178,9 +178,9 @@ export class Sfte002Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
         } finally {
-            if(db) db.close();
+            this.closeConnector(db,context);
         }
     }
 
@@ -210,9 +210,9 @@ export class Sfte002Handler extends TknOperateHandler {
     public async getDataPermit(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
         let vi = this.validateParameters(context.params,"groupid","progid");
         if(!vi.valid) {
-            return Promise.reject(new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061));
+            throw new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061);
         }
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let settings = this.getCategorySetting(context, "tkpermit");
             let dt = await this.getDataCategories(context, db, settings);
@@ -249,9 +249,9 @@ export class Sfte002Handler extends TknOperateHandler {
             return dt;
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -279,7 +279,7 @@ export class Sfte002Handler extends TknOperateHandler {
     }
 
     public async getDataProgList(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnRecordSet> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let knsql = new KnSQL();
             knsql.append("select tproggrp.seqno,tproggrp.programid,tprog.progname,tproggrp.parameters ");
@@ -292,9 +292,9 @@ export class Sfte002Handler extends TknOperateHandler {
             return this.createRecordSet(rs);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -400,7 +400,7 @@ export class Sfte002Handler extends TknOperateHandler {
     }
 
     public async doProgInserting(context: KnContextInfo, model: KnModel): Promise<KnRecordSet> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.getProgGroup(context, db, context.params.groupname, context.params.programid);
             if(rs.rows.length>0) {
@@ -415,10 +415,10 @@ export class Sfte002Handler extends TknOperateHandler {
             return rs;
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            try { await db.rollbackWork(); } catch(er) { this.logger.error(er); }
-            return Promise.reject(this.getDBError(ex));
+            try { await db.rollbackWork(); } catch(error) { this.logger.error(error); }
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }   
 
@@ -428,7 +428,7 @@ export class Sfte002Handler extends TknOperateHandler {
     }
 
     protected async doProgUpdating(context: KnContextInfo, model: KnModel): Promise<KnRecordSet> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             await db.beginWork();
             await this.deletePermits(context, model, db);
@@ -438,10 +438,10 @@ export class Sfte002Handler extends TknOperateHandler {
             return rs;
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            try { await db.rollbackWork(); } catch(er) { this.logger.error(er); }
-            return Promise.reject(this.getDBError(ex));
+            try { await db.rollbackWork(); } catch(error) { this.logger.error(error); }
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }   
 
@@ -451,7 +451,7 @@ export class Sfte002Handler extends TknOperateHandler {
     }
 
     protected async doProgRemoving(context: KnContextInfo, model: KnModel): Promise<KnRecordSet> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             await db.beginWork();
             await this.deletePermits(context, model, db);
@@ -461,10 +461,10 @@ export class Sfte002Handler extends TknOperateHandler {
             return rs;
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            try { await db.rollbackWork(); } catch(er) { this.logger.error(er); }
-            return Promise.reject(this.getDBError(ex));
+            try { await db.rollbackWork(); } catch(error) { this.logger.error(error); }
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }   
 
@@ -487,7 +487,7 @@ export class Sfte002Handler extends TknOperateHandler {
     }
 
     protected override async doUpdating(context: KnContextInfo, model: KnModel): Promise<KnRecordSet> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             await db.beginWork();
             await this.updateProgramSequence(context, model, db);
@@ -496,10 +496,10 @@ export class Sfte002Handler extends TknOperateHandler {
             return this.createRecordSet(rs);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            try { await db.rollbackWork(); } catch(er) { this.logger.error(er); }
-            return Promise.reject(this.getDBError(ex));
+            try { await db.rollbackWork(); } catch(error) { this.logger.error(error); }
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 

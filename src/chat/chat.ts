@@ -16,8 +16,6 @@ class ChatHandler extends TknOperateHandler {
         if(!chatuser || chatuser.trim().length==0) {
             return this.createDataTable(KnOperation.EXECUTE, {}, {}, "chat/notfound");
         }
-        //let usernames = chatuser.split("@");
-        //let username = usernames[0];
         let username = chatuser.replaceAll("@",".");
         let userpassword = username;
         let handler = new ChatUserHandler();

@@ -61,10 +61,6 @@ body {
 	background-image: -moz-linear-gradient(white, #69b3ff);
 	background-image: linear-gradient(white, #69b3ff);
 }
-div.link-button-cover a:hover {
-	background: #5d77ff;
-	color: white;
-}
 
 .btn-primary {
 	border: 1px solid #315989;
@@ -195,7 +191,6 @@ table.partition-table { background-color: #dee2e6; }
 	}
 }	
 .login-input-field input:focus ~ label , .login-input-field input:valid ~ label {
-	/*background-color: #EEF0F8;*/
 	background-color: white;
 }
 #imagepagelogin {
@@ -203,7 +198,6 @@ table.partition-table { background-color: #dee2e6; }
 }
 /* after login */
 .favor-navbox-tiles .tile {
-  /*background-color: #5385C1;*/
   background-color: #646c9a;
 }
 .favor-dropdown-menu { 

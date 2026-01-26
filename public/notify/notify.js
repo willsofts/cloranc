@@ -1,9 +1,9 @@
-var defaultContentType = "application/x-www-form-urlencoded; charset=UTF-8";
+let defaultContentType = "application/x-www-form-urlencoded; charset=UTF-8";
 const notification_actions = {
     READY: 'READY',
     NOTI_SELECT: 'NOTI_SELECT'
 };
-var connection;
+let connection;
 $(function() {
     if (!connection) {
         signalRHubConnection();
@@ -21,7 +21,7 @@ function getCurrentLanguage() {
 }
 function getCurrentCulture() {
     let deflang = getCurrentLanguage();
-	let record = undefined;
+	let record;
 	let langs = getStorage("tklanguage");
 	if(langs) {
 		record = langs.find(item => item.typeid == deflang);
@@ -102,15 +102,15 @@ function showBroadcastNotification(datanotification) {
         let notinumber = window.parent.$("#noti_number");
         notinumber.hide().html("");
         let unReadN = datanotification.rOutputData.newMessage;
-        unReadN = parseInt(!unReadN ? '0' : unReadN);
+        unReadN = Number.parseInt(unReadN || '0');
         console.log("-new unReadN", unReadN);
         if (unReadN > 0) {
             let counter = (unReadN > 99) ? '+99' : unReadN;
             notinumber.show().html(""+counter);
-            var tnotimessege = datanotification.rOutputData?.transaction[0]?.t_Notimessege;
-            var enotimessege = datanotification.rOutputData?.transaction[0]?.e_NotiMessege;
-            var msg = getFsText(enotimessege, tnotimessege);
-            var key = datanotification.rOutputData?.transaction[0]?.keyId ? datanotification.rOutputData.transaction[0].keyId : new Date().getTime();
+            let tnotimessege = datanotification.rOutputData?.transaction[0]?.t_Notimessege;
+            let enotimessege = datanotification.rOutputData?.transaction[0]?.e_NotiMessege;
+            let msg = getFsText(enotimessege, tnotimessege);
+            let key = datanotification.rOutputData?.transaction[0]?.keyId ? datanotification.rOutputData.transaction[0].keyId : Date.now();
             if (datanotification.rOutputData.isShow) {
                 createAlert({
                     icon: 'kt-header__topbar-icon kt-pulse kt-pulse--brand flaticon2-notification',
@@ -155,8 +155,8 @@ async function getNewNotification(action, isAlert, numofRecords, isShow) {
     });
 }
 function showNotification(datanotification, isAlert) {
-    var unReadN = datanotification.data.rOutputData.newMessage;
-    unReadN = parseInt(!unReadN ? '0' : unReadN);
+    let unReadN = datanotification.data.rOutputData.newMessage;
+    unReadN = Number.parseInt(unReadN || '0');
     let notinumber = window.parent.$("#noti_number");
     notinumber.hide().html("");
     let container = window.parent.$('#nn_alert_container');
@@ -165,29 +165,28 @@ function showNotification(datanotification, isAlert) {
     }
     let noti_container = window.parent.$("#noti_lastest").empty();
     if (datanotification.data.rOutputData.transaction.length > 0) {
-        for (var i = 0; i < datanotification.data.rOutputData.transaction.length; i++) {
-            var progParam = datanotification.data.rOutputData.transaction[i].progParam == null ? '' : datanotification.data.rOutputData.transaction[i].progParam;
-            var progId = datanotification.data.rOutputData.transaction[i].progId == null ? '' : datanotification.data.rOutputData.transaction[i].progId;
-            var notimessege = getFsText(datanotification.data.rOutputData.transaction[i].e_NotiMessege, datanotification.data.rOutputData.transaction[i].t_Notimessege);
-            var lastestupdate = getFsText(datanotification.data.rOutputData.transaction[i].lastestUpdate_EN, datanotification.data.rOutputData.transaction[i].lastestUpdate);
-            var lTransactionKeyStr = getFsTransactionKeys(datanotification.data.rOutputData.transaction[i].transactionKey);
-            var programName = "&ProgramName=" + (datanotification.data.rOutputData.transaction[i].programName ? datanotification.data.rOutputData.transaction[i].programName : '');
-            var workflowId = datanotification.data.rOutputData.transaction[i].workflowId == null ? '' : datanotification.data.rOutputData.transaction[i].workflowId;
-            var linkto = datanotification.data.rOutputData.transaction[i].linkto == null ? '' : datanotification.data.rOutputData.transaction[i].linkto;
-            var currentstep = datanotification.data.rOutputData.transaction[i].currentstep == null ? '' : datanotification.data.rOutputData.transaction[i].currentstep;
-            var params = [datanotification.data.rOutputData.transaction[i].keyId
-                , datanotification.data.rOutputData.transaction[i].insuranceStatus
-                , datanotification.data.rOutputData.transaction[i].policyStatus
+        for (let transaction of datanotification.data.rOutputData.transaction) {
+            let progParam = transaction.progParam == null ? '' : transaction.progParam;
+            let progId = transaction.progId == null ? '' : transaction.progId;
+            let notimessege = getFsText(transaction.e_NotiMessege, transaction.t_Notimessege);
+            let lastestupdate = getFsText(transaction.lastestUpdate_EN, transaction.lastestUpdate);
+            let lTransactionKeyStr = getFsTransactionKeys(transaction.transactionKey);
+            let programName = "&ProgramName=" + (transaction.programName ? transaction.programName : '');
+            let workflowId = transaction.workflowId == null ? '' : transaction.workflowId;
+            let linkto = transaction.linkto == null ? '' : transaction.linkto;
+            let currentstep = transaction.currentstep == null ? '' : transaction.currentstep;
+            let params = [transaction.keyId
+                , transaction.insuranceStatus
+                , transaction.policyStatus
                 , workflowId
                 , linkto
-                , datanotification.data.rOutputData.transaction[i].readFlag
+                , transaction.readFlag
                 , currentstep
                 ];
-            var elem_data = ['data-transactionkey="' + lTransactionKeyStr + '"'];
-            elem_data.push('data-namesubheader="' + progId + '"');
-            elem_data.push('data-parameter="' + (progParam + programName) + '"');
+            let elem_data = ['data-transactionkey="' + lTransactionKeyStr + '"'];
+            elem_data.push('data-namesubheader="' + progId + '"','data-parameter="' + (progParam + programName) + '"');
 
-            if (datanotification.data.rOutputData.transaction[i].readFlag == 'N') {
+            if (transaction.readFlag == 'N') {
                 if (datanotification.data.rOutputData.isShow == 'Y') {
                     createAlert({
                         icon: 'kt-header__topbar-icon kt-pulse kt-pulse--brand flaticon2-notification',
@@ -195,7 +194,7 @@ function showNotification(datanotification, isAlert) {
                         color: 'alert-info',
                         duration: 10,
                         isFade: isAlert,
-                        serial: datanotification.data.rOutputData.transaction[i].keyId
+                        serial: transaction.keyId
                     });
                 }
                 let lastesthtml = '<a href="#" class="kt-notification__item" ' + (elem_data.join(" ")) + '>' +
@@ -265,29 +264,28 @@ async function getNewNotificationWeeks() {
 function showNotificationWeeks(datanotificationweeks) {
     let noti_container = window.parent.$("#noti_weeks");
     if (datanotificationweeks.data.rOutputData.transaction.length > 0) {
-        for (var i = 0; i < datanotificationweeks.data.rOutputData.transaction.length; i++) {
-            var progParam = datanotificationweeks.data.rOutputData.transaction[i].progParam == null ? '' : datanotificationweeks.data.rOutputData.transaction[i].progParam;
-            var progId = datanotificationweeks.data.rOutputData.transaction[i].progId == null ? '' : datanotificationweeks.data.rOutputData.transaction[i].progId;
-            var notimessege = getFsText(datanotificationweeks.data.rOutputData.transaction[i].e_NotiMessege, datanotificationweeks.data.rOutputData.transaction[i].t_Notimessege);
-            var lastestupdate = datanotificationweeks.data.rOutputData.transaction[i].notiDate; 
-            var lTransactionKeyStr = getFsTransactionKeys(datanotificationweeks.data.rOutputData.transaction[i].transactionKey);
-            var programName = "&ProgramName=" + (datanotificationweeks.data.rOutputData.transaction[i].programName ? datanotificationweeks.data.rOutputData.transaction[i].programName : '');
-            var workflowId = datanotificationweeks.data.rOutputData.transaction[i].workflowId == null ? '' : datanotificationweeks.data.rOutputData.transaction[i].workflowId;
-            var linkto = datanotificationweeks.data.rOutputData.transaction[i].linkto == null ? '' : datanotificationweeks.data.rOutputData.transaction[i].linkto;
-            var currentstep = datanotificationweeks.data.rOutputData.transaction[i].currentstep == null ? '' : datanotificationweeks.data.rOutputData.transaction[i].currentstep;
-            var params = [datanotificationweeks.data.rOutputData.transaction[i].keyId 
-                , datanotificationweeks.data.rOutputData.transaction[i].insuranceStatus 
-                , datanotificationweeks.data.rOutputData.transaction[i].policyStatus 
+        for (let transaction of datanotificationweeks.data.rOutputData.transaction) {
+            let progParam = transaction.progParam == null ? '' : transaction.progParam;
+            let progId = transaction.progId == null ? '' : transaction.progId;
+            let notimessege = getFsText(transaction.e_NotiMessege, transaction.t_Notimessege);
+            let lastestupdate = transaction.notiDate; 
+            let lTransactionKeyStr = getFsTransactionKeys(transaction.transactionKey);
+            let programName = "&ProgramName=" + (transaction.programName ? transaction.programName : '');
+            let workflowId = transaction.workflowId == null ? '' : transaction.workflowId;
+            let linkto = transaction.linkto == null ? '' : transaction.linkto;
+            let currentstep = transaction.currentstep == null ? '' : transaction.currentstep;
+            let params = [transaction.keyId 
+                , transaction.insuranceStatus 
+                , transaction.policyStatus 
                 , workflowId 
                 , linkto 
-                , datanotificationweeks.data.rOutputData.transaction[i].readFlag 
+                , transaction.readFlag 
                 , currentstep 
                 ];
-            var elem_data = ['data-transactionkey="' + lTransactionKeyStr + '"'];
-            elem_data.push('data-namesubheader="' + progId + '"');
-            elem_data.push('data-parameter="' + (progParam + programName) + '"');
+            let elem_data = ['data-transactionkey="' + lTransactionKeyStr + '"'];
+            elem_data.push('data-namesubheader="' + progId + '"','data-parameter="' + (progParam + programName) + '"');
 
-            if (datanotificationweeks.data.rOutputData.transaction[i].readFlag.toUpperCase() === 'N') {
+            if (transaction.readFlag.toUpperCase() === 'N') {
                 let weekshtml = '<a href="#" class="kt-notification__item" ' + (elem_data.join(" ")) + '>' +
                     '<div class="kt-notification__item-details">' +
                     '<div class="kt-notification__item-title font-size-custom-h-14-b">' + notimessege + '</div>' +
@@ -350,29 +348,28 @@ async function getNewNotificationMonths() {
 function showNotificationMonths(datanotificationmonths) {
     let noti_container = window.parent.$("#noti_months");
     if (datanotificationmonths.data.rOutputData.transaction.length > 0) {
-        for (var i = 0; i < datanotificationmonths.data.rOutputData.transaction.length; i++) {
-            var progParam = datanotificationmonths.data.rOutputData.transaction[i].progParam == null ? '' : datanotificationmonths.data.rOutputData.transaction[i].progParam;
-            var progId = datanotificationmonths.data.rOutputData.transaction[i].progId == null ? '' : datanotificationmonths.data.rOutputData.transaction[i].progId;
-            var notimessege = getFsText(datanotificationmonths.data.rOutputData.transaction[i].e_NotiMessege, datanotificationmonths.data.rOutputData.transaction[i].t_Notimessege);
-            var lastestupdate = datanotificationmonths.data.rOutputData.transaction[i].notiDate; 
-            var lTransactionKeyStr = getFsTransactionKeys(datanotificationmonths.data.rOutputData.transaction[i].transactionKey);
-            var programName = "&ProgramName=" + (datanotificationmonths.data.rOutputData.transaction[i].programName ? datanotificationmonths.data.rOutputData.transaction[i].programName : '');
-            var workflowId = datanotificationmonths.data.rOutputData.transaction[i].workflowId == null ? '' : datanotificationmonths.data.rOutputData.transaction[i].workflowId;
-            var linkto = datanotificationmonths.data.rOutputData.transaction[i].linkto == null ? '' : datanotificationmonths.data.rOutputData.transaction[i].linkto;
-            var currentstep = datanotificationmonths.data.rOutputData.transaction[i].currentstep == null ? '' : datanotificationmonths.data.rOutputData.transaction[i].currentstep;
-            var params = [ datanotificationmonths.data.rOutputData.transaction[i].keyId 
-                , datanotificationmonths.data.rOutputData.transaction[i].insuranceStatus
-                , datanotificationmonths.data.rOutputData.transaction[i].policyStatus 
+        for (let transaction of datanotificationmonths.data.rOutputData.transaction) {
+            let progParam = transaction.progParam == null ? '' : transaction.progParam;
+            let progId = transaction.progId == null ? '' : transaction.progId;
+            let notimessege = getFsText(transaction.e_NotiMessege, transaction.t_Notimessege);
+            let lastestupdate = transaction.notiDate; 
+            let lTransactionKeyStr = getFsTransactionKeys(transaction.transactionKey);
+            let programName = "&ProgramName=" + (transaction.programName ? transaction.programName : '');
+            let workflowId = transaction.workflowId == null ? '' : transaction.workflowId;
+            let linkto = transaction.linkto == null ? '' : transaction.linkto;
+            let currentstep = transaction.currentstep == null ? '' : transaction.currentstep;
+            let params = [ transaction.keyId 
+                , transaction.insuranceStatus
+                , transaction.policyStatus 
                 , workflowId 
                 , linkto 
-                , datanotificationmonths.data.rOutputData.transaction[i].readFlag 
+                , transaction.readFlag 
                 , currentstep 
                 ];
-            var elem_data = ['data-transactionkey="' + lTransactionKeyStr + '"'];
-            elem_data.push('data-namesubheader="' + progId + '"');
-            elem_data.push('data-parameter="' + (progParam + programName) + '"');
+            let elem_data = ['data-transactionkey="' + lTransactionKeyStr + '"'];
+            elem_data.push('data-namesubheader="' + progId + '"','data-parameter="' + (progParam + programName) + '"');
 
-            if (datanotificationmonths.data.rOutputData.transaction[i].readFlag.toUpperCase() === 'N') {
+            if (transaction.readFlag.toUpperCase() === 'N') {
                 let monthhtml = '<a href="#" class="kt-notification__item" ' + (elem_data.join(" ")) + '>' +
                     '<div class="kt-notification__item-details">' +
                     '<div class="kt-notification__item-title font-size-custom-h-14-b">' + notimessege + '</div>' +
@@ -408,7 +405,7 @@ async function notificationOpen(params, ths) {
     if (!params) {
         return false;
     }
-    var lNameSubheader = $(ths).attr("data-namesubheader");
+    let lNameSubheader = $(ths).attr("data-namesubheader");
     checkAccessTask(params[3],(checkAccess) => {
         if (!checkAccess) {
             updateNotificationReaded(params, () => {
@@ -422,11 +419,11 @@ async function notificationOpen(params, ths) {
             });
         } else {
             updateNotificationReaded(params, () => {
-                //editToDoList(ths);
+                //try out editToDoList(ths);
             });
         }
     });
-    return false;
+    return true;
 }
 
 async function checkAccessTask(workflowId, callback) {
@@ -467,15 +464,7 @@ function updateNotificationReaded(params, callback) {
     if (!params) {
         return false;
     }
-    if (params[5] !== 'N') {
-        getNewNotification(notification_actions.READY, false, 0, true);
-        getNewNotificationWeeks();
-        getNewNotificationMonths();
-        if (callback) {
-            callback();
-        }
-        return;
-    } else {
+    if (params[5] == 'N') {
         let cfg = createNotifyConfigure();
         let urlstr = NOTIFY_API_URL + "/notify/api/Junt/UpdateRead";
         let data = { 'keyid': params[0] };
@@ -506,6 +495,13 @@ function updateNotificationReaded(params, callback) {
                 window.parent.stopWaiting();
             }
         });
+    } else {
+        getNewNotification(notification_actions.READY, false, 0, true);
+        getNewNotificationWeeks();
+        getNewNotificationMonths();
+        if (callback) {
+            callback();
+        }
     }
 }
 function load_url_content(url) {
@@ -521,7 +517,7 @@ function getFsText(texten, textth) {
     return (language && "TH" == language.toUpperCase()) ? textth : texten;
 }
 function fsLocaleString(val, digits) {
-    return val.toLocaleString('en-US', { minimumIntegerDigits: digits ? digits : val.length, useGrouping: false });
+    return val.toLocaleString('en-US', { minimumIntegerDigits: digits ?? val.length, useGrouping: false });
 }
 function getFsNotiDateDisplay(strDate) {
     try {
@@ -534,8 +530,8 @@ function getFsNotiDateDisplay(strDate) {
 }
 function getFsTransactionKeys(transactionKeyArr) {
     let lTransactionKeyStr = '';
-    for (let j = 0; j < transactionKeyArr.length; j++) {
-        lTransactionKeyStr += "@@@" + transactionKeyArr[j].keyField + "=" + transactionKeyArr[j].keyValue;
+    for (let transaction of transactionKeyArr) {
+        lTransactionKeyStr += "@@@" + transaction.keyField + "=" + transaction.keyValue;
     }
     return lTransactionKeyStr;
 }

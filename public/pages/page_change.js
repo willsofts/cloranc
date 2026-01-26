@@ -1,8 +1,6 @@
-var mouseX = 0;
-var mouseY = 0;
 $(function(){
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("page_change"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("page_change"); }catch(ex) { console.error("ex",ex); }
 	initialApplication();
 });
 function initialApplication() {
@@ -37,11 +35,12 @@ function setupComponents() {
 	}
 }
 function clearingFields() {
+	//do nothing
 }
 function validForm() {
 	clearAlerts();
 	$("#matchpassword_alert").hide();
-	var validator = null;
+	let validator = null;
 	if($.trim($("#oldpassword").val())=="") {
 		$("#oldpassword").parent().addClass("has-error");
 		$("#oldpassword_alert").show();
@@ -63,7 +62,7 @@ function validForm() {
 		if(!validator) validator = "matchpassword";
 	}	
 	if(validator) {
-		var matching = validator=="matchpassword";
+		let matching = validator=="matchpassword";
 		if(matching) validator = "confirmpassword";
 		$("#"+validator).focus();
 		setTimeout(function() { 
@@ -97,26 +96,24 @@ function save(aform) {
 					if(CHANGED_ACTION=="force" || CHANGED_ACTION=="expire") {						
 						try {  
 							window.parent.gotoLoginPage(); 
-						} catch(ex) { }
+						} catch(ex) { console.error("ex",ex); }
 						return;
 					}
-					try {  window.parent.goHome(); } catch(ex) { }
+					try {  window.parent.goHome(); } catch(ex) { console.error("ex",ex); }
 				});					
 			}
 		});
 	});
-	return false;
+	return true;
 }
-const INPUT_TYPE_PASSWORD = "password";
-const INPUT_TYPE_TEXT = "text";
 function togglePassword(passwordField,toggleBtn) {
 	const icon = toggleBtn.querySelector("i");
-	if (passwordField.type === INPUT_TYPE_PASSWORD) {
-		passwordField.type = INPUT_TYPE_TEXT;
+	const isHidden = passwordField.type === "password"
+	passwordField.type = isHidden ? "text" : "password";
+	if(isHidden) {
 		icon.classList.remove("fa-eye-slash");
 		icon.classList.add("fa-eye");
 	} else {
-		passwordField.type = INPUT_TYPE_PASSWORD;
 		icon.classList.remove("fa-eye");
 		icon.classList.add("fa-eye-slash");
 	}

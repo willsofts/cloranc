@@ -7,9 +7,15 @@ body {
 table.code-table {
 	width: 100%;
 }
-a.copy-button {
+.copy-button {
 	text-decoration: none;
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	color: #0d6efd;
 }
+.copy-button:hover { color: navy; }
 table.code-table tr th { background-color: #d2d2d2; padding: 3px; }
 pre { border-radius: 0px; text-align: left; }
 textarea { position: absolute; left: -100%; } 

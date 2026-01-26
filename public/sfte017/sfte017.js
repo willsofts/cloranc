@@ -1,10 +1,8 @@
-var mouseX = 0;
-var mouseY = 0;
 //#(10000) programmer code begin;
 //#(10000) programmer code end;
 $(function(){
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("sfte017"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("sfte017"); }catch(ex) { console.warn("error",ex);  }
 	initialApplication();
 	//#(20000) programmer code begin;
 	//#(20000) programmer code end;
@@ -52,14 +50,14 @@ function resetFilters() {
 		fssearchform.page.value = "1";
 		fssearchform.orderBy.value = "";
 		fssearchform.orderDir.value = "";
-	}catch(ex) { }
+	}catch(ex) { console.warn("error",ex);  }
 }
 function refreshFilters() {
 	try {
 		fssearchform.page.value = fslistform.page.value;
 		fssearchform.orderBy.value = fschapterform.orderBy.value;
 		fssearchform.orderDir.value = fschapterform.orderDir.value;
-	}catch(ex) { }
+	}catch(ex) { console.warn("error",ex);  }
 }
 function search(aform) {
 	//#(70000) programmer code begin;
@@ -68,7 +66,7 @@ function search(aform) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte017/search",
+		url: getApiUrl()+"/api/sfte017/search",
 		data: formdata.jsondata,
 		headers : formdata.headers,
 		type: "POST",
@@ -118,13 +116,12 @@ function validSaveForm(callback) {
 	//#(180000) programmer code end;
 }
 function submitChapter(aform,index) {
-	let fs_params = fetchParameters($("#listpanel").data("searchfilters"));
 	//#(270000) programmer code begin;
 	//#(270000) programmer code end;
 	let formdata = serializeDataForm(aform, $("#listpanel").data("searchfilters"));
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte017/search",
+		url: getApiUrl()+"/api/sfte017/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -150,7 +147,7 @@ function submitOrder(src,sorter) {
 	//#(290000) programmer code end;
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte017/search",
+		url: getApiUrl()+"/api/sfte017/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -191,7 +188,7 @@ function submitViewhistory(src,userid){
 		let formdata = serializeDataForm(formary);	
 		startWaiting();
 		jQuery.ajax({
-			url: API_URL+"/api/sfte017history/retrieval",
+			url: getApiUrl()+"/api/sfte017history/retrieval",
 			data: formdata.jsondata,
 			headers : formdata.headers,
 			type: "POST",
@@ -217,7 +214,7 @@ function submitChapterHistory(aform,index) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte017history/search",
+		url: getApiUrl()+"/api/sfte017history/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -238,7 +235,7 @@ function submitOrderHistory(src,sorter) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		url: API_URL+"/api/sfte017history/search",
+		url: getApiUrl()+"/api/sfte017history/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",

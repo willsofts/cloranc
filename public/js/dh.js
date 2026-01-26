@@ -1,23 +1,32 @@
 const getPrimes = function (min, max) {
-	const result = Array(max + 1).fill(0).map((_, i) => i);
-	for (let i = 2; i <= Math.sqrt(max + 1); i++) {
-	    for (let j = i ** 2; j < max + 1; j += i) delete result[j];
-	}
-	return Object.values(result.slice(min));
+    const isPrime = new Array(max + 1).fill(true);
+    isPrime[0] = isPrime[1] = false;
+    for (let i = 2; i <= Math.sqrt(max); i++) {
+        if (isPrime[i]) {
+            for (let j = i * i; j <= max; j += i) {
+                isPrime[j] = false;
+            }
+        }
+    }
+    const result = [];
+    for (let i = Math.max(min, 2); i <= max; i++) {
+        if (isPrime[i]) {
+            result.push(i);
+        }
+    }
+    return result;
 };
-
 function randomize() {
-	const crypto = window.crypto || window.msCrypto;
+	const crypto = globalThis.crypto || globalThis.msCrypto;
 	let array = new Uint32Array(1);
 	crypto.getRandomValues(array);	
-	return array[0];
+	return array[0] / (0xFFFFFFFF + 1);
 }	
-
 const getRandomNum = function(min, max) {
 	return Math.floor(randomize() * (max - min + 1) + min);
 };
 	
-const getRandomPrime =function (min, max) {
+const getRandomPrime = function (min, max) {
 	const primes = getPrimes(min, max);
 	return primes[getRandomNum(0, primes.length - 1)];
 };

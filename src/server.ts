@@ -2,11 +2,8 @@ import KnAPI from "@willsofts/will-api";
 import { ServiceSchema } from "moleculer";
 import { KnExpress, KnRunner } from "@willsofts/will-run";
 import { TknAssureHandler } from "@willsofts/will-core";
-import { TknRouteManager } from '@willsofts/will-serv';
-import { TknSAMLManager } from '@willsofts/will-serv';
-import { TknReportManager } from '@willsofts/will-serv';
-import { TknUploadFileManager } from "@willsofts/will-serv";
-import { TknDocumentManager } from "@willsofts/will-serv";
+import { TknRouteManager, TknSAMLManager, TknReportManager, TknUploadFileManager, TknDocumentManager, TknExportManager } from '@willsofts/will-serv';
+import { UPLOAD_FILE_SIZE, UPLOAD_FILE_COUNT } from "./utils/EnvironmentVariable";
 import "express-async-errors";
 
 const ExpressService : ServiceSchema = {
@@ -18,6 +15,12 @@ const ExpressService : ServiceSchema = {
         path: "/api",
         routes: [
             {
+                busboyConfig: {
+                    limits: {
+                        files: UPLOAD_FILE_COUNT,        
+                        fileSize: UPLOAD_FILE_SIZE,
+                    },
+                },
                 authorization: true,
                 aliases: {
                     "GET fetch/hi/:name": "fetch.hi",
@@ -26,6 +29,12 @@ const ExpressService : ServiceSchema = {
 
                     "POST sign/fetchtoken/:useruuid": "sign.fetchtoken",
                     "GET sign/fetchtoken/:useruuid": "sign.fetchtoken",
+
+                    "POST dataservice/lookup/:apiname": "dataservice.lookup",
+                    "GET dataservice/lookup/:apiname": "dataservice.lookup",
+
+                    "POST upload/file": { type: "multipart", action: "upload.file" },
+                    "POST upload/files": { type: "multipart", action: "upload.file" },
                 }
             }
         ]
@@ -36,8 +45,9 @@ const ExpressService : ServiceSchema = {
         }
     }
 };
-const runner = new KnRunner(ExpressService);
-runner.start(process.argv).then(() => {
+async function startServer() {
+    const runner = new KnRunner(ExpressService);
+    await runner.start(process.argv);
     if(runner.service) {
         let app = KnExpress.createApplication(runner.service);
         runner.service.logger.info("working directory",__dirname);
@@ -50,22 +60,20 @@ runner.start(process.argv).then(() => {
         new TknUploadFileManager(runner.service, __dirname).route(app);
         //this is an api documentary router
         new TknDocumentManager(runner.service, __dirname).route(app);
+        //this is export operator
+        new TknExportManager(runner.service, __dirname).route(app);
     }
     if(runner.broker) {
-        runner.broker.call("$node.services").then((services: any) => {
-            let servicenames = [];
-            for(let s of services) {
-                if(s.name!="$node" && s.name!="api") {
-                    servicenames.push(s.name);
-                }
-            }
-            if(runner.service) {
-                runner.service.logger.debug("service names",servicenames);
-                runner.service.logger.debug("number of services",servicenames.length);
-            } else {
-                console.debug("service names",servicenames);
-                console.log("number of services",servicenames.length);
-            }
-        });
+        const services: any[] = await runner.broker.call("$node.services");
+        const servicenames = services
+            .filter(s => s.name !== "$node" && s.name !== "api")
+            .map(s => s.name);
+        runner.broker.logger.debug("service names",servicenames);
+        runner.broker.logger.debug("number of services",servicenames.length);
     }
+}
+// Entry point uses CommonJS; top-level await is not supported
+startServer().catch(err => { // NOSONAR typescript:S7785
+    console.error(err);
+    process.exit(1);
 });

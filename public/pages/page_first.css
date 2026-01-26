@@ -14,6 +14,7 @@
   color: white;
   font-weight: bold;
   position: relative;
+  box-shadow: 3px 3px 3px gray;
 }
 
 .favor-navbox-tiles .tile .icon {
@@ -23,10 +24,6 @@
   position: absolute;
   top: 0;
   left: 0;
-}
-
-.favor-navbox-tiles .tile {
-  box-shadow: 3px 3px 3px gray;
 }
 
 .favor-navbox-tiles .tile .icon .fa {

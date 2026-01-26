@@ -38,6 +38,7 @@ html, body { height: 100%; }
 	line-height: 1.5;
 	letter-spacing: 6px;
 	text-align: center;
+	left: 0px
 }
 
 .pt-page h1 span {
@@ -174,7 +175,6 @@ html, body { height: 100%; }
 	}
 }
 
-.pt-page h1 { left: 0px; }
 .pt-page th { color: white; }
 .pt-page-header { 
 	height: 30px; 

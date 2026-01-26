@@ -1,5 +1,5 @@
 			$(function(){
-				$(window).scroll(function(){    
+				$(globalThis).scroll(function(){    
 				 	if($(document).scrollTop()>50){   
 						$("#navigatebar").addClass("navbar-fixed-top");
 						$(".portalbody").removeClass("portalbody-off").addClass("portalbody-on");

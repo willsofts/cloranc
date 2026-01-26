@@ -2,15 +2,10 @@ import { v4 as uuid } from 'uuid';
 import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
-import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
-import { VerifyError } from '@willsofts/will-core';
-import { KnPageUtility } from '@willsofts/will-core';
+import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable, KnPageUtility, KnUserAccessInfo, KnUserToken, TknSigninTokenHandler } from '@willsofts/will-core';
 import { Utilities } from "@willsofts/will-util";
 import { TknOperateHandler } from '@willsofts/will-serv';
 import { AuthenToken } from '@willsofts/will-lib';
-import { KnUserAccessInfo } from "@willsofts/will-core";
-import { KnUserToken } from "@willsofts/will-core";
-import { TknSigninTokenHandler } from '@willsofts/will-core';
 import { MAX_EXPIRE_DATE } from "../utils/EnvironmentVariable";
 
 export class Sftu004Handler extends TknOperateHandler {
@@ -71,46 +66,46 @@ export class Sftu004Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: KnContextInfo, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting): KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            knsql.append(actions.selector);
-            knsql.append(" from ");
-            knsql.append(model.name);
-            knsql.append(" where site = ?site and userid = ?userid ");
-            knsql.set("site",this.userToken?.site || params.site);
-            knsql.set("userid",this.userToken?.userid || params.userid);
-            if(params.keyname && params.keyname!="") {
-                knsql.append("and keyname LIKE ?keyname ");
-                knsql.set("keyname","%"+params.keyname+"%");
-            }
-            if(params.fromdate && params.fromdate!="") {
-                let fromdate = Utilities.parseDate(params.fromdate);
-                if(fromdate) {
-                    knsql.append("and createdate >= ?fromdate ");
-                    knsql.set("fromdate",fromdate);
-                }
-            }
-            if(params.todate && params.todate!="") {
-                let todate = Utilities.parseDate(params.todate);
-                if(todate) {
-                    knsql.append("and createdate <= ?todate ");
-                    knsql.set("todate",todate);
-                }
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let params = context.params;
+        knsql.append(actions.selector);
+        knsql.append(" from ");
+        knsql.append(model.name);
+        knsql.append(" where site = ?site and userid = ?userid ");
+        knsql.set("site",this.userToken?.site || params.site);
+        knsql.set("userid",this.userToken?.userid || params.userid);
+        if(params.keyname && params.keyname!="") {
+            knsql.append("and keyname LIKE ?keyname ");
+            knsql.set("keyname","%"+params.keyname+"%");
+        }
+        if(params.fromdate && params.fromdate!="") {
+            let fromdate = Utilities.parseDate(params.fromdate);
+            if(fromdate) {
+                knsql.append("and createdate >= ?fromdate ");
+                knsql.set("fromdate",fromdate);
+            }
+        }
+        if(params.todate && params.todate!="") {
+            let todate = Utilities.parseDate(params.todate);
+            if(todate) {
+                knsql.append("and createdate <= ?todate ");
+                knsql.set("todate",todate);
+            }
+        }
+        return knsql;    
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			try { if(db) db.close(); } catch(er) { this.logger.error(this.constructor.name,er); }
+			try { this.closeConnector(db,context); } catch(error) { console.error(error); }
         }
     }
 
@@ -120,7 +115,7 @@ export class Sftu004Handler extends TknOperateHandler {
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -130,9 +125,9 @@ export class Sftu004Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			try { if(db) db.close(); } catch(er) { this.logger.error(this.constructor.name,er); }
+			try { this.closeConnector(db,context); } catch(error) { console.error(error); }
         }
     }
 
@@ -173,7 +168,7 @@ export class Sftu004Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -189,9 +184,9 @@ export class Sftu004Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			try { if(db) db.close(); } catch(er) { this.logger.error(this.constructor.name,er); }
+			try { this.closeConnector(db,context); } catch(error) { console.error(error); }
         }
     }
 

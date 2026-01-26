@@ -1,17 +1,19 @@
-var defaultContentType = "application/x-www-form-urlencoded; charset=UTF-8";
+const defaultContentType = "application/x-www-form-urlencoded; charset=UTF-8";
 function isValidUrl(url) {
     try {
         new URL(url);
         return true;
-    } catch (err) { return false; }
+    } catch (err) { console.error("ex",err); return false; }
 }
 function load_page(appid,params,callback){	
+	let $currPage = getCurrentPage();
 	if(!$currPage || $currPage=="") {
 		$currPage = $("#page_0");
 	}	
 	$currPage.hide();
-	$currPage.removeClass("pt-page-current pt-page-moveFromRight pt-page-moveFromLeft");	
-	try{ closeMenuBar(); }catch(ex) { }
+	$currPage.removeClass("pt-page-current pt-page-moveFromRight pt-page-moveFromLeft");
+	setCurrentPage($currPage);	
+	try{ closeMenuBar(); }catch(ex) { console.error("ex",ex); }
 	loadApplication(appid,params,callback);
 	$("#pagecontainer").show();
 	$("#workingframe").hide();
@@ -20,13 +22,13 @@ function load_page(appid,params,callback){
 function loadApplication(appid,params,callback) {
 	let fs_useruuid = $("#main_useruuid").val();
 	let fs_user = $("#main_user").val();
-	let appurl = BASE_URL+"/gui/"+appid; //+"?seed="+Math.random()+"&useruuid="+fs_useruuid+"&userid="+fs_user+(params?"&"+params:"");
+	let appurl = BASE_URL+"/gui/"+appid; 
 	console.log("load application url",appurl);
 	let prm = { useruuid: fs_useruuid, userid: fs_user, language: fs_default_language };
 	if(params) {
 		let pr = params.split("&");
-		for(let i=0;i<pr.length;i++) {
-			let kary = pr[i].split("=");
+		for(let prs of pr) {
+			let kary = prs.split("=");
 			prm[kary[0]] = kary[1];
 		}
 	}
@@ -49,57 +51,56 @@ function loadApplication(appid,params,callback) {
 		success: function(data,status,transport){ 
 			stopWaiting();
 			$("#pagecontainer").html(data);
-			$currPage = $("#pagecontainer").children("div").eq(0);
+			let $currPage = $("#pagecontainer").children("div").eq(0);
 			$currPage.addClass("pt-page-current pt-page-moveFromRight");
 			$currPage.show();
+			setCurrentPage($currPage);
 			if(callback) callback();
 		}
 	});	
 }
 function open_page(opts) {
-	let { appid, newflag, caption, treepath } = opts;
+	let { newflag } = opts;
 	console.log("open_page: ",opts);
 	let fs_newflag = "1" == $("#accessor_label").data("NEW")  || "1" == newflag;
 	if(!fs_newflag) {
+		let $currPage = getCurrentPage();
 		if(!$currPage || $currPage==""){
 			$currPage = $("#page_0");
 		}	
 		$currPage.hide();
-		$currPage.removeClass("pt-page-current pt-page-moveFromRight pt-page-moveFromLeft");	
-		try{ closeMenuBar(); }catch(ex) { }
+		$currPage.removeClass("pt-page-current pt-page-moveFromRight pt-page-moveFromLeft");
+		setCurrentPage($currPage);	
+		try{ closeMenuBar(); }catch(ex) { console.error("ex",ex); }
 		$("#languagemenuitem").hide();
-	}
-	if(caption && caption.trim().length > 0) {
-		show_subheader(appid,caption,treepath);
 	}
 	open_program(opts);
 }
-var except_apps = ["page_profile","page_change","page_first","page_login","page_work","page_forgot","page_register"];
+const except_apps = ["page_profile","page_change","page_first","page_login","page_work","page_forgot","page_register"];
 function open_program(opts) {
 	let { appid, url, params, path, newflag, openmethod, caption, treepath, target } = opts;
 	let fs_newwindows = "1" == $("#accessor_label").data("NEW") || "1" == newflag;
 	console.log("open_program(appid="+appid+", path="+path+", url="+url+", params="+params+", newflag="+newflag+", openmethod="+openmethod+")");
 	let html = false; 
-	let appurl = "/gui/"+appid; //+"?seed="+Math.random()+(params?"&"+params:"");
+	let appurl = "/gui/"+appid; 
 	if(path && $.trim(path)!="") {
 		appurl = path;
-		html = path.indexOf(".html") > 0;
+		html = path.includes(".html");
 	}
 	if(url && $.trim(url)!="") {
-		appurl = "/load/"+appid; //+"?seed="+Math.random()+(params?"&"+params:"");
+		appurl = "/load/"+appid; 
 	}
-	let culture = getDefaultCulture();
-	console.log("open : "+appurl,", language",fs_default_language,", culture",culture);
+	console.log("open : "+appurl);
 	html = openmethod == "GET" ? "GET" : html;
 	$("#page_login").hide();
-	let seed = new Date().getTime();
+	let seed = Date.now();
 	let authtoken = getAccessorToken();
 	if(fs_newwindows) {
 		let awin = openNewWindow({
 			method: html?"GET":"POST",
 			url : appurl,
 			windowName: "fs_window_"+appid,
-			params: "seed="+seed+"&program="+appid+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
+			params: "seed="+seed+"&authtoken="+authtoken+"&language="+fs_default_language+(params?"&"+params:"")
 		});
 		awin.focus();
 	} else {
@@ -110,14 +111,15 @@ function open_program(opts) {
 			method: html?"GET":"POST",
 			url : appurl,
 			windowName: target,
-			params: "seed="+seed+"&program="+appid+"&authtoken="+authtoken+"&culture="+culture+"&language="+fs_default_language+(params?"&"+params:"")
+			params: "seed="+seed+"&authtoken="+authtoken+"&language="+fs_default_language+(params?"&"+params:"")
 		});
 		startWaiting();
 	}
-	$(window).trigger("resize");
-	recentApplication(appid,url,params,path,newflag,openmethod,caption,treepath);
+	$(globalThis).trigger("resize");
+	recentApplication({appid,url,params,path,newflag,openmethod,caption,treepath});
 }
-function recentApplication(appid,url,params,path,newflag,openmethod,caption,treepath) {
+function recentApplication(options) {
+	let { appid, url, params, path, newflag, openmethod, treepath } = options;
 	let $rlist = $("#recentmenulist");
 	let $items = $rlist.find("li");
 	if($items.length>15) return;
@@ -140,7 +142,7 @@ function recentApplication(appid,url,params,path,newflag,openmethod,caption,tree
 				let $li = $("<li></li>");
 				let $alink = $("<a href='javascript:void(0)'></a>");
 				let description = row["description"];
-				$alink.addClass("dropdown-item").click(() => { open_page({appid,url,params,path,newflag,openmethod,proxyflag,caption: description,treepath}); }).html(description);
+				$alink.addClass("dropdown-item").click(() => { open_page({appid,url,params,path,newflag,openmethod,caption: description,treepath}); }).html(description);
 				$li.append($alink).attr("appid",appid).attr("url",url).appendTo($rlist);	
 				$("#recentcaret").show();
 			}
@@ -174,7 +176,7 @@ function show_subheader(itemname, nameprogram, treepath) {
 
     $("#subheader_link").html(subheraderlink);
     $("#subheader_wrapper").html('<span style="width: 100px;"><span class="btn btn-bold btn-sm btn-font-sm btn-label-brand">' + itemname + '</span></span>');
-    let x = window.matchMedia("(max-width: 1024px)");
+    let x = globalThis.matchMedia("(max-width: 1024px)");
     if (x.matches) {
         $(".kt-content").css("padding", "40px 0px 0px 0px");
         $("#kt_subheader").addClass("subheader-display");
@@ -190,12 +192,13 @@ function clearSubHeader() {
 	$("#subheader_wrapper").empty();
 }
 function getDefaultCulture() {
-	let record = undefined;
+	let record;
+	let default_language = getDefaultLanguage();
 	let langs = getStorage("tklanguage");
 	if(langs) {
-		record = langs.find(item => item.typeid == fs_default_language);
+		record = langs.find(item => item.typeid == default_language);
 	}
-	return record ? record.typestyle || fs_default_language : fs_default_language;
+	return record ? record.typestyle || default_language : default_language;
 }
 function fetchMoreInfo() {
 	fetchLanguages();

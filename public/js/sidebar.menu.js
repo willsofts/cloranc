@@ -43,7 +43,6 @@
 			$(function(){
 				$("#mainmenutrigger").on("click", function(e) {
 					let menubar = $("#sidebarmenu");
-					barclicked = false;
 					$(this).toggleClass("active-trigger");
 					if(menubar.is(":visible")) { 		
 						if(menubar.hasClass("fliph")) {

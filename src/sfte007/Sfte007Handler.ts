@@ -3,12 +3,8 @@ import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "
 import { HTTP } from "@willsofts/will-api";
 import { Utilities } from "@willsofts/will-util";
 import { MailLibrary, MailInfo } from "@willsofts/will-lib";
-import { TknOperateHandler } from '@willsofts/will-serv';
-import { OPERATE_HANDLERS } from "@willsofts/will-serv";
-import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
-import { KnUtility } from "@willsofts/will-core";
-import { KnNotifyConfig } from "@willsofts/will-core";
-import { VerifyError } from "@willsofts/will-core";
+import { TknOperateHandler, OPERATE_HANDLERS } from '@willsofts/will-serv';
+import { VerifyError, KnNotifyConfig, KnUtility, KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
 
 export interface KnUserTypeInfo {
     groupname: string;
@@ -72,59 +68,59 @@ export class Sfte007Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let eng = KnUtility.isEnglish(context);
-            let params = context.params;
-            let counting = KnOperation.COUNT==actions.subaction;
-            knsql.append(actions.selector);
-            if(!counting) {
-                knsql.append(",tuser.username,tuser.status,tuser.siteflag,tuser.branchflag,");
-                if(eng) {
-                    knsql.append("tcomp.nameen as sitedesc ");
-                } else {
-                    knsql.append("tcomp.nameth as sitedesc ");
-                }        
-            }
-            knsql.append(" from ");
-            knsql.append(model.name);
-            knsql.append(" join tuser on tuser.userid = tuserinfo.userid ");
-            if(params.username && params.username!="") {
-                knsql.append("and tuser.username LIKE ?username");
-                knsql.set("username","%"+params.username+"%");
-            }
-            if(!counting) {
-                knsql.append(" left join tcomp on tcomp.site = tuserinfo.site ");
-            }
-            let filter = " where ";
-            if(params.site && params.site!="") {
-                knsql.append(filter).append(model.name).append(".site = ?site");
-                knsql.set("site",params.site);
-                filter = " and ";
-            }
-            if(params.usertname && params.usertname!="") {
-                knsql.append(filter).append(model.name).append(".usertname LIKE ?usertname");
-                knsql.set("usertname","%"+params.usertname+"%");
-                filter = " and ";
-            }
-            if(params.usertsurname && params.usertsurname!="") {
-                knsql.append(filter).append(model.name).append(".usertsurname LIKE ?usertsurname");
-                knsql.set("usertsurname","%"+params.usertsurname+"%");
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let eng = KnUtility.isEnglish(context);
+        let conditions : string[] = [];
+        let params = context.params;
+        let counting = KnOperation.COUNT==actions.subaction;
+        knsql.append(actions.selector);
+        if(!counting) {
+            knsql.append(",tuser.username,tuser.status,tuser.siteflag,tuser.branchflag,");
+            if(eng) {
+                knsql.append("tcomp.nameen as sitedesc ");
+            } else {
+                knsql.append("tcomp.nameth as sitedesc ");
+            }        
+        }
+        knsql.append(" from ");
+        knsql.append(model.name);
+        knsql.append(" join tuser on tuser.userid = tuserinfo.userid ");
+        if(params.username && params.username!="") {
+            knsql.append("and tuser.username LIKE ?username ");
+            knsql.set("username","%"+params.username+"%");
+        }
+        if(!counting) {
+            knsql.append(" left join tcomp on tcomp.site = tuserinfo.site ");
+        }
+        if(params.site && params.site!="") {
+            conditions.push(model.name+".site = ?site");
+            knsql.set("site",params.site);
+        }
+        if(params.usertname && params.usertname!="") {
+            conditions.push(model.name+".usertname LIKE ?usertname");
+            knsql.set("usertname","%"+params.usertname+"%");
+        }
+        if(params.usertsurname && params.usertsurname!="") {
+            conditions.push(model.name+".usertsurname LIKE ?usertsurname");
+            knsql.set("usertsurname","%"+params.usertsurname+"%");
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -142,7 +138,7 @@ export class Sfte007Handler extends TknOperateHandler {
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -152,10 +148,66 @@ export class Sfte007Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
+    }
+
+    public async getUserBranches(context: KnContextInfo, db: KnDBConnector, site: string, userid: string) : Promise<string[]> {
+        let userbranches : string[] = [];
+        let knsql = new KnSQL();
+        knsql.append("select branch from tuserbranch ");
+        knsql.append("where site = ?site and userid = ?userid ");
+        knsql.set("site",site);
+        knsql.set("userid",userid);
+        let ars = await knsql.executeQuery(db,context);
+        if(ars.rows.length>0) {
+            for(let r of ars.rows) {
+                userbranches.push(r.branch);
+            }
+        }
+        return userbranches;
+    }
+
+    public async getuserRoles(context: KnContextInfo, db: KnDBConnector, userid: string) : Promise<string[]> {
+        let userroles : string[] = [];
+        let knsql = new KnSQL();
+        knsql.append("select roleid from tuserrole where userid = ?userid ");
+        knsql.set("userid",userid);
+        let ars = await knsql.executeQuery(db,context);
+        if(ars.rows.length>0) {
+            for(let r of ars.rows) {
+                userroles.push(r.roleid);
+            }
+        }
+        return userroles;
+    }
+
+    public async getUserGroups(context: KnContextInfo, db: KnDBConnector, userid: string) : Promise<string[]> {
+        let usergroups : string[] = [];
+        let knsql = new KnSQL();
+        knsql.append("select groupname from tusergrp where userid = ?userid ");
+        knsql.set("userid",userid);
+        let ars = await knsql.executeQuery(db,context);
+        if(ars.rows.length>0) {
+            for(let r of ars.rows) {
+                usergroups.push(r.groupname);
+            }
+        }
+        return usergroups;
+    }
+
+    public async getUserFactor(context: KnContextInfo, db: KnDBConnector, userid: string) : Promise<{factorid: string, factorflag: string} | undefined> {
+        let knsql = new KnSQL();
+        knsql.append("select factorid,factorflag from tuserfactor where userid = ?userid ");
+        knsql.set("userid",userid);
+        let ars = await knsql.executeQuery(db,context);
+        if(ars.rows.length>0) {
+            let r = ars.rows[0];
+            return { factorid : r.factorid, factorflag : r.factorflag };
+        }
+        return undefined;
     }
 
     protected async performRetrieving(context: KnContextInfo, model: KnModel, db: KnDBConnector): Promise<KnRecordSet> {
@@ -177,47 +229,13 @@ export class Sfte007Handler extends TknOperateHandler {
         let rs = await knsql.executeQuery(db,context);
         if(rs.rows.length>0) {
             let row = rs.rows[0];
-            let site = row.site;
-            row.userbranches = [];
-            knsql.clear();
-            knsql.append("select branch from tuserbranch ");
-            knsql.append("where site = ?site and userid = ?userid ");
-            knsql.set("site",site);
-            knsql.set("userid",context.params.userid);
-            let ars = await knsql.executeQuery(db,context);
-            if(ars.rows.length>0) {
-                for(let r of ars.rows) {
-                    row.userbranches.push(r.branch);
-                }
-            }
-            row.userroles = [];
-            knsql.clear();
-            knsql.append("select roleid from tuserrole where userid = ?userid ");
-            knsql.set("userid",context.params.userid);
-            ars = await knsql.executeQuery(db,context);
-            if(ars.rows.length>0) {
-                for(let r of ars.rows) {
-                    row.userroles.push(r.roleid);
-                }
-            }
-            row.usergroups = [];
-            knsql.clear();
-            knsql.append("select groupname from tusergrp where userid = ?userid ");
-            knsql.set("userid",context.params.userid);
-            ars = await knsql.executeQuery(db,context);
-            if(ars.rows.length>0) {
-                for(let r of ars.rows) {
-                    row.usergroups.push(r.groupname);
-                }
-            }
-            knsql.clear();
-            knsql.append("select factorid,factorflag from tuserfactor where userid = ?userid ");
-            knsql.set("userid",context.params.userid);
-            ars = await knsql.executeQuery(db,context);
-            if(ars.rows.length>0) {
-                let r = ars.rows[0];
-                row.factorid = r.factorid;
-                row.factorflag = r.factorflag;
+            row.userbranches = await this.getUserBranches(context,db,row.site,context.params.userid);
+            row.userroles = await this.getuserRoles(context,db,context.params.userid);
+            row.usergroups = await this.getUserGroups(context,db,context.params.userid);
+            let factor = await this.getUserFactor(context,db,context.params.userid);
+            if(factor) {
+                row.factorid = factor.factorid;
+                row.factorflag = factor.factorflag;
             }
         }
         return this.createRecordSet(rs);
@@ -241,7 +259,7 @@ export class Sfte007Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -252,30 +270,29 @@ export class Sfte007Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
     
 	protected async doSendMail(context: KnContextInfo, model: KnModel, info: MailInfo) : Promise<void> {
-		let db = this.getPrivateConnector(model);
+		let db = this.getPrivateConnector(model,context);
 		try {
 			await MailLibrary.sendMail(info, db);	
 		} catch(ex: any) {
 			this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
 		}
 	}
 
     /**
      * Override in order to update records
      */
-    protected override async doUpdating(context: any, model: KnModel): Promise<KnResultSet> {
-        let result = this.createRecordSet();
-		let db = this.getPrivateConnector(model);
+    protected override async doUpdating(context: KnContextInfo, model: KnModel): Promise<KnResultSet> {
+		let db = this.getPrivateConnector(model,context);
 		try {
             let eng = KnUtility.isEnglish(context);
             let site = context.params.site || this.userToken?.site;
@@ -286,7 +303,7 @@ export class Sfte007Handler extends TknOperateHandler {
             knsql.append("select username from tuser where userid = ?userid ");
             knsql.set("userid", context.params.userid);
             let rs = await knsql.executeQuery(db,context);
-            if(rs && rs.rows.length>0) {
+            if(rs?.rows.length > 0) {
                 info.fromusername = rs.rows[0].username;
                 info.updateflag = !Utilities.equalsIgnoreCase(info.fromusername, info.tousername);
             }
@@ -296,42 +313,45 @@ export class Sfte007Handler extends TknOperateHandler {
 				knsql.append("from tuserinfo where userid=?userid ");
                 knsql.set("userid", context.params.userid);
                 rs = await knsql.executeQuery(db,context);
-                if(rs && rs.rows.length>0) {
+                if(rs?.rows.length > 0) {
                     let row = rs.rows[0];
                     info.email = row.email;
-                    info.userename = (row.userename?row.userename:"")+" "+(row.useresurname?row.useresurname:"");
-                    info.usertname = (row.usertname?row.usertname:"")+" "+(row.usertsurname?row.usertsurname:"");
+                    info.userename = (row.userename ?? "")+" "+(row.useresurname ?? "");
+                    info.usertname = (row.usertname ?? "")+" "+(row.usertsurname ?? "");
                 }
             }
-            result = await this.updateUserTable(context, db, info, utmap, rolemap);
-            if(info.updateflag && (info.email && info.email.trim().length>0)) {
-                let msg = undefined;
-                let noti = new KnNotifyConfig();
-                let tmp = await noti.getConfigTemplate(db, "USER_INFO", "MAIL_CHANGE");
-                if(tmp) {
-                    msg = eng?tmp.contents:tmp.contexts;
-                }
-                if(!msg || msg.trim().length==0) {
-                    msg = "Dear, ${usertname}<br/><br/>";
-                    msg += "Your access user name was changed.<br/>";
-                    msg += "From : ${fromusername}<br/>";
-                    msg += "To : ${tousername}<br/>";
-                    msg += "You can try out with the new access into the system.<br/><br/>";
-                    msg += "Should you encounter any difficulties, please contact system administrator.<br/>"
-                    msg += "<br/>Regards,<br/>";
-                    msg += "Administrator<br/>";
-                }
-                msg = Utilities.translateVariables(msg, info);
-                this.mailing(context, {email: info.email, subject: tmp?tmp.subjecttitle:"Account Changed", message: msg});
-                //this.doSendMail(context, model, {email: info.email, subject: tmp?tmp.subjecttitle:"Account Changed", message: msg});
-            }
+            const result = await this.updateUserTable(context, db, info, utmap, rolemap);
+            await this.performMailing(context,db,info,eng);
+            return result;
 		} catch(ex: any) {
 			this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
 		}
-        return result;
+    }
+
+    public async performMailing(context: KnContextInfo, db: KnDBConnector, info : KnUserChangedInfo, eng: boolean) : Promise<void> {
+        if(info.updateflag && (info.email && info.email.trim().length>0)) {
+            let msg = undefined;
+            let noti = new KnNotifyConfig();
+            let tmp = await noti.getConfigTemplate(db, "USER_INFO", "MAIL_CHANGE");
+            if(tmp) {
+                msg = eng?tmp.contents:tmp.contexts;
+            }
+            if(!msg || msg.trim().length==0) {
+                msg = "Dear, ${usertname}<br/><br/>";
+                msg += "Your access user name was changed.<br/>";
+                msg += "From : ${fromusername}<br/>";
+                msg += "To : ${tousername}<br/>";
+                msg += "You can try out with the new access into the system.<br/><br/>";
+                msg += "Should you encounter any difficulties, please contact system administrator.<br/>"
+                msg += "<br/>Regards,<br/>";
+                msg += "Administrator<br/>";
+            }
+            msg = Utilities.translateVariables(msg, info);
+            this.mailing(context, {email: info.email, subject: tmp?tmp.subjecttitle:"Account Changed", message: msg});
+        }
     }
 
     public async updateUserTable(context: KnContextInfo, db: KnDBConnector, info: KnUserChangedInfo, utmap: Map<string,KnUserTypeInfo>, rolemap: Map<string,string>) : Promise<KnRecordSet> {  
@@ -391,16 +411,14 @@ export class Sfte007Handler extends TknOperateHandler {
             await db.commitWork(); 
             return result;                   
         } catch(ex: any) {
-            try { await db.rollbackWork(); } catch(er) { this.logger.error(er); }
+            try { await db.rollbackWork(); } catch(error) { this.logger.error(error); }
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(ex);
+            throw ex;
         }
     }
 
-    public async updateUserInfo(context: KnContextInfo, db: KnDBConnector, site: string, utmap: Map<string,KnUserTypeInfo>, rolemap: Map<string,string>) : Promise<KnUserTypeInfo> {  
-        let result : KnUserTypeInfo = { groupname: "", usertype: "", level: 0, approveflag: "" };            
+    public async insertUserCompany(context: KnContextInfo, db: KnDBConnector) : Promise<void> {
         let knsql = new KnSQL();
-        /*
         knsql.append("delete from tusercomp where userid = ?userid ");
         knsql.set("userid",context.params.userid);
         await knsql.executeUpdate(db);            
@@ -415,8 +433,10 @@ export class Sfte007Handler extends TknOperateHandler {
                 await knsql.executeUpdate(db);
             }
         }
-        */
-        knsql.clear();
+    }
+
+    public async insertUserBranch(context: KnContextInfo, db: KnDBConnector, site: string) : Promise<void> {
+        let knsql = new KnSQL();
         knsql.append("delete from tuserbranch where site = ?site and userid = ?userid ");
         knsql.set("site",site);
         knsql.set("userid",context.params.userid);
@@ -432,10 +452,12 @@ export class Sfte007Handler extends TknOperateHandler {
                 knsql.set("userid",context.params.userid);
                 await knsql.executeUpdate(db,context);
             }
-        }
+        }    
+    }
 
+    public async insertUserRole(context: KnContextInfo, db: KnDBConnector, rolemap: Map<string,string>) : Promise<string> {
         let approveflag = "0";
-        knsql.clear();
+        let knsql = new KnSQL();
         knsql.append("delete from tuserrole where userid = ?userid ");
         knsql.set("userid",context.params.userid);
         await knsql.executeUpdate(db,context);
@@ -454,8 +476,12 @@ export class Sfte007Handler extends TknOperateHandler {
                 await knsql.executeUpdate(db,context);
             }
         }
+        return approveflag;
+    }
 
-        knsql.clear();
+    public async insertUserGroup(context: KnContextInfo, db: KnDBConnector, utmap: Map<string,KnUserTypeInfo>) : Promise<KnUserTypeInfo> {
+        let result : KnUserTypeInfo = { groupname: "", usertype: "", level: 0, approveflag: "" };
+        let knsql = new KnSQL();
         knsql.append("delete from tusergrp where userid = ?userid ");
         knsql.set("userid",context.params.userid);
         await knsql.executeUpdate(db,context);
@@ -476,6 +502,13 @@ export class Sfte007Handler extends TknOperateHandler {
                 await knsql.executeUpdate(db,context);
             }
         }
+        return result;
+    }
+    
+    public async updateUserInfo(context: KnContextInfo, db: KnDBConnector, site: string, utmap: Map<string,KnUserTypeInfo>, rolemap: Map<string,string>) : Promise<KnUserTypeInfo> {  
+        await this.insertUserBranch(context,db,site);            
+        let approveflag = await this.insertUserRole(context,db,rolemap);
+        let result = await this.insertUserGroup(context,db,utmap);
         result.approveflag = approveflag;
         return result;                   
     }
@@ -533,19 +566,17 @@ export class Sfte007Handler extends TknOperateHandler {
     public async doResetFactoring(context: KnContextInfo, model: KnModel, action: string = KnOperation.REMOVE): Promise<KnResultSet> {
         let vi = this.validateParameters(context.params,"factorid");
         if(!vi.valid) {
-            return Promise.reject(new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061));
+            throw new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061);
         }
-        let result = this.createRecordSet();
-		let db = this.getPrivateConnector(model);
+		let db = this.getPrivateConnector(model,context);
 		try {
-            result = await this.deleteUserFactor(context, db);
+            return await this.deleteUserFactor(context, db);
 		} catch(ex: any) {
 			this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
 		}
-        return result;
     }
 
     public async deleteUserFactor(context: KnContextInfo, db: KnDBConnector) : Promise<KnRecordSet> {  
@@ -565,9 +596,9 @@ export class Sfte007Handler extends TknOperateHandler {
             await db.commitWork(); 
             return result;                   
         } catch(ex: any) {
-            try { await db.rollbackWork(); } catch(er) { this.logger.error(er); }
+            try { await db.rollbackWork(); } catch(error) { this.logger.error(error); }
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(ex);
+            throw ex;
         }
     }
 

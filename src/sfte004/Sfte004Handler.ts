@@ -2,9 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
-import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
-import { VerifyError } from '@willsofts/will-core';
-import { KnPageUtility } from '@willsofts/will-core';
+import { VerifyError, KnPageUtility, KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
 import { Utilities } from "@willsofts/will-util";
 import { TknOperateHandler } from '@willsofts/will-serv';
 
@@ -42,13 +40,10 @@ export class Sfte004Handler extends TknOperateHandler {
 
     /* try to validate fields for insert, update, delete, retrieve */
     protected override validateRequireFields(context: KnContextInfo, model: KnModel, action: string) : Promise<KnValidateInfo> {
-        let vi : KnValidateInfo = {valid: true};
         let page = new KnPageUtility(this.progid, context);
-        if(page.isInsertMode(action)) {
-            vi = this.validateParameters(context.params,"nameen","nameth");
-        } else {
-            vi = this.validateParameters(context.params,"roleid");
-        }
+        const vi = page.isInsertMode(action)
+            ? this.validateParameters(context.params,"nameen","nameth")
+            : this.validateParameters(context.params,"roleid");        
         if(!vi.valid) {
             return Promise.reject(new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061));
         }
@@ -56,45 +51,44 @@ export class Sfte004Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            knsql.append(actions.selector);
-            knsql.append(" from ");
-            knsql.append(model.name);
-            let filter = " where ";
-            let site = context.params.site || this.userToken?.site;
-            knsql.append(filter).append("site = ?site");
-            knsql.set("site",site);
-            filter = " and ";
-            if(params.nameen && params.nameen!="") {
-                knsql.append(filter).append("nameen LIKE ?nameen");
-                knsql.set("nameen","%"+params.nameen+"%");
-                filter = " and ";
-            }
-            if(params.nameth && params.nameth!="") {
-                knsql.append(filter).append("nameth LIKE ?nameth");
-                knsql.set("nameth","%"+params.nameth+"%");
-                filter = " and ";
-            }
-            if(params.inactive && params.inactive!="") {
-                knsql.append(filter).append("inactive = ?inactive");
-                knsql.set("inactive",params.inactive);
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        knsql.append(actions.selector);
+        knsql.append(" from ");
+        knsql.append(model.name);
+        let site = context.params.site || this.userToken?.site;
+        knsql.append(" where site = ?site ");
+        knsql.set("site",site);
+        if(params.nameen && params.nameen!="") {
+            conditions.push("nameen LIKE ?nameen");
+            knsql.set("nameen","%"+params.nameen+"%");
+        }
+        if(params.nameth && params.nameth!="") {
+            conditions.push("nameth LIKE ?nameth");
+            knsql.set("nameth","%"+params.nameth+"%");
+        }
+        if(params.inactive && params.inactive!="") {
+            conditions.push("inactive = ?inactive");
+            knsql.set("inactive",params.inactive);
+        }
+        if (conditions.length > 0) {
+            knsql.append(" and ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -104,7 +98,7 @@ export class Sfte004Handler extends TknOperateHandler {
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -114,9 +108,9 @@ export class Sfte004Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -147,7 +141,7 @@ export class Sfte004Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -158,9 +152,9 @@ export class Sfte004Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 

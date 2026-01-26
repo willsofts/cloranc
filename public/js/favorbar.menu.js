@@ -1,5 +1,5 @@
-			var fs_current_favor_item;
-			var fs_favor_prog_ary;
+			let fs_current_favor_item;
+			let fs_favor_prog_ary;
 			function showNewFavorItem() {
 				$("#favorcoverbarmenu").show();
 				$("#favornewitemlayer").addClass("show");
@@ -10,7 +10,7 @@
 			}
 			function addBlankMenuItem(alink) {
 				let seqno = alink.attr("seqno");
-				$blank = $("<a href=\"javascript:void(0);\" class=\"kt-grid-nav__item tile fa-box-title fav-blank\" title=\"New Favorite\" seqno=\""+seqno+"\"><span class=\"kt-grid-nav__icon\"><img class=\"fa fa-app-image\" src=\""+IMG_URL+"/img/apps/fs_icon.png\" /></span><span class=\"kt-grid-nav__title font-size-custom-h-14\">New Favorite</span></a>");
+				let $blank = $("<a href=\"javascript:void(0);\" class=\"kt-grid-nav__item tile fa-box-title fav-blank\" title=\"New Favorite\" seqno=\""+seqno+"\"><span class=\"kt-grid-nav__icon\"><img class=\"fa fa-app-image\" src=\""+IMG_URL+"/img/apps/fs_icon.png\" /></span><span class=\"kt-grid-nav__title font-size-custom-h-14\">New Favorite</span></a>");
 				$blank.click(function(evt) { 
 					evt.stopPropagation();
 					fs_current_favor_item = $(this);
@@ -28,8 +28,8 @@
 				}
 			}
 			function setupTodo(alink) {
-				if(!IMG_URL) IMG_URL = "";
-				let $del = $("<li><img src=\""+IMG_URL+"/img/delete_icon.png\" title=\"Delete\" width=\"25px\" height=\"25px\"/></li>");
+				let imgurl = IMG_URL || "";
+				let $del = $("<li><img src=\""+imgurl+"/img/delete_icon.png\" title=\"Delete\" width=\"25px\" height=\"25px\"/></li>");
 				$del.click(function(evt) { 
 					evt.stopPropagation();
 					let fs_user = $("#main_user").val();
@@ -112,15 +112,15 @@
 			function bindingOnFavorMenu() {
 				$("a",$("#favorbarmenu")).each(function(index,element) { 
 					let alink = $(element);
-					if(!alink.is(".fav-app")) {
+					if(alink.is(".fav-app")) {
+						setupOpenLink(alink);
+						setupTodo(alink);
+					} else {
 						alink.click(function(evt) { 
 							evt.stopPropagation();
 							fs_current_favor_item = alink;
 							showNewFavorItem();
 						});						
-					} else {
-						setupOpenLink(alink);
-						setupTodo(alink);
 					}
 				});
 				setupContextMenu("favorbarmenu","favorcontextmenu");
@@ -135,7 +135,7 @@
 				if(!$("#favormenuitem").is(".open")) $("#favormenuitemlink").trigger("click");
 			}
 			function inputNewFavorMenuItem(evt) {
-				if(evt) evt.stopPropagation();
+				if(evt) { evt.stopPropagation(); }
     			bootbox.prompt({
 					title: "Favorite Menu", 
 					value: "Institute", 
@@ -147,6 +147,7 @@
     			}); 
 			}			
 			function setupContextMenu(containerID,menuID,element) {
+				//do nothing
 			}
 			function load_prog_item() {
 				let authtoken = getAccessorToken();

@@ -15,8 +15,8 @@ export class Sfte001Handler extends TknOperateHandler {
         fields: {
             programid: { type: "STRING", key: true },
             product: { type: "STRING" },
-            progname: { type: "STRING", updated: true, defaultValue: null },
-            prognameth: { type: "STRING", updated: true, defaultValue: null },
+            progname: { type: "STRING" },
+            prognameth: { type: "STRING" },
             progtype: { type: "STRING" },
             appstype: { type: "STRING" },
             description: { type: "STRING", updated: true, defaultValue: null },
@@ -24,8 +24,8 @@ export class Sfte001Handler extends TknOperateHandler {
             progsystem: { type: "STRING" },
             iconfile: { type: "STRING" },
             iconstyle: { type: "STRING" },
-            shortname: { type: "STRING", updated: true, defaultValue: null },
-            shortnameth: { type: "STRING", updated: true, defaultValue: null },
+            shortname: { type: "STRING" },
+            shortnameth: { type: "STRING" },
             progpath: { type: "STRING", updated: true, defaultValue: null },
             newflag: { type: "STRING", updated: true, defaultValue: "0" },
             openmethod: { type: "STRING", updated: true, defaultValue: null },
@@ -54,53 +54,52 @@ export class Sfte001Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            let counting = KnOperation.COUNT==actions.subaction;
-            knsql.append(actions.selector);
-            if(!counting) {
-                knsql.append(", tconstant.nameen as progtypedesc ");
-            }
-            knsql.append(" from ");
-            knsql.append(model.name);
-            if(!counting) {
-                knsql.append(" left join tconstant on tconstant.typename = 'tprogtype' and tconstant.typeid = tprog.progtype ");    
-            }
-            let filter = " where ";
-            if(params.product && params.product!="") {
-                knsql.append(filter).append(model.name).append(".product = ?product");
-                knsql.set("product",params.product);
-                filter = " and ";
-            }
-            if(params.programid && params.programid!="") {
-                knsql.append(filter).append(model.name).append(".programid LIKE ?programid");
-                knsql.set("programid","%"+params.programid+"%");
-                filter = " and ";
-            }
-            if(params.progname && params.progname!="") {
-                knsql.append(filter).append(model.name).append(".progname LIKE ?progname");
-                knsql.set("progname","%"+params.progname+"%");
-                filter = " and ";
-            }
-            if(params.progtype && params.progtype!="") {
-                knsql.append(filter).append(model.name).append(".progtype = ?progtype");
-                knsql.set("progtype",params.progtype);
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        let counting = KnOperation.COUNT==actions.subaction;
+        knsql.append(actions.selector);
+        if(!counting) {
+            knsql.append(", tconstant.nameen as progtypedesc ");
+        }
+        knsql.append(" from ");
+        knsql.append(model.name);
+        if(!counting) {
+            knsql.append(" left join tconstant on tconstant.typename = 'tprogtype' and tconstant.typeid = tprog.progtype ");    
+        }
+        if(params.product && params.product!="") {
+            conditions.push(model.name+".product = ?product");
+            knsql.set("product",params.product);
+        }
+        if(params.programid && params.programid!="") {
+            conditions.push(model.name+".programid LIKE ?programid");
+            knsql.set("programid","%"+params.programid+"%");
+        }
+        if(params.progname && params.progname!="") {
+            conditions.push(model.name+".progname LIKE ?progname");
+            knsql.set("progname","%"+params.progname+"%");
+        }
+        if(params.progtype && params.progtype!="") {
+            conditions.push(model.name+".progtype = ?progtype");
+            knsql.set("progtype",params.progtype);
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -111,7 +110,7 @@ export class Sfte001Handler extends TknOperateHandler {
 
     /* override to handle launch router when invoked from menu */
     protected override async doExecute(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let settings = this.getCategorySetting(context, "tkprogtype");
             let handler = new TknDataTableHandler();
@@ -120,9 +119,9 @@ export class Sfte001Handler extends TknOperateHandler {
             return this.createDataTable(KnOperation.EXECUTE, ds, dt);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -135,7 +134,7 @@ export class Sfte001Handler extends TknOperateHandler {
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -146,9 +145,9 @@ export class Sfte001Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -178,7 +177,7 @@ export class Sfte001Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -190,9 +189,9 @@ export class Sfte001Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 

@@ -1,8 +1,6 @@
-var mouseX = 0;
-var mouseY = 0;
 $(function(){
-	$(this).mousedown(function(e) { mouseX = e.pageX; mouseY = e.pageY; });
-	try { startApplication("sftq001"); }catch(ex) { }
+	$(this).mousedown(function(e) { setMouseCoordinate(e); });
+	try { startApplication("sftq001"); }catch(ex) { console.warn("error",ex); }
 	initialApplication();
 });
 function initialApplication() {
@@ -24,7 +22,7 @@ function resetFilters() {
 		fssearchform.page.value = "1";
 		fssearchform.orderBy.value = "";
 		fssearchform.orderDir.value = "";
-	} catch(ex) { }
+	} catch(ex) { console.warn("error",ex); }
 }
 function clearingFields() {
 	fssearchform.reset();
@@ -36,8 +34,7 @@ function search(aform) {
 	let formdata = serializeDataForm(aform);
 	startWaiting();
 	jQuery.ajax({
-		//url: BASE_URL+"/gui/sftq001/sftq001_search",
-		url: API_URL+"/api/sftq001/search",
+		url: getApiUrl()+"/api/sftq001/search",
 		data: formdata.jsondata,
 		headers : formdata.headers,
 		type: "POST",
@@ -61,8 +58,7 @@ function submitChapter(aform,index) {
 	let formdata = serializeDataForm(aform, $("#listpanel").data("searchfilters"));
 	startWaiting();
 	jQuery.ajax({
-		//url: BASE_URL+"/gui/sftq001/sftq001_search",
-		url: API_URL+"/api/sftq001/search",
+		url: getApiUrl()+"/api/sftq001/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",
@@ -81,12 +77,10 @@ function submitChapter(aform,index) {
 function submitOrder(src,sorter) {
 	let aform = fssortform;
 	aform.orderBy.value = sorter;
-	let fs_params = fetchParameters($("#listpanel").data("searchfilters"));
 	let formdata = serializeDataForm(aform, $("#listpanel").data("searchfilters"));
 	startWaiting();
 	jQuery.ajax({
-		//url: BASE_URL+"/gui/sftq001/sftq001_search",
-		url: API_URL+"/api/sftq001/search",
+		url: getApiUrl()+"/api/sftq001/search",
 		data: formdata.jsondata,
 		headers: formdata.headers,
 		type: "POST",

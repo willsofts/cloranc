@@ -1,10 +1,7 @@
 import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
-import { KnValidateInfo, KnContextInfo, KnDataTable } from '@willsofts/will-core';
-import { VerifyError } from '@willsofts/will-core';
-import { KnPageUtility } from '@willsofts/will-core';
-import { KnUtility } from '@willsofts/will-core';
+import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable, KnPageUtility, KnUtility } from '@willsofts/will-core';
 import { TknOperateHandler } from '@willsofts/will-serv';
 
 export class Sfte015Handler extends TknOperateHandler {
@@ -25,13 +22,10 @@ export class Sfte015Handler extends TknOperateHandler {
 
     /* try to validate fields for insert, update, delete, retrieve */
     protected override validateRequireFields(context: KnContextInfo, model: KnModel, action: string) : Promise<KnValidateInfo> {
-        let vi : KnValidateInfo = {valid: true};
         let page = new KnPageUtility(this.progid, context);
-        if(page.isInsertMode(action)) {
-            vi = this.validateParameters(context.params,"msgcode","langcode","msgtext");
-        } else {
-            vi = this.validateParameters(context.params,"msgcode","langcode");
-        }
+        const vi = page.isInsertMode(action)
+            ? this.validateParameters(context.params,"msgcode","langcode","msgtext")
+            : this.validateParameters(context.params,"msgcode","langcode");        
         if(!vi.valid) {
             return Promise.reject(new VerifyError("Parameter not found ("+vi.info+")",HTTP.NOT_ACCEPTABLE,-16061));
         }
@@ -39,53 +33,53 @@ export class Sfte015Handler extends TknOperateHandler {
     }
 
     protected override buildFiltersQuery(context: any, model: KnModel, knsql: KnSQLInterface, actions: KnActionQuery, pageSetting?: KnPageSetting) : KnSQLInterface {
-        if(this.isCollectMode(actions.action)) {
-            let params = context.params;
-            let counting = KnOperation.COUNT==actions.subaction;
-            let eng = KnUtility.isEnglish(context);
-            knsql.append(actions.selector);
-            if(!counting) {
-                if(eng) {
-                    knsql.append(", tconstant.nameen as langtext ");
-                } else {
-                    knsql.append(", tconstant.nameth as langtext ");
-                }
-            }
-            knsql.append(" from ");
-            knsql.append(model.name);
-            if(!counting) {
-                knsql.append(" left join tconstant on tconstant.typename = 'tlanguage' and tconstant.typeid = tmessage.langcode ");
-            }
-            let filter = " where ";
-            if(params.msgcode && params.msgcode!="") {
-                knsql.append(filter).append(model.name).append(".msgcode = ?msgcode");
-                knsql.set("msgcode",params.msgcode);
-                filter = " and ";
-            }
-            if(params.langcode && params.langcode!="") {
-                knsql.append(filter).append(model.name).append(".langcode = ?langcode");
-                knsql.set("langcode",params.langcode);
-                filter = " and ";
-            }
-            if(params.msgtext && params.msgtext!="") {
-                knsql.append(filter).append(model.name).append(".msgtext LIKE ?msgtext");
-                knsql.set("msgtext","%"+params.msgtext+"%");
-                filter = " and ";
-            }
-            return knsql;    
+        if(!this.isCollectMode(actions.action)) {
+            return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
         }
-        return super.buildFiltersQuery(context, model, knsql, actions, pageSetting);
+        let conditions : string[] = [];
+        let params = context.params;
+        let counting = KnOperation.COUNT==actions.subaction;
+        let eng = KnUtility.isEnglish(context);
+        knsql.append(actions.selector);
+        if(!counting) {
+            if(eng) {
+                knsql.append(", tconstant.nameen as langtext ");
+            } else {
+                knsql.append(", tconstant.nameth as langtext ");
+            }
+        }
+        knsql.append(" from ");
+        knsql.append(model.name);
+        if(!counting) {
+            knsql.append(" left join tconstant on tconstant.typename = 'tlanguage' and tconstant.typeid = tmessage.langcode ");
+        }
+        if(params.msgcode && params.msgcode!="") {
+            conditions.push(model.name+".msgcode = ?msgcode");
+            knsql.set("msgcode",params.msgcode);
+        }
+        if(params.langcode && params.langcode!="") {
+            conditions.push(model.name+".langcode = ?langcode");
+            knsql.set("langcode",params.langcode);
+        }
+        if(params.msgtext && params.msgtext!="") {
+            conditions.push(model.name+".msgtext LIKE ?msgtext");
+            knsql.set("msgtext","%"+params.msgtext+"%");
+        }
+        if (conditions.length > 0) {
+            knsql.append(" where ").append(conditions.join(" and "));
+        }
+        return knsql;    
     }
 
     protected override async doCategories(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             return await this.performCategories(context, model, db);
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -95,7 +89,7 @@ export class Sfte015Handler extends TknOperateHandler {
     }
 
     protected override async doRetrieving(context: KnContextInfo, model: KnModel, action: string = KnOperation.RETRIEVE): Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs = await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -105,9 +99,9 @@ export class Sfte015Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
@@ -149,7 +143,7 @@ export class Sfte015Handler extends TknOperateHandler {
      * @returns KnDataTable
      */
     public override async getDataRetrieval(context: KnContextInfo, model: KnModel) : Promise<KnDataTable> {
-        let db = this.getPrivateConnector(model);
+        let db = this.getPrivateConnector(model,context);
         try {
             let rs =  await this.performRetrieving(context, model, db);
             if(rs.rows.length>0) {
@@ -160,9 +154,9 @@ export class Sfte015Handler extends TknOperateHandler {
             return this.recordNotFound();
         } catch(ex: any) {
             this.logger.error(this.constructor.name,ex);
-            return Promise.reject(this.getDBError(ex));
+            throw this.getDBError(ex);
 		} finally {
-			if(db) db.close();
+			this.closeConnector(db,context);
         }
     }
 
