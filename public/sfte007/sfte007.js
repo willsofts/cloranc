@@ -341,17 +341,11 @@ function setupEntryComponents() {
 	});
 	$("#branchflag").click(function() { 
 		if($("#branchflag").is(":checked")) {
-			$("#accessbranchesfieldset").attr("disabled",false);
-			$("input.branch-class",$("#accessbranchesfieldset")).attr("checked",true);
+			$("input.branch-class",$("#accessbranchesfieldset")).prop("checked",true);
 		} else {
-			$("#accessbranchesfieldset").attr("disabled",true);	
-			$("input.branch-class",$("#accessbranchesfieldset")).attr("checked",false);
+			$("input.branch-class",$("#accessbranchesfieldset")).prop("checked",false);
 		}
 	});
-	if(!$("#branchflag").is(":checked")) {
-		$("#accessbranchesfieldset").attr("disabled",true);	
-		$("input.branch-class",$("#accessbranchesfieldset")).attr("checked",false);		
-	}
 }
 function validateOptions() {	
 	return true;
