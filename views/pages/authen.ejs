@@ -6,10 +6,25 @@
 		<% if(auth?.isAuthenticated && data.body?.authtoken) {%>
 		<script type="text/javascript" src="<%=meta.cdn_url%>/cryptojs/secure-ls.min.js"></script>
 		<script type="text/javascript" src="<%=meta.cdn_url%>/js/fslib.js"></script>
+		<script type="text/javascript" src="<%=meta.cdn_url%>/js/fsinfo.js"></script>
 		<script type="text/javascript" nonce="YXNzdXJl" >
 			var $ACCESS_TOKEN = {authtoken: '<%=data.body.authtoken%>'};
 			saveAccessorInfo($ACCESS_TOKEN);
 			setStorage("access_token",$ACCESS_TOKEN.authtoken)
+			assignAppConfig({
+				DEFAULT_RAW_PARAMETERS : <%=meta.raw_parameters%>,
+				DEFAULT_LANGUAGE : "<%=meta.language%>",
+				API_URL : "<%=meta.api_url%>",
+				BASE_URL : "<%=meta.base_url%>",
+				CDN_URL : "<%=meta.cdn_url%>",
+				CHAT_URL : "<%=meta.chat_url%>",
+				BASE_CSS : "<%=meta.base_css%>",
+				IMG_URL : "<%=meta.img_url%>",
+				BASE_STORAGE : "<%=meta.storage%>",
+				SECURE_STORAGE : <%=meta.secure_storage%>,
+				MULTI_LANGUAGES : <%-JSON.stringify(meta.multi_languages)%>,
+				META_INFO : <%-JSON.stringify(meta.info) %>
+			});
 		</script>
 		<% } %>
 		<script type="text/javascript" nonce="YXNzdXJl">
