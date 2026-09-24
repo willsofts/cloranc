@@ -23,11 +23,6 @@ const ExpressService : ServiceSchema = {
                 },
                 authorization: true,
                 aliases: {
-                    "GET health": "health.check",
-                    "GET fetch/hi/:name": "fetch.hi",
-                    "GET fetch/time/:name": "fetch.time",
-                    "GET fetch/config/:name": "fetch.config",
-
                     "POST sign/fetchtoken/:useruuid": "sign.fetchtoken",
                     "GET sign/fetchtoken/:useruuid": "sign.fetchtoken",
 
@@ -37,7 +32,29 @@ const ExpressService : ServiceSchema = {
                     "POST upload/file": { type: "multipart", action: "upload.file" },
                     "POST upload/files": { type: "multipart", action: "upload.file" },
                 }
-            }
+            },
+            {
+                path: "/fetch",
+                aliases: {
+                    "GET /info": "fetch.info",
+                    "GET /time/:name?": "fetch.time",
+                    "GET /config/:name": "fetch.config",
+                },
+            },
+            {
+                path: "/health",
+                aliases: {
+                    "GET /": "$node.health",
+                    "GET /ready": "$node.health",
+                    "GET /live": "$node.health",
+                },
+            },
+            {
+                path: "/metrics",
+                aliases: {
+                    "GET /": "$node.metrics",
+                },
+            },
         ]
     },
     methods: {
