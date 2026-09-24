@@ -1,3 +1,3 @@
-import { TknPasswordPolicyHandler } from "@willsofts/will-core";
+import { TknPasswordPolicyHandler } from "@willsofts/will-serv";
 
 export = new TknPasswordPolicyHandler();

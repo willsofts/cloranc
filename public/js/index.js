@@ -45,7 +45,7 @@
 		}
 		function loginSuccess(data) {
 			console.log("loginSuccess: data",data);
-			let json = $.parseJSON(data);
+			let json = JSON.parse(data);
 			if(json.head.errorflag=="Y") {
 				alertbox(json.head.errordesc);
 			} else {
@@ -115,7 +115,7 @@
 			startReceiveBroadcast();
 		}
 		function defaultUserLanguage(body) {
-			if(body && body.langcode && body.langcode.trim().length>0) {
+			if(body?.langcode && body.langcode.trim().length>0) {
 				$("a.lang-linker").each(function(index,element) {
 					let $e = $(element);
 					let lang = $e.attr("data-lang");
@@ -476,7 +476,7 @@
 		}
 		function validAccessToken(callback) {
 			let json = getAccessorInfo();
-			if(json && json.authtoken) {
+			if(json?.authtoken) {
 				doAccessToken(json.authtoken,callback,json.info);
 				return;
 			}
@@ -505,8 +505,8 @@
 		function accessSuccess(data,callback,info) {
 			console.log("accessSuccess: data",data);
 			try {
-				let json = $.parseJSON(data);
-				if(json && json.head.errorflag=="N") {
+				let json = JSON.parse(data);
+				if(json?.head.errorflag == "N") {
 					showUserDetail(json);
 					if(info) json.body.info = info;
 					console.log("accessSuccess: body",json.body);
@@ -702,4 +702,7 @@
 				$("#kt_alert_container").empty();
 				window.open(BASE_URL+"/blank.html","notifyframe");			
 			}
+		}
+		function hangOut() {
+			console.log("hang out");
 		}

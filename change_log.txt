@@ -1,3 +1,24 @@
+2026-09-24
+version: 1.0.12
++ refactor packages especially will-core & will-serv
++ fix scan libraries
+    "@willsofts/will-api": "^1.0.24",
+    "@willsofts/will-core": "^1.1.87",
+    "@willsofts/will-db": "^1.0.82",
+    "@willsofts/will-dh": "^1.0.5",
+    "@willsofts/will-lib": "^1.0.44",
+    "@willsofts/will-run": "^1.0.19",
+    "@willsofts/will-saml": "^1.0.7",
+    "@willsofts/will-serv": "^1.0.77",
+    "@willsofts/will-sql": "^1.0.67",
+    "@willsofts/will-util": "^1.0.41",
+    "axios": "^1.20.0",
+    "body-parser": "^1.20.8",
+    "express": "^4.22.3",
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^9.0.3",
+    "uuid": "^14.0.0"
+
 2025-01-26
 version: 1.0.11
 + fix scan libraries

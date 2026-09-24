@@ -239,10 +239,12 @@ export class Sfte018Handler extends TknOperateHandler {
         knsql.set("createdate",now,"DATE");
         knsql.set("createtime",now,"TIME");
         knsql.set("createuser",this.userToken?.userid);
-        let rs = await knsql.executeUpdate(db,context);
-        let rcs = this.createRecordSet(rs);
-        if(rcs.records>0) {
+        const rs = await knsql.executeUpdate(db,context);
+        const rss = this.createRecordSet(rs);
+        const rcs = this.createRecordSet();
+        if(rss.records > 0) {
             rcs.rows = [record];
+            rcs.records = rcs.rows.length;
         }
         return rcs;
     }

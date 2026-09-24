@@ -1,6 +1,6 @@
 import KnService from "@willsofts/will-db";
 import { ServiceSchema } from "moleculer";
-import { TknForgotPasswordHandler } from "@willsofts/will-core";
+import { TknForgotPasswordHandler } from "@willsofts/will-serv";
 
 const ForgotPasswordService : ServiceSchema = {
     name: "forgot",

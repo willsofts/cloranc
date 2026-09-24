@@ -473,18 +473,17 @@ export class Sfte016Handler extends TknOperateHandler {
             let privileges = DEFAULT_PRIVILEGES.split(",");
             for(let groupname of privileges) {
                 if(Utilities.hasValue(groupname)) {
-                    let found = false;
                     knsql.clearParameter();
                     knsql.set("userid",context.params.userid);
                     knsql.set("groupname",groupname);
-                    let rs = await knsql.executeQuery(db,context);
-                    found = rs.rows.length>0;
+                    const rs = await knsql.executeQuery(db,context);
+                    const found = rs.rows.length > 0;
                     if(!found) {
                         inssql.clearParameter();
                         inssql.set("userid",context.params.userid);
                         inssql.set("groupname",groupname);
-                        rs = await inssql.executeUpdate(db,context);
-                        result.records += rs.rows?.affectedRows || 0;
+                        const rss = await inssql.executeUpdate(db,context);
+                        result.records += rss.rows?.affectedRows || 0;
                     }
                 }
             }

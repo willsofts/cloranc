@@ -90,7 +90,7 @@ function ssoSelectAccount () {
         if(!username || username=="") {
             username = response.account.idTokenClaims.given_name;
         }
-        tryLogIn(username,acct.tenantId);
+        tryLogIn(username,acct.tenantId,acct.accessToken,acct.idToken);
     }
 }
 function ssoHandleResponse(response) {
@@ -101,7 +101,7 @@ function ssoHandleResponse(response) {
         if(!username || username=="") {
             username = response.account.idTokenClaims?.given_name;
         }
-        tryLogIn(username,response.tenantId,response.accessToken);
+        tryLogIn(username,response.tenantId,response.accessToken,response.idToken);
     } else {
         ssoSelectAccount();
     }
@@ -149,14 +149,14 @@ function getTokenPopup(request) {
             }
     });
 }
-function tryLogIn(username,tenant,token) {
-    console.log("tryLogin: username="+username+", domainid="+fs_current_domainid+", tenant="+tenant+", token="+token);
+function tryLogIn(username,tenant,token,id) {
+    console.log("tryLogin: username="+username+", domainid="+fs_current_domainid+", tenant="+tenant+", token="+token,", id="+id);
     startWaiting();
     jQuery.ajax({
         url: API_URL+"/api/sign/access",
         type: "POST",
         contentType: defaultContentType,
-        data: {username: username, domainid: fs_current_domainid, accesstoken: token}, 
+        data: {username: username, domainid: fs_current_domainid, accesstoken: token, idtoken: id}, 
         dataType: "html",
         error : function(transport,status,errorThrown) { 
             stopWaiting();

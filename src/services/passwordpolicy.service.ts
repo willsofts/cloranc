@@ -1,6 +1,6 @@
 import KnService from "@willsofts/will-db";
 import { ServiceSchema } from "moleculer";
-import { TknPasswordPolicyHandler } from "@willsofts/will-core";
+import { TknPasswordPolicyHandler } from "@willsofts/will-serv";
 
 const PasswordPolicyService : ServiceSchema = {
     name: "passwordpolicy",

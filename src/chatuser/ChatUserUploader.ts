@@ -2,7 +2,8 @@ import os from "node:os";
 import path from 'node:path';
 import { Request, Response } from 'express';
 import { JSONReply } from "@willsofts/will-api";
-import { KnResponser, KnValidateInfo, TknUploadRouter } from "@willsofts/will-core";
+import { KnResponser, KnValidateInfo } from "@willsofts/will-core";
+import { TknUploadRouter } from "@willsofts/will-serv";
 import { ChatUserHandler } from "./ChatUserHandler";
 
 export class ChatUserUploader extends TknUploadRouter {

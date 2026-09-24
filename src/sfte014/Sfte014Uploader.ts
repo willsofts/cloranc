@@ -2,7 +2,8 @@ import os from "node:os";
 import path from 'node:path';
 import { Request, Response } from 'express';
 import { JSONReply } from "@willsofts/will-api";
-import { TknUploadRouter, KnValidateInfo, KnResponser } from "@willsofts/will-core";
+import { KnValidateInfo, KnResponser } from "@willsofts/will-core";
+import { TknUploadRouter } from "@willsofts/will-serv";
 import { Sfte014Handler } from "./Sfte014Handler";
 
 export class Sfte014Uploader extends TknUploadRouter {

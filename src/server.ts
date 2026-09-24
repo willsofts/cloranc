@@ -23,6 +23,7 @@ const ExpressService : ServiceSchema = {
                 },
                 authorization: true,
                 aliases: {
+                    "GET health": "health.check",
                     "GET fetch/hi/:name": "fetch.hi",
                     "GET fetch/time/:name": "fetch.time",
                     "GET fetch/config/:name": "fetch.config",

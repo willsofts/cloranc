@@ -2,9 +2,9 @@ import { v4 as uuid } from 'uuid';
 import { KnModel, KnOperation, KnActionQuery, KnPageSetting } from "@willsofts/will-db";
 import { KnDBConnector, KnSQLInterface, KnRecordSet, KnSQL, KnResultSet } from "@willsofts/will-sql";
 import { HTTP } from "@willsofts/will-api";
-import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable, KnPageUtility, KnUserAccessInfo, KnUserToken, TknSigninTokenHandler } from '@willsofts/will-core';
+import { VerifyError, KnValidateInfo, KnContextInfo, KnDataTable, KnPageUtility, KnUserAccessInfo, KnUserToken } from '@willsofts/will-core';
+import { TknOperateHandler, TknSigninTokenHandler } from "@willsofts/will-serv";
 import { Utilities } from "@willsofts/will-util";
-import { TknOperateHandler } from '@willsofts/will-serv';
 import { AuthenToken } from '@willsofts/will-lib';
 import { MAX_EXPIRE_DATE } from "../utils/EnvironmentVariable";
 
@@ -229,7 +229,7 @@ export class Sftu004Handler extends TknOperateHandler {
             expireins = expireday*msperday;
         } else {            
             let maxdate = Utilities.parseDate(MAX_EXPIRE_DATE);
-            if(!maxdate) maxdate = Utilities.parseDate("31/12/9000");            
+            maxdate ??= Utilities.parseDate("31/12/9000");            
             expireins = (maxdate as Date).getTime() - now.getTime();
             expireday = Math.round(expireins / msperday);
             expiredays = expireday+"d";
@@ -274,10 +274,12 @@ export class Sftu004Handler extends TknOperateHandler {
         knsql.set("expiredate",expiredate,"DATE");
         knsql.set("expiretime",expiredate,"TIME");
         knsql.set("expiretimes",record.expiretimes);
-        let rs = await knsql.executeUpdate(db,context);
-        let rcs = this.createRecordSet(rs);
-        if(rcs.records>0) {
+        const rs = await knsql.executeUpdate(db,context);
+        const rss = this.createRecordSet(rs);
+        const rcs = this.createRecordSet();
+        if(rss.records > 0) {
             rcs.rows = [record];
+            rcs.records = rcs.rows.length;
         }
         return rcs;
     }

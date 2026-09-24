@@ -1,6 +1,6 @@
 import KnService from "@willsofts/will-db";
 import { ServiceSchema } from "moleculer";
-import { TknDirectoryHandler } from "@willsofts/will-core";
+import { TknDirectoryHandler } from "@willsofts/will-serv";
 
 const DirectoryService : ServiceSchema = {
     name: "directory",
