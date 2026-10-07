@@ -1,0 +1,32 @@
+<div class="row row-height filter-layer">
+	<div class="col-md-12 col-height">
+		<div class="table-layer-class">
+			<div class="row row-height align-items-end">
+				<div class="col-height col-md-4 search-group">
+					<label for="servicename" id="servicename_label" class="control-label"><%=label.get('servicename_label','Service Name')%></label>
+					<input type="text" id="servicename" name="servicename" class="form-control input-md" placeholder="Filter by service name..." autocomplete="off"/>
+				</div>
+				<div class="col-height col-md-3 search-group">
+					<label for="status_filter" id="status_label" class="control-label"><%=label.get('status_label','Status')%></label>
+					<select id="status_filter" name="status" class="form-control input-md">
+						<option value="">-- All Status --</option>
+						<option value="UP">UP</option>
+						<option value="DOWN">DOWN</option>
+					</select>
+				</div>
+				<div class="col-height col-md-5 search-group">
+					<button type="button" id="searchbutton" class="btn btn-dark btn-sm">
+						<i class="fa fa-refresh fa-btn-icon" aria-hidden="true"></i><%=label.get('searchbutton','Search/Refresh')%>
+					</button>
+					<button type="button" id="resetbutton" class="btn btn-secondary btn-sm">
+						<i class="fa fa-eraser fa-btn-icon" aria-hidden="true"></i><%=label.get('resetbutton','Clear')%>
+					</button>
+					<div class="custom-control custom-switch d-inline-block ml-3 align-middle">
+						<input type="checkbox" class="custom-control-input" id="autorefresh">
+						<label class="custom-control-label small" for="autorefresh">Auto Refresh (5s)</label>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

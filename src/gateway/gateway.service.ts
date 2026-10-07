@@ -52,6 +52,14 @@ const GatewayService : ServiceSchema = {
                     "GET /": "$node.metrics",
                 },
             },
+            {
+                path: "/monitor",
+                aliases: {
+                    "GET /list": "monitor.list",
+                    "GET /get": "monitor.get",
+                    "GET /services": "monitor.services",
+                },
+            },
         ],
 		assets: {
 			folder: "public",

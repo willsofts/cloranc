@@ -22,6 +22,7 @@ COPY public/ ./public/
 COPY src/ ./src/
 COPY views/ ./views/
 COPY middleware.tracing.js ./
+COPY middleware.tracker.js ./
 COPY moleculer.config.js ./
 COPY moleculer.formatter.js ./
 COPY swagger.json ./

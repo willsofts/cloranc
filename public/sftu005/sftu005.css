@@ -1,0 +1,49 @@
+/* Styling for Monitor Service (sftu005) */
+#searchbutton { margin-right: 5px; }
+#resetbutton { margin-right: 5px; }
+
+.status-text {
+	font-size: 0.95rem;
+	letter-spacing: 0.5px;
+}
+
+.text-success {
+	color: #28a745 !important;
+}
+
+.text-danger {
+	color: #dc3545 !important;
+}
+
+.badge-light-success {
+	background-color: #e8f5e9;
+	font-size: 0.82rem;
+	font-weight: 500;
+}
+
+.badge-light-danger {
+	background-color: #ffebee;
+	font-size: 0.82rem;
+	font-weight: 500;
+}
+
+.service-name-cell {
+	font-size: 0.95rem;
+	letter-spacing: 0.2px;
+}
+
+.table td {
+	vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+	background-color: #f8fbff;
+}
+
+.fa-btn-icon {
+	margin-right: 4px;
+}
+
+.filter-layer {
+	margin-bottom: 15px;
+}

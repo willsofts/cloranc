@@ -30,7 +30,8 @@
 			{"name": "openmethod_label", "value": "วิธีการเปิดโปรแกรม"},
 			{"name": "openmethod_post_label", "value": "POST"},
 			{"name": "openmethod_get_label", "value": "GET"},
-			{"name": "newflag_label", "value": "เปิดโปรแกรมด้วยการเปิดหน้าต่างใหม่"} ]
+			{"name": "newflag_label", "value": "เปิดโปรแกรมด้วยการเปิดหน้าต่างใหม่"},
+			{"name": "proxyflag_label", "value": "เปิดโปรแกรมด้วยการใช้งานตัวแทน"} ]
 	},
 	{
 		"language": "EN",
@@ -63,6 +64,7 @@
 			{"name": "openmethod_label", "value": "Open Method"},
 			{"name": "openmethod_post_label", "value": "POST"},
 			{"name": "openmethod_get_label", "value": "GET"},
-			{"name": "newflag_label", "value": "Open New Window/TAB"} ]
+			{"name": "newflag_label", "value": "Open New Window/TAB"},
+			{"name": "proxyflag_label", "value": "Using Proxy When Open"} ]
 	}
 ]

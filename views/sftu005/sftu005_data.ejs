@@ -1,0 +1,73 @@
+<table id="datatable" class="table table-bordered table-hover table-striped tablesorter">
+	<thead>
+		<tr>
+			<th class="text-center th-sequence" style="width: 70px;"><label id="seqno_headerlabel"><%=label.get('seqno_headerlabel','No.')%></label></th>
+			<th class="text-center th-data" style="width: 130px;"><label id="status_headerlabel"><%=label.get('status_headerlabel','Status')%></label></th>
+			<th class="text-left th-data"><label id="servicename_headerlabel"><%=label.get('servicename_headerlabel','Service Name')%></label></th>
+			<th class="text-center th-data" style="width: 220px;"><label id="lastaccess_headerlabel"><%=label.get('lastaccess_headerlabel','Last Access')%></label></th>
+			<th class="text-center th-data"><label id="nodes_headerlabel"><%=label.get('nodes_headerlabel','Nodes')%></label></th>
+		</tr>
+	</thead>
+	<tbody id="datatablebody">							
+		<%	let rows = data?.dataset?.rows || (Array.isArray(data) ? data : (data?.rows || []));
+			if(rows && rows.length > 0) { 
+				for(let index = 0; index < rows.length; index++) { 
+					let item = rows[index]; 
+					let isUp = item?.status === "UP";
+					let lastAccessText = "-";
+					if (item?.lastAccess) {
+						let d = new Date(Number(item.lastAccess));
+						if (!Number.isNaN(d.getTime())) {
+							let pad = (n) => n < 10 ? '0' + n : n;
+							lastAccessText = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+						}
+					}
+		%>
+					<tr data-service="<%=item?.name%>">
+						<td class="text-center seq-cell"><%= (index + 1) %></td>
+						<td class="text-center status-cell">
+							<span class="status-text <%= isUp ? 'text-success font-weight-bold' : 'text-danger font-weight-bold' %>">
+								<i class="fa <%= isUp ? 'fa-check-circle' : 'fa-times-circle' %> mr-1"></i><%= item?.status || 'DOWN' %>
+							</span>
+						</td>
+						<td class="text-left font-weight-bold text-dark service-name-cell">
+							<i class="fa fa-cube text-primary mr-1"></i><%= item?.name %>
+						</td>
+						<td class="text-center last-access-cell">
+							<span class="text-muted"><i class="fa fa-clock-o mr-1"></i><%= lastAccessText %></span>
+						</td>
+						<td class="text-left nodes-cell">
+							<% if(item?.nodes && item.nodes.length > 0) { %>
+								<% for(let n of item.nodes) { 
+									let nodeUp = n.status === "UP";
+								%>
+									<span class="badge <%= nodeUp ? 'badge-light-success text-success border border-success' : 'badge-light-danger text-danger border border-danger' %> mr-1 mb-1 p-2">
+										<i class="fa fa-server mr-1"></i><%= n.nodeID %> 
+										<span class="badge <%= nodeUp ? 'badge-success' : 'badge-danger' %> ml-1"><%= n.status %></span>
+										<% if(n.isLocal) { %>
+											<span class="badge badge-secondary ml-1">local</span>
+										<% } %>
+									</span>
+								<% } %>
+							<% } else { %>
+								<span class="text-muted small">-</span>
+							<% } %>
+						</td>
+					</tr>
+		<%		}
+			} else { %>
+				<tr id="norowstr">
+					<td class="text-center" colspan="5">
+						<div class="p-4 text-muted">
+							<i class="fa fa-info-circle fa-2x mb-2 d-block"></i>
+							<%=label.get('recordnotfound','No services found')%>
+						</div>
+					</td>
+				</tr>
+		<%	} %>
+	</tbody>
+</table>
+<div id="service_summary_bar" class="d-flex justify-content-between align-items-center mt-2 px-2 text-muted small">
+	<span id="service_count_label">Total services: <strong id="total_services_count"><%= (rows ? rows.length : 0) %></strong></span>
+	<span id="last_updated_time_label">Updated at: <span id="last_updated_time">-</span></span>
+</div>

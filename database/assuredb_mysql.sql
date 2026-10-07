@@ -671,6 +671,7 @@ INSERT INTO `tprog` (`product`, `programid`, `progname`, `prognameth`, `progtype
 	('PROMPT', 'sftq003', 'Mail Tracking', 'Mail Tracking', 'Q', 'W', 'Mail Tracking', NULL, 'A', 'sftq003.png', NULL, 'Mail Tracking', 'Mail Tracking', NULL, NULL, NULL, NULL, NULL, NULL),
 	('PROMPT', 'sftu003', 'API Configuration', 'กำหนดค่า API', 'F', 'W', 'API Configuration', NULL, 'A', 'sftu003.png', NULL, 'API Config', 'กำหนดค่า API', NULL, NULL, NULL, NULL, NULL, NULL),
 	('PROMPT', 'sftu004', 'Access Token', 'กำหนด Token', 'F', 'W', 'Access Token', NULL, 'A', 'sftu004.png', NULL, 'Token', 'กำหนด Token', NULL, NULL, NULL, NULL, NULL, NULL),
+	('PROMPT', 'sftu005', 'Monitor Service', 'Monitor Service', 'F', 'W', 'Monitor Service', NULL, 'F', 'sftu005.png', NULL, 'Monitor', 'Monitor', NULL, NULL, NULL, NULL, NULL, NULL),
 	('VUE', 'vfte001', 'Program Information', 'ข้อมูลโปรแกรม', 'F', 'W', 'Program Information', NULL, 'A', 'sfte001.png', NULL, 'Program', 'โปรแกรม', '/show/vfte001', NULL, NULL, NULL, NULL, NULL),
 	('VUE', 'vfte002', 'Group Information', 'กลุ่มผู้ใช้งาน', 'F', 'W', 'Group Information', NULL, 'A', 'sfte002.png', NULL, 'Group', 'กลุ่มผู้ใช้', '/show/vfte002', NULL, NULL, NULL, NULL, NULL),
 	('VUE', 'vfte003', 'Product Information', 'ข้อมูลผลิตภัณฑ์', 'F', 'W', 'Product Information', NULL, 'A', 'sfte003.png', NULL, 'Product', 'ผลิตภัณฑ์', '/show/vfte003', NULL, NULL, NULL, NULL, NULL),

@@ -1,5 +1,6 @@
 const os = require("node:os");
 const formatting = require("./moleculer.formatter")
+const MiddlewareTracker = require("./middleware.tracker");
 
 module.exports = {
     nodeID: "cloranc-"+os.hostname().toLowerCase() + "-" + process.pid,
@@ -17,4 +18,5 @@ module.exports = {
         strategy: "RoundRobin",
         preferLocal: false,
     },
+    middlewares: [MiddlewareTracker],
 };

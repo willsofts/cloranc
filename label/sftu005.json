@@ -1,0 +1,34 @@
+[
+	{
+		"language": "TH",
+		"label": [
+			{"name": "caption", "value": "บริการติดตามสถานะ (Monitor Service)"},
+			{"name": "seqno_headerlabel", "value": "ลำดับ"},
+			{"name": "status_headerlabel", "value": "สถานะ"},
+			{"name": "servicename_headerlabel", "value": "ชื่อ Service"},
+			{"name": "lastaccess_headerlabel", "value": "เข้าใช้งานล่าสุด"},
+			{"name": "nodes_headerlabel", "value": "โหนดที่ให้บริการ (Nodes)"},
+			{"name": "servicename_label", "value": "ชื่อ Service"},
+			{"name": "status_label", "value": "สถานะ"},
+			{"name": "searchbutton", "value": "ค้นหา/รีเฟรช"},
+			{"name": "resetbutton", "value": "ล้างข้อมูล"},
+			{"name": "recordnotfound", "value": "ไม่พบข้อมูลบริการ"}
+		]
+	},
+	{
+		"language": "EN",
+		"label": [
+			{"name": "caption", "value": "Monitor Service"},
+			{"name": "seqno_headerlabel", "value": "No."},
+			{"name": "status_headerlabel", "value": "Status"},
+			{"name": "servicename_headerlabel", "value": "Service Name"},
+			{"name": "lastaccess_headerlabel", "value": "Last Access"},
+			{"name": "nodes_headerlabel", "value": "Nodes"},
+			{"name": "servicename_label", "value": "Service Name"},
+			{"name": "status_label", "value": "Status"},
+			{"name": "searchbutton", "value": "Search/Refresh"},
+			{"name": "resetbutton", "value": "Clear"},
+			{"name": "recordnotfound", "value": "No services found"}
+		]
+	}
+]

@@ -5,7 +5,7 @@ set -e
 REGISTRY_USER="willsofts"
 IMAGE_NAME="willsofts/cloranc"
 APP_NAME="willsofts/cloranc"
-APP_VERSION="1.0.12"
+APP_VERSION="1.0.13"
 
 # ต้องมี ENV: REGISTRY_PASSWORD
 if [ -z "${REGISTRY_PASSWORD}" ]; then

@@ -1452,7 +1452,10 @@ GO
 INSERT INTO [dbo].[tprog] ([product], [programid], [progname], [prognameth], [progtype], [appstype], [description], [parameters], [progsystem], [iconfile], [iconstyle], [shortname], [shortnameth], [progpath], [editdate], [edittime], [edituser]) VALUES (N'PROMPT', N'sftu003', N'API Configuration', N'กำหนดค่า API', N'F', N'W', N'API Configuration', NULL, N'A', N'sftu003.png', NULL, N'API Config', N'กำหนดค่า API', NULL, NULL, NULL, NULL)
 GO
 
-INSERT INTO [dbo].[tprog] ([product], [programid], [progname], [prognameth], [progtype], [appstype], [description], [parameters], [progsystem], [iconfile], [iconstyle], [shortname], [shortnameth], [progpath], [editdate], [edittime], [edituser]) VALUES (N'PROMPT', N'sftu004', N'Access Token', N'กำหนด Token', N'F', N'W', N'Access Token', NULL, N'A', N'sftu004.png', NULL, N'Token', N'กำหนด Token', NULL, NULL, NULL, NULL)
+INSERT INTO [dbo].[tprog] ([product], [programid], [progname], [prognameth], [progtype], [appstype], [description], [parameters], [progsystem], [iconfile], [iconstyle], [shortname], [shortnameth], [progpath], [editdate], [edittime], [edituser]) VALUES (N'PROMPT', N'sftu004', N'Access Token', N'กำหนด Token', N'F', N'W', N'Access Token', NULL, N'A', N'sftu004.png', NULL, N'Token', N'Token', NULL, NULL, NULL, NULL)
+GO
+
+INSERT INTO [dbo].[tprog] ([product], [programid], [progname], [prognameth], [progtype], [appstype], [description], [parameters], [progsystem], [iconfile], [iconstyle], [shortname], [shortnameth], [progpath], [editdate], [edittime], [edituser]) VALUES (N'PROMPT', N'sftu005', N'Monitor Service', N'Monitor Service', N'F', N'W', N'Monitor Service', NULL, N'A', N'sftu005.png', NULL, N'Monitor', N'Monitor', NULL, NULL, NULL, NULL)
 GO
 
 INSERT INTO [dbo].[tprog] ([product], [programid], [progname], [prognameth], [progtype], [appstype], [description], [parameters], [progsystem], [iconfile], [iconstyle], [shortname], [shortnameth], [progpath], [editdate], [edittime], [edituser]) VALUES (N'VUE', N'vfte001', N'Program Information', N'ข้อมูลโปรแกรม', N'F', N'W', N'Program Information', NULL, N'A', N'sfte001.png', NULL, N'Program', N'โปรแกรม', N'/show/vfte001', NULL, NULL, NULL)

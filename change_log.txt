@@ -1,3 +1,12 @@
+2026-10-07
+version: 1.0.13
++ support monitor service
++ support screen sftu005: monitor service
++ update libraries
+
+INSERT INTO `tprog` (`product`, `programid`, `progname`, `prognameth`, `progtype`, `description`, `progsystem`, `iconfile`, `shortname`, `shortnameth`) VALUES ('PROMPT', 'sftu005', 'Monitor Service', 'Monitor Service', 'F', 'Monitor Service', 'F', 'sftu005.png', 'Monitor', 'Monitor');
+INSERT INTO `tproggrp` (`groupname`, `programid`, `seqno`) VALUES ('ADMIN', 'sftu005', 19);
+
 2026-09-24
 version: 1.0.12
 + refactor packages especially will-core & will-serv

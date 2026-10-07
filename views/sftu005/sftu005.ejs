@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title><%=label.get('caption','Monitor Service')%></title>
+		<%- include('../asset/meta') %>		
+		<%- include('../asset/styles') %>		
+		<%- include('../asset/scripts') %>	
+		<link rel="stylesheet" type="text/css" href="<%=meta.base_url%>/sftu005/sftu005.css" />
+		<script type="text/javascript" src="<%=meta.base_url%>/sftu005/sftu005.js"></script>
+	</head>
+	<body class="portalbody portalbody-off">
+		<%- include('../partials/page_waiting') %>
+		<div id="sftu005" class="pt-page pt-page-current pt-page-controller sftu005-search-pager">
+			<%- page.createHeader({pid: 'sftu005', title: label.get('caption','Monitor Service')}) %>
+			<div id="searchpanel" class="panel-body">
+				<form id="fssearchform" name="fssearchform" method="post" autocomplete="off">
+					<input type="hidden" name="ajax" value="true"/>
+					<%- include('./sftu005_filter') %>
+				</form>
+				<div id="listpanel" class="table-responsive fa-list-panel">
+					<%- include('./sftu005_data') %>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

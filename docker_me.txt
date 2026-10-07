@@ -8,6 +8,7 @@
     2.1 run
         docker run -d --name cloranc --env VALIDATE_TOKEN=false -p 8080:8080 willsofts/cloranc
         docker run -d --name cloranc -p 8080:8080 willsofts/cloranc
+        docker run -d --name xreport -p 8080:8080 -v D:\node\willsofts\cloranc\config\default_docker.json:/usr/node/app/config/default.json willsofts/cloranc
     2.2 try to simulate test by calling api:
         curl http://localhost:8080/api/config/list
     2.3 stop & remove container
